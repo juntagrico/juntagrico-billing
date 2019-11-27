@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load config %}
+{% block page_title %}
+    <h3>Abos</h3>
+{% endblock %}
+
+{% block content %}
+
+    <div>Abo Buchungen nach Periode</div><br/>
+    <form class="form-inline" method="GET">
+        <div class="form-group">
+    		<label for="id_fromdate">Von</label> {{ daterange_form.fromdate }} 
+            <label for="id_tilldate">bis</label> {{ daterange_form.tilldate }} 
+            {% if daterange_form.fromdate.errors %}
+                <div class="alert alert-danger">Ungültiges Von Datum</div>
+            {% endif %}
+            {% if daterange_form.tilldate.errors %}
+                <div class="alert alert-danger">Ungültiges Bis Datum</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <button id="btn_submit" type="submit" class="btn">OK</button>
+            <button id="btn_excel" type="submit" name="format" value="xlsx" class="btn">Excel Export</button>
+        </div>
+    </form> 
+    <br/>
+    <table id="filter-table" class="list table" style="display: table; font-size: 14px;">
+    	<thead>
+	    	<tr>
+                <th>Datum</th>
+	    		<th>Start</th>
+	    		<th>Ende</th>
+	    		<th>{% vocabulary "member" %}</th>
+	    		<th>Bezeichnung</th>
+	    		<th class="text-right">Betrag</th>
+	    	</tr>
+    	</thead>
+    	<tbody> 
+	        {% for b in bookings %}
+	        <tr>
+                <td>{{ b.date | date:'d.m.Y'}}</td>
+	        	<td>{{ b.activation_date | date:'d.m.Y' }}</td>
+	        	<td>{{ b.deactivation_date | date:'d.m.Y' }}</td>
+	        	<td>{{ b.member }}</td>
+	        	<td>{{ b.text }}</td>
+	        	<td class="text-right">{{ b.price | stringformat:'6.2f' }}</td>
+	        </tr>
+	        {% endfor %}
+	    </tbody>
+    </table>
+{% endblock %}
