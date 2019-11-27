@@ -1,24 +1,15 @@
 from django.db import models
 from django.utils.translation import gettext as _
 
-from juntagrico.entity import JuntagricoBasePoly, JuntagricoBaseModel
-
-
-class Billable(JuntagricoBasePoly):
-    '''
-    Parent type for billables.
-    '''
-
-    class Meta:
-        verbose_name = _('Verrechenbare Einheit')
-        verbose_name_plural = _('Verrechenbare Einheiten')
+from juntagrico.entity import JuntagricoBaseModel
+from juntagrico.entity.billing import Billable
 
 
 class Bill(JuntagricoBaseModel):
     '''
     Actuall Bill for billables
     '''
-    billable = models.ForeignKey('Billable', related_name='bills',
+    billable = models.ForeignKey(Billable, related_name='bills',
                                  null=False, blank=False,
                                  on_delete=models.PROTECT)
     paid = models.BooleanField(_('bezahlt'), default=False)
