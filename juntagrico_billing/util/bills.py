@@ -40,8 +40,8 @@ def scale_subscription_price(subscription, fromdate, tilldate):
     """
     year_price = subscription.price
 
-    start_of_year = start_of_specific_business_year(fromdate)
-    end_of_year = end_of_specific_business_year(fromdate)
+    start_of_year = start_of_specific_business_year(fromdate).date()
+    end_of_year = end_of_specific_business_year(fromdate).date()
 
     if tilldate > end_of_year:
         raise Exception("till-date is not in same business year as from-date")
