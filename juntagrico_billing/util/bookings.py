@@ -6,6 +6,28 @@ from juntagrico.dao.subscriptiondao import SubscriptionDao
 from juntagrico_billing.entity.settings import Settings
 from juntagrico_billing.util.bills import scale_subscription_price
 
+def check_subscription_active(subscription, fromdate, tilldate):
+    """
+    Helper function to check if a subscription was active during 
+    a given certain date interval.
+    If the subscription doesn't have an activation date, it is considered
+    to never have been active.
+    """
+    if not subscription.activation_date:
+        return False    # not activation_date -> inactive
+
+    if (not subscription.deactivation_date) and (not subscription.active):
+        return False    # no deactivation date and inactiv -> inactive
+
+    if (subscription.activation_date > tilldate):
+        return False    # activated after our interval -> inactive
+
+    if (subscription.deactivation_date or date.max) < fromdate:
+        return False    # deactivated before our interval -> inactive
+
+    # otherwise consider the subscription as active
+    return True
+    
 
 def subscription_bookings_by_date(fromdate, tilldate):
     """
@@ -20,6 +42,10 @@ def subscription_bookings_by_date(fromdate, tilldate):
 
     bookings = []
     for subs in subscriptions:
+        # check again if subscription active in our interval
+        if not check_subscription_active(subs, fromdate, tilldate):
+            continue
+        
         for subs_type in subs.types.all():
             booking = Booking()
             booking.date = max(fromdate, subs.activation_date or date.min)
@@ -73,13 +99,18 @@ def extrasub_bookings_by_date(fromdate, tilldate):
                 # skip periods outside our interval
                 continue
 
-            # create a booking for each period
-            booking = Booking()
             eff_period_start = max(period_start, extrasub.activation_date or date.min)
             eff_period_end = min(period_end, extrasub.deactivation_date or date.max)
 
             eff_start = max(fromdate, eff_period_start)
             eff_end = min(tilldate, eff_period_end)
+
+            # check if main subscription was active too during effective interval
+            if not check_subscription_active(extrasub.main_subscription, fromdate, tilldate):
+                continue
+
+            # create a booking for each period
+            booking = Booking()
 
             if (eff_start != period_start) or (eff_end != period_end):
                 # extrasubscription is only active for a part of the period

@@ -46,6 +46,30 @@ class SubscriptionBookingsTest(SubscriptionTestBase):
         self.assertEqual(docnumber_expected, docnumber, "document_number for subscription")
 
 
+    def test_inactive_subscription(self):
+        # subscription was deactivated before our interval
+        self.subscription.active = False
+        self.subscription.deactivation_date = date(2017, 12, 31)
+        self.subscription.save()
+
+        start_date = date(2018, 1, 1)
+        end_date = date(2018, 12, 31)
+        bookings_list = subscription_bookings_by_date(start_date, end_date)
+        self.assertEqual(0, len(bookings_list))
+
+
+    def test_neveractive_subscription(self):
+        # subscription was never activated
+        self.subscription.active = False
+        self.subscription.activation_date = None
+        self.subscription.save()
+
+        start_date = date(2018, 1, 1)
+        end_date = date(2018, 12, 31)
+        bookings_list = subscription_bookings_by_date(start_date, end_date)
+        self.assertEqual(0, len(bookings_list))
+
+
 class ExtraSubscriptionBookingsTest(SubscriptionTestBase):
 
     def test_generate_document_number_for_extra_subscription(self):
@@ -161,3 +185,17 @@ class ExtraSubscriptionBookingsTest(SubscriptionTestBase):
         self.assertEqual("", booking.credit_account)
         self.assertEqual("4321", booking.member_account)
         self.assertEqual("Zusatz: Extra 1, 01.07.18-30.11.18, Michael Test", booking.text)
+
+
+    def test_inactive_primary_suscription(self):
+        # deactivate primary subscription, extra subscription should not
+        # get a booking, even if still active itself
+        self.subscription.active = False
+        self.subscription.deactivation_date = date(2017, 12, 31)
+        self.subscription.save()
+
+        start_date = date(2018, 1, 1)
+        end_date = date(2018, 12, 31)
+        bookings_list = extrasub_bookings_by_date(start_date, end_date)
+        self.assertEqual(0, len(bookings_list))
+
