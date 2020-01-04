@@ -1,1 +1,1 @@
-git+http://github.com/juntagrico/juntagrico.git
+git+https://github.com/juntagrico/juntagrico.git
