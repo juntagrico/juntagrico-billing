@@ -1,8 +1,8 @@
 from datetime import date
 from django.conf import settings
 
-from test.util.subscription_test_base import SubscriptionTestBase
-from juntagrico.util.bills import scale_subscription_price
+from juntagrico_billing.test.test_base import SubscriptionTestBase
+from juntagrico_billing.util.bills import scale_subscription_price
 
 
 class ScaleSuscriptionPriceTest(SubscriptionTestBase):
