@@ -33,7 +33,7 @@ class Bill(JuntagricoBaseModel):
                                       null=False, blank=False,
                                       on_delete=models.PROTECT,
                                       verbose_name=_('Business Year'))
-    paid = models.BooleanField(_('paid'), default=False)
+    exported = models.BooleanField(_('exported'), default=False)
     bill_date = models.DateField(
         _('Billing date'), null=True, blank=True)
     ref_number = models.CharField(
