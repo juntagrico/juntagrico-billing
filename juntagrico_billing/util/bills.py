@@ -1,6 +1,7 @@
 from datetime import date, timedelta
 from django.utils import timezone
 
+from juntagrico.dao.subscriptiondao import SubscriptionDao
 from juntagrico.dao.extrasubbillingperioddao import ExtraSubBillingPeriodDao
 from juntagrico.util.temporal import start_of_next_business_year, end_of_business_year
 from juntagrico.util.temporal import start_of_specific_business_year
@@ -9,6 +10,7 @@ from juntagrico.util.temporal import start_of_business_year
 from juntagrico.config import Config
 
 from juntagrico_billing.entity.billing import Bill
+from juntagrico_billing.entity.billing import BusinessYear
 from juntagrico_billing.mailer import send_bill_sub, send_bill_share, send_bill_extrasub
 
 type_codes = {'subscription': '01', 'share': '02', 'extra': '03'}
@@ -104,3 +106,29 @@ def bill_extra_subscription(extra, period):
                                bill_date=now)
     member = extra.main_subscription.primary_member
     send_bill_extrasub(bill, extra, start, end, member)
+
+def get_billable_subscriptions(business_year):
+    """
+    get all subscriptions that are active during the given period and
+    don't have a corresponding bill.
+    """
+    from_date = business_year.start_date
+    till_date = date(from_date.year + 1, from_date.month, from_date.day) - timedelta(1)
+
+    # get all active subscriptions that overlap our date range
+    subscriptions = SubscriptionDao.subscriptions_by_date(from_date, till_date)
+
+    # get all bills with bill_date in our date range
+    bills = business_year.bills.all()
+    bills_by_subs = dict([(bill.billable, bill) for bill in bills])
+
+    # check if they already have a bill with billing date in the date range
+    result_list = []
+    for sub in subscriptions:
+        if sub in bills_by_subs:
+            continue
+        result_list.append(sub)
+    
+    return result_list
+
+
