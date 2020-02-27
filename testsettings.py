@@ -22,7 +22,7 @@ INSTALLED_APPS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME':  'yourdatabasename.db',
+        'NAME':  'juntagrico.db',
     }
 }
 
