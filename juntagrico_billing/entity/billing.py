@@ -11,7 +11,7 @@ class BusinessYear(JuntagricoBaseModel):
     Business Year for Bills
     '''
     start_date = models.DateField(_('start date'), unique=True)
-    name = models.CharField(_('name'), null=True, blank='True', unique=True)
+    name = models.CharField(_('name'), max_length=20, null=True, blank='True', unique=True)
 
     def __str__(self):
         return self.name or str(self.start_date)
@@ -28,7 +28,7 @@ class Bill(JuntagricoBaseModel):
     billable = models.ForeignKey(Billable, related_name='bills',
                                  null=False, blank=False,
                                  on_delete=models.PROTECT,
-                                 verbose_name=-('Billable object'))
+                                 verbose_name=_('Billable object'))
     business_year = models.ForeignKey('BusinessYear', related_name='bills',
                                       null=False, blank=False,
                                       on_delete=models.PROTECT,
