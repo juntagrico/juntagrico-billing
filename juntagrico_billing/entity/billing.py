@@ -39,6 +39,7 @@ class Bill(JuntagricoBaseModel):
     ref_number = models.CharField(
         _('Reference number'), max_length=30, unique=True)
     amount = models.FloatField(_('Amount'), null=False, blank=False)
+    paid = models.BooleanField(_('bezahlt'), default=False)
     public_notes = models.TextField(_('Notes visible to {}').format(Config.vocabulary('member_pl')), null=True, blank=True)
     private_notes = models.TextField(_('Notes not visible to {}').format(Config.vocabulary('member_pl')), null=True, blank=True)
 
