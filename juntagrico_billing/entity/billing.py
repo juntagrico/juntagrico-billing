@@ -1,3 +1,4 @@
+from datetime import date
 from django.db import models
 from django.utils.translation import gettext as _
 from juntagrico.config import Config
@@ -12,6 +13,16 @@ class BusinessYear(JuntagricoBaseModel):
     '''
     start_date = models.DateField(_('start date'), unique=True)
     name = models.CharField(_('name'), max_length=20, null=True, blank='True', unique=True)
+
+    # derived properties
+    @property
+    def end_date(self):
+        # at the moment always the end of year
+        if self.start_date:
+            return date(self.start_date.year, 12, 31)
+        else:
+            return None
+        
 
     def __str__(self):
         return self.name or str(self.start_date)

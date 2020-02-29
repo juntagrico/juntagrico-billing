@@ -42,8 +42,8 @@ def scale_subscription_price(subscription, fromdate, tilldate):
     """
     year_price = subscription.price
 
-    start_of_year = start_of_specific_business_year(fromdate).date()
-    end_of_year = end_of_specific_business_year(fromdate).date()
+    start_of_year = start_of_specific_business_year(fromdate)
+    end_of_year = end_of_specific_business_year(fromdate)
 
     if tilldate > end_of_year:
         raise Exception("till-date is not in same business year as from-date")
@@ -130,5 +130,26 @@ def get_billable_subscriptions(business_year):
         result_list.append(sub)
     
     return result_list
+
+def create_subscription_bill(subscription, businessyear, date):
+    """
+    create a bill for a subscription and a businessyear.
+    """
+    price = scale_subscription_price(subscription,
+                                     businessyear.start_date, businessyear.end_date)
+
+    refnumber = generate_ref_number('subscription',
+                                    subscription.id,
+                                    subscription.primary_member.id,
+                                    businessyear.start_date)
+
+    bill = Bill.objects.create(billable=subscription,
+                               business_year=businessyear,
+                               amount=price,
+                               ref_number=refnumber,
+                               bill_date=date)
+    return bill
+
+
 
 
