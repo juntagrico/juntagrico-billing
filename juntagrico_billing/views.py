@@ -8,7 +8,7 @@ from django.shortcuts import render
 from juntagrico.util import return_to_previous_location
 from juntagrico.views import get_menu_dict
 from juntagrico_billing.entity.billing import BusinessYear, Bill
-from juntagrico_billing.util.bills import get_billable_subscriptions
+from juntagrico_billing.util.bills import get_billable_subscriptions, create_subscription_bill
 
 
 @permission_required('juntagrico.is_book_keeper')
@@ -45,11 +45,19 @@ def bills(request):
 @require_POST
 def bills_setyear(request):
     # determine chosen billing year
-    request.session['billing_year'] = year
+    request.session['billing_businessyear'] = year
     return return_to_previous_location(request)
-
 
 
 @permission_required('juntagrico.is_book_keeper')
 def bills_generate(request):
-    pass
+    # generate bills for current business year
+    year = request.session['billing_businessyear']
+    billable_subscriptions = get_billable_subscriptions(year)
+
+    for subs in billable_subscriptions:
+        create_subscription_bill(subs, year, date.today())
+
+    return return_to_previous_location(request)
+
+
