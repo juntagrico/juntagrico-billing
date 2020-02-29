@@ -47,10 +47,10 @@ class Bill(JuntagricoBaseModel):
     exported = models.BooleanField(_('exported'), default=False)
     bill_date = models.DateField(
         _('Billing date'), null=True, blank=True)
-    ref_number = models.CharField(
-        _('Reference number'), max_length=30, unique=True)
     amount = models.FloatField(_('Amount'), null=False, blank=False)
-    paid = models.BooleanField(_('bezahlt'), default=False)
+    payment_date = models.DateField(
+        _('Payment date'), null=True, blank=True)
+    paid_amount = models.FloatField(_('Paid amount'), null=True, blank=True)
     public_notes = models.TextField(_('Notes visible to {}').format(Config.vocabulary('member_pl')), null=True, blank=True)
     private_notes = models.TextField(_('Notes not visible to {}').format(Config.vocabulary('member_pl')), null=True, blank=True)
 
@@ -69,21 +69,3 @@ class Bill(JuntagricoBaseModel):
         verbose_name = _('Bill')
         verbose_name_plural = _('Bills')
 
-
-class Payment(JuntagricoBaseModel):
-    '''
-    Payment for bill
-    '''
-    bill = models.ForeignKey('Bill', related_name='payments',
-                             null=False, blank=False,
-                             on_delete=models.PROTECT, verbose_name=_('Bill'))
-    paid_date = models.DateField(_('Paid date'), null=True, blank=True)
-    amount = models.FloatField(_('Amount number'), null=False, blank=False)
-    private_notes = models.TextField(_('Notes not visible to {}').format(Config.vocabulary('member_pl')), null=True, blank=True)
-
-    def __str__(self):
-        return '{}'.format(self.bill.ref_number)
-
-    class Meta:
-        verbose_name = _('Payment')
-        verbose_name_plural = _('Payment')

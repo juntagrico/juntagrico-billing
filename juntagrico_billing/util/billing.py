@@ -137,15 +137,9 @@ def create_subscription_bill(subscription, businessyear, date):
     price = scale_subscription_price(subscription,
                                      businessyear.start_date, businessyear.end_date)
 
-    refnumber = generate_ref_number('subscription',
-                                    subscription.id,
-                                    subscription.primary_member.id,
-                                    businessyear.start_date)
-
     bill = Bill.objects.create(billable=subscription,
                                business_year=businessyear,
                                amount=price,
-                               ref_number=refnumber,
                                bill_date=date)
     return bill
 
