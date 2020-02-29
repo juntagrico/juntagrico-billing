@@ -54,6 +54,14 @@ class Bill(JuntagricoBaseModel):
     public_notes = models.TextField(_('Notes visible to {}').format(Config.vocabulary('member_pl')), null=True, blank=True)
     private_notes = models.TextField(_('Notes not visible to {}').format(Config.vocabulary('member_pl')), null=True, blank=True)
 
+    # derived properties
+    @property
+    def member_name(self):
+        if self.billable:
+            return self.billable.primary_member_nullsave()
+        return ""
+
+
     def __str__(self):
         return '{}'.format(self.ref_number)
 

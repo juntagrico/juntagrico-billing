@@ -33,54 +33,53 @@
 
 {% endblock %}
 {% block list %}
-    <table id="filter-table" class="list table" style="display: table;">
+    <table xid="filter-table" class="table">
         <thead>
             <tr>
-                <th class="filter">
-                    Nummer
+                <th scope="col" class="filter">
+                    {% trans "Number" %}
                 </th>
-                <th class="filter">
+                <th scope="col" class="filter">
                     {% trans "Member" %}
                 </th>
-                <th class="filter">
-                    Datum
+                <th scope="col" class="filter">
+                    {% trans "Kind" %}
                 </th>
-                <th class="filter">
-                    Text
+                <th scope="col" class="filter">
+                    {% trans "Date" %}
                 </th>
-                <th class="filter">
-                    Betrag
+                <th scope="col" class="filter">
+                    {% trans "Amount" %}
                 </th>
-                <th class="filter">
-                    Bezahlt
+                <th scope="col" class="filter">
+                    {% trans "Paid" %}
                 </th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
             {% for bill in bills_list %}
                 <tr>
                     <td>
-                        {{ bill.ref_number }}
+                        {{ bill.id }}
                     </td>
                     <td>
-                        {# bill.member_name #}
+                        {{ bill.member_name }}
+                    </td>
+                    <td>
+                        {{ bill.billable }}
                     </td>
                     <td>
                         {{ bill.bill_date |date:"Y-m-d" }}
                     </td>
                     <td>
-                        {# text #}
-                    </td>
-                    <td>
                         {{ bill.amount }}
                     </td>
                     <td>
-                        {#
-                        {% if bill.paid %}
-                            {{ bill.payment_date |date:"Y-m-d" }}
-                        {% endif %}
-                        #}
-                    </td>                                      
+                    </td>
+                    <td>
+                        <a href="#">Delete</a>
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>

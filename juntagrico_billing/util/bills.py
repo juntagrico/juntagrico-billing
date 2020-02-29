@@ -70,7 +70,6 @@ def bill_subscription(subscription):
 
     bill = Bill.objects.create(billable=subscription,
                                amount=price,
-                               ref_number=refnumber,
                                bill_date=now)
     send_bill_sub(bill, subscription, start, end, subscription.primary_member)
 
