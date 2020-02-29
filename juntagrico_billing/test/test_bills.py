@@ -2,9 +2,9 @@ from datetime import date
 from django.conf import settings
 
 from juntagrico_billing.test.test_base import SubscriptionTestBase
-from juntagrico_billing.util.bills import scale_subscription_price
-from juntagrico_billing.util.bills import get_billable_subscriptions
-from juntagrico_billing.entity.billing import Bill, BusinessYear
+from juntagrico_billing.util.billing import scale_subscription_price
+from juntagrico_billing.util.billing import get_billable_subscriptions
+from juntagrico_billing.entity.bill import Bill, BusinessYear
 
 
 class ScaleSubscriptionPriceTest(SubscriptionTestBase):

@@ -4,7 +4,7 @@ from juntagrico.dao.extrasubscriptiondao import ExtraSubscriptionDao
 from juntagrico.dao.subscriptiondao import SubscriptionDao
 
 from juntagrico_billing.entity.settings import Settings
-from juntagrico_billing.util.bills import scale_subscription_price
+from juntagrico_billing.util.billing import scale_subscription_price
 
 
 def subscription_bookings_by_date(fromdate, tilldate):

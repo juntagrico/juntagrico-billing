@@ -7,8 +7,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from juntagrico.util import return_to_previous_location
 from juntagrico.views import get_menu_dict
-from juntagrico_billing.entity.billing import BusinessYear, Bill
-from juntagrico_billing.util.bills import get_billable_subscriptions, create_subscription_bill
+from juntagrico_billing.entity.bill import BusinessYear, Bill
+from juntagrico_billing.util.billing import get_billable_subscriptions, create_subscription_bill
 
 
 @permission_required('juntagrico.is_book_keeper')

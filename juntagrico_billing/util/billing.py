@@ -9,8 +9,8 @@ from juntagrico.util.temporal import end_of_specific_business_year
 from juntagrico.util.temporal import start_of_business_year
 from juntagrico.config import Config
 
-from juntagrico_billing.entity.billing import Bill
-from juntagrico_billing.entity.billing import BusinessYear
+from juntagrico_billing.entity.bill import Bill
+from juntagrico_billing.entity.bill import BusinessYear
 from juntagrico_billing.mailer import send_bill_sub, send_bill_share, send_bill_extrasub
 
 type_codes = {'subscription': '01', 'share': '02', 'extra': '03'}
