@@ -76,7 +76,7 @@
                         {{ bill.amount }}
                     </td>
                     <td>
-                        {{ bill.payment_date | date:"Y-m-d" }}
+                        {{ bill.paid }}
                     </td>
                     <td>
                         <a href="{% url 'bills-delete' bill.id %}">Delete</a>
