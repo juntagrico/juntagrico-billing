@@ -70,15 +70,16 @@
                         {{ bill.billable }}
                     </td>
                     <td>
-                        {{ bill.bill_date |date:"Y-m-d" }}
+                        {{ bill.bill_date | date:"Y-m-d" }}
                     </td>
                     <td>
                         {{ bill.amount }}
                     </td>
                     <td>
+                        {{ bill.payment_date | date:"Y-m-d" }}
                     </td>
                     <td>
-                        <a href="#">Delete</a>
+                        <a href="{% url 'bills-delete' bill.id %}">Delete</a>
                     </td>
                 </tr>
             {% endfor %}

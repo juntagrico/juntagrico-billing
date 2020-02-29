@@ -4,7 +4,7 @@ from django import forms
 from django.contrib.auth.decorators import permission_required
 from django.views.decorators.http import require_POST
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from juntagrico.util import return_to_previous_location
 from juntagrico.views import get_menu_dict
 from juntagrico_billing.entity.bill import BusinessYear, Bill
@@ -57,6 +57,14 @@ def bills_generate(request):
 
     for subs in billable_subscriptions:
         create_subscription_bill(subs, year, date.today())
+
+    return return_to_previous_location(request)
+
+@permission_required('juntagrico.is_book_keeper')
+def bills_delete(request, id):
+    # delete a bill
+    bill = get_object_or_404(Bill, pk=id)
+    bill.delete()
 
     return return_to_previous_location(request)
 
