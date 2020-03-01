@@ -61,7 +61,7 @@ class Bill(JuntagricoBaseModel):
 
 
     def __str__(self):
-        return '{}'.format(self.ref_number)
+        return '{}'.format(self.id)
 
     class Meta:
         verbose_name = _('Bill')
