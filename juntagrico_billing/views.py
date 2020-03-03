@@ -1,12 +1,11 @@
-from datetime import date, timedelta
+from datetime import date
 
-from django import forms
 from django.contrib.auth.decorators import permission_required
-from django.views.decorators.http import require_POST
-from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
+from django.views.decorators.http import require_POST
 from juntagrico.util import return_to_previous_location
 from juntagrico.views import get_menu_dict
+
 from juntagrico_billing.entity.bill import BusinessYear, Bill
 from juntagrico_billing.util.billing import get_billable_subscriptions, create_subscription_bill
 
@@ -27,17 +26,19 @@ def bills(request):
         if len(business_years):
             selected_year = business_years.last()
             request.session['billing_businessyear'] = selected_year
-    
-    renderdict['business_years'] = business_years
-    renderdict['selected_year'] = selected_year
 
     if selected_year:
         bills_list = selected_year.bills.all()
     else:
-        bills_list = [] 
-    renderdict['bills_list'] = bills_list
+        bills_list = []
 
-    renderdict['billable_subscriptions'] = get_billable_subscriptions(selected_year)
+    renderdict.update({
+        'business_years' : business_years,
+        'selected_year' : selected_year,
+        'bills_list' : bills_list,
+        'billable_subscriptions' : get_billable_subscriptions(selected_year),
+        'email_form_disabled' : True
+    })
 
     return render(request, "jb/bills.html", renderdict)
 
@@ -45,6 +46,7 @@ def bills(request):
 @require_POST
 def bills_setyear(request):
     # determine chosen billing year
+    year = request.POST.get('year')
     request.session['billing_businessyear'] = year
     return return_to_previous_location(request)
 
@@ -59,6 +61,7 @@ def bills_generate(request):
         create_subscription_bill(subs, year, date.today())
 
     return return_to_previous_location(request)
+
 
 @permission_required('juntagrico.is_book_keeper')
 def bills_delete(request, id):

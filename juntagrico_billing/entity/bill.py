@@ -22,7 +22,6 @@ class BusinessYear(JuntagricoBaseModel):
             return date(self.start_date.year, 12, 31)
         else:
             return None
-        
 
     def __str__(self):
         return self.name or str(self.start_date)

@@ -1,4 +1,4 @@
-{% extends "jb/list_base.html" %}
+{% extends "management_lists/man_list_base.html" %}
 {% load i18n %}
 {% load config %}
 {% block page_title %}
@@ -61,7 +61,9 @@
             {% for bill in bills_list %}
                 <tr>
                     <td>
+                        <a href="{% url 'admin:juntagrico_billing_bill_change' bill.id %}">
                         {{ bill.id }}
+                        </a>
                     </td>
                     <td>
                         {{ bill.member_name }}
