@@ -1,10 +1,10 @@
 from datetime import date
 from django.conf import settings
 
-from juntagrico_billing.test.test_base import SubscriptionTestBase
 from juntagrico_billing.util.billing import scale_subscription_price
 from juntagrico_billing.util.billing import get_billable_subscriptions
 from juntagrico_billing.entity.bill import Bill, BusinessYear
+from test.test_base import SubscriptionTestBase
 
 
 class ScaleSubscriptionPriceTest(SubscriptionTestBase):
@@ -57,17 +57,10 @@ class BillSubscriptionsTests(SubscriptionTestBase):
         self.subs3 = self.create_subscription_and_member(self.subs_type, 
                     date(2018, 3, 1), None, "Later", "Thisyear", "17321")
 
-
-    def test_businessyear_end_date(self):
-        year = BusinessYear.objects.create(start_date=date(2018,1,1),
-                                            name="2018")
-
-        self.assertEqual(date(2018, 12, 31), year.end_date)
-
-
     def test_get_billable_subscriptions_without_bills(self):
         year = BusinessYear.objects.create(start_date=date(2018,1,1),
-                                            name="2018")
+                                           end_date=date(2018,12,31),
+                                           name="2018")
         to_bill_list = get_billable_subscriptions(year)
 
         self.assertEqual(3, len(to_bill_list))
@@ -77,7 +70,8 @@ class BillSubscriptionsTests(SubscriptionTestBase):
 
     def test_get_billable_subscriptions(self):
         year = BusinessYear.objects.create(start_date=date(2018,1,1),
-                                            name="2018")
+                                           end_date=date(2018,12,31),
+                                           name="2018")
 
         # create bill for subs2
         bill = Bill.objects.create(billable=self.subs2, business_year=year, 

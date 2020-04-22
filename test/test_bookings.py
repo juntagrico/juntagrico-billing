@@ -1,13 +1,8 @@
-import django.test
 from datetime import date
-from juntagrico.models import *
-from juntagrico_billing.test.test_base import SubscriptionTestBase
 
-from juntagrico_billing.entity.account import MemberAccount
-from juntagrico_billing.entity.settings import Settings
 from juntagrico_billing.util.bookings import subscription_bookings_by_date, gen_document_number, \
     extrasub_bookings_by_date
-
+from test.test_base import SubscriptionTestBase
 
 
 class SubscriptionBookingsTest(SubscriptionTestBase):
@@ -48,7 +43,6 @@ class SubscriptionBookingsTest(SubscriptionTestBase):
 
     def test_inactive_subscription(self):
         # subscription was deactivated before our interval
-        self.subscription.active = False
         self.subscription.deactivation_date = date(2017, 12, 31)
         self.subscription.save()
 
