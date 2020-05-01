@@ -40,71 +40,17 @@ def scale_subscription_price(subscription, fromdate, tilldate):
     """
     scale subscription price for a certain date interval.
     """
-    year_price = subscription.price
+    result = []
+    days_period = (tilldate - fromdate).days + 1
+    for part in subscription.parts.all():
+        if part.activation_date and part.activation_date <= tilldate:
+            part_start = max(part.activation_date or date.min, fromdate)
+            part_end = min(part.deactivation_date or date.max, tilldate)
+            days_part = (part_end - part_start).days + 1
+            result.append(part.type.price +days_part/days_period)
 
-    start_of_year = start_of_specific_business_year(fromdate)
-    end_of_year = end_of_specific_business_year(fromdate)
+    return sum(result)
 
-    if tilldate > end_of_year:
-        raise Exception("till-date is not in same business year as from-date")
-
-    days_year = (end_of_year - start_of_year).days + 1
-    subs_start = max(subscription.activation_date or date.min, fromdate)
-    subs_end = min(subscription.deactivation_date or date.max, tilldate)
-    days_subs = (subs_end - subs_start).days + 1
-
-    return year_price * days_subs / days_year
-
-
-def bill_subscription(subscription):
-    now = timezone.now()
-    start = start_of_business_year()
-    end = start_of_next_business_year()
-    price = scale_subscription_price(subscription,
-                                     start_of_business_year(), end_of_business_year() - timedelta(1))
-
-    refnumber = generate_ref_number('subscription',
-                                    subscription.id,
-                                    subscription.primary_member.id,
-                                    start)
-
-    bill = Bill.objects.create(billable=subscription,
-                               amount=price,
-                               bill_date=now)
-    send_bill_sub(bill, subscription, start, end, subscription.primary_member)
-
-
-def bill_share(share):
-    now = timezone.now()
-    price = float(Config.share_price())
-    refnumber = generate_ref_number('share', share.id, share.member.id)
-    bill = Bill.objects.create(billable=share,
-                               amount=price,
-                               ref_number=refnumber,
-                               bill_date=now)
-    send_bill_share(bill, share, share.member)
-
-
-def bill_extra_subscription(extra):
-    period = ExtraSubBillingPeriodDao.get_current_period_per_type(extra.type)
-    bill_extra_subscription(extra, period)
-
-
-def bill_extra_subscription(extra, period):
-    now = timezone.now
-    price = period.calculated_price(extra.activation_date)
-    start = period.get_actual_start(extra.activation_date)
-    end = period.get_actual_end()
-    refnumber = generate_ref_number('extra',
-                                    extra.id,
-                                    extra.main_subscription.primary_member.id,
-                                    start)
-    bill = Bill.objects.create(billable=extra,
-                               amount=price,
-                               ref_number=refnumber,
-                               bill_date=now)
-    member = extra.main_subscription.primary_member
-    send_bill_extrasub(bill, extra, start, end, member)
 
 def get_billable_subscriptions(business_year):
     """
@@ -112,14 +58,14 @@ def get_billable_subscriptions(business_year):
     don't have a corresponding bill.
     """
     from_date = business_year.start_date
-    till_date = date(from_date.year + 1, from_date.month, from_date.day) - timedelta(1)
+    till_date = business_year.end_year
 
     # get all active subscriptions that overlap our date range
     subscriptions = SubscriptionDao.subscriptions_by_date(from_date, till_date)
 
     # get all bills with bill_date in our date range
     bills = business_year.bills.all()
-    bills_by_subs = dict([(bill.billable, bill) for bill in bills])
+    bills_by_subs = [bill.billable for bill in bills]
 
     # check if they already have a bill with billing date in the date range
     result_list = []
@@ -129,6 +75,7 @@ def get_billable_subscriptions(business_year):
         result_list.append(sub)
     
     return result_list
+
 
 def create_subscription_bill(subscription, businessyear, date):
     """
@@ -142,7 +89,3 @@ def create_subscription_bill(subscription, businessyear, date):
                                amount=price,
                                bill_date=date)
     return bill
-
-
-
-
