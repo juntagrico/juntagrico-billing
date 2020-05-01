@@ -3,13 +3,16 @@ from datetime import date
 from django.contrib.auth.decorators import permission_required, login_required
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
+from juntagrico.entity.extrasubs import ExtraSubscription
+from juntagrico.entity.subs import Subscription
+
 from juntagrico_billing.config import Config as BConfig
 from juntagrico.util import return_to_previous_location
 from juntagrico.views import get_menu_dict
 
 from juntagrico_billing.dao.billdao import BillDao
 from juntagrico_billing.entity.bill import BusinessYear, Bill
-from juntagrico_billing.util.billing import get_billable_subscriptions, create_subscription_bill
+from juntagrico_billing.util.billing import get_billable_subscriptions, create_subscription_bill, create_extra_sub_bill
 
 
 @permission_required('juntagrico.is_book_keeper')
@@ -60,7 +63,10 @@ def bills_generate(request):
     billable_subscriptions = get_billable_subscriptions(year)
 
     for subs in billable_subscriptions:
-        create_subscription_bill(subs, year, date.today())
+        if isinstance(subs, Subscription):
+            create_subscription_bill(subs, year, date.today())
+        if isinstance(subs, ExtraSubscription):
+            create_extra_sub_bill(subs, year, date.today())
 
     return return_to_previous_location(request)
 

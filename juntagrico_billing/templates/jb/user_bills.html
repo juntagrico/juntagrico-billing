@@ -46,6 +46,9 @@
                             {% trans "Number" %}
                         </th>
                         <th>
+                            {% trans "Billable" %}
+                        </th>
+                        <th>
                             {% trans "Price" %}
                         </th>
                         <th>
@@ -67,6 +70,9 @@
                         <td>
                             {{ bill.pk }}
                         </td>
+                        <th>
+                            {{ bill.billable }}
+                        </th>
                         <th>
                             {{ bill.amount }}
                         </th>

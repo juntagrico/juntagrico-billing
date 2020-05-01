@@ -58,7 +58,7 @@ class BillSubscriptionsTests(SubscriptionTestBase):
                                            name="2018")
         to_bill_list = get_billable_subscriptions(year)
 
-        self.assertEqual(3, len(to_bill_list))
+        self.assertEqual(4, len(to_bill_list))
         subscription = to_bill_list[0].subscription
         self.assertEqual('Test', subscription.primary_member.last_name)
 
@@ -76,7 +76,7 @@ class BillSubscriptionsTests(SubscriptionTestBase):
         to_bill_list = get_billable_subscriptions(year)
 
         # we expect only 2 billable subscriptions
-        self.assertEqual(2, len(to_bill_list))
+        self.assertEqual(3, len(to_bill_list))
         subscription = to_bill_list[0]
         self.assertEqual('Test', subscription.primary_member.last_name)
 

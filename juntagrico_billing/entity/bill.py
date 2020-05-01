@@ -6,6 +6,8 @@ from django.core.exceptions import ValidationError
 
 from juntagrico.entity import JuntagricoBaseModel
 from juntagrico.entity.billing import Billable
+from juntagrico.entity.extrasubs import ExtraSubscription
+from juntagrico.entity.subs import Subscription
 
 from juntagrico_billing.util.esr import generate_ref_number
 
@@ -78,7 +80,11 @@ class Bill(JuntagricoBaseModel):
 
     @property
     def ref_number(self):
-        return generate_ref_number('subscription', self.pk, self.billable.pk)
+        if isinstance(self.billable, Subscription):
+            billtype = 'subscription'
+        if isinstance(self.billable, ExtraSubscription):
+            billtype = 'extra'
+        return generate_ref_number(billtype, self.pk, self.billable.pk)
 
     def __str__(self):
         return '{}'.format(self.id)
