@@ -1,11 +1,13 @@
 from datetime import date
 
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import permission_required, login_required
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
+from juntagrico_billing.config import Config as BConfig
 from juntagrico.util import return_to_previous_location
 from juntagrico.views import get_menu_dict
 
+from juntagrico_billing.dao.billdao import BillDao
 from juntagrico_billing.entity.bill import BusinessYear, Bill
 from juntagrico_billing.util.billing import get_billable_subscriptions, create_subscription_bill
 
@@ -70,5 +72,20 @@ def bills_delete(request, id):
     bill.delete()
 
     return return_to_previous_location(request)
+
+
+@login_required
+def bills(request):
+    member = request.user.member
+    subs = list(member.old_subscriptions.all())
+    subs.append(member.subscription)
+    subs.append(member.future_subscription)
+    renderdict = get_menu_dict(request)
+    renderdict.update({
+        'bills': BillDao.bills_for_billables(subs),
+        'esr': BConfig.esr(),
+        'menu': {'bills': 'active'},
+    })
+    return render(request, "jb/user_bills.html", renderdict)
 
 

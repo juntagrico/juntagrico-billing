@@ -7,6 +7,8 @@ from django.core.exceptions import ValidationError
 from juntagrico.entity import JuntagricoBaseModel
 from juntagrico.entity.billing import Billable
 
+from juntagrico_billing.util.esr import generate_ref_number
+
 
 class BusinessYear(JuntagricoBaseModel):
     """
@@ -45,7 +47,6 @@ class Bill(JuntagricoBaseModel):
     bill_date = models.DateField(
         _('Billing date'), null=True, blank=True)
     amount = models.FloatField(_('Amount'), null=False, blank=False)
-    paid = models.BooleanField(_('Paid'), default=False)
     public_notes = models.TextField(_('Notes visible to {}').format(Config.vocabulary('member_pl')), null=True, blank=True)
     private_notes = models.TextField(_('Notes not visible to {}').format(Config.vocabulary('member_pl')), null=True, blank=True)
 
@@ -55,6 +56,29 @@ class Bill(JuntagricoBaseModel):
         if self.billable:
             return self.billable.primary_member_nullsave()
         return ""
+
+    @property
+    def paid(self):
+        amount_paid = self.amount_paid
+        return self.amount <= amount_paid
+
+    @property
+    def amount_paid(self):
+        return sum([p.amount for p in self.payments.all()])
+
+    @property
+    def state(self):
+        amount_paid = self.amount_paid
+        if amount_paid < self.amount:
+            return _('unpaid')
+        elif amount_paid == self.amount:
+            return _('paid')
+        else:
+            return _('overpaid')
+
+    @property
+    def ref_number(self):
+        return generate_ref_number('subscription', self.pk, self.billable.pk)
 
     def __str__(self):
         return '{}'.format(self.id)

@@ -27,18 +27,13 @@ class ScaleSubscriptionPriceTest(SubscriptionTestBase):
         finally:
             del settings.BUSINESS_YEAR_START
 
-    def test_price_by_date_quarter(self):
-        start_date = date(2018, 4, 1)
-        end_date = date(2018, 6, 30)
-        price_quarter = scale_subscription_price(self.subscription,
-                                                 start_date, end_date)
-        price_quarter_expected = 1200.0 * (30 + 31 + 30) / 365
-        self.assertEqual(price_quarter_expected, price_quarter,
-                         "second quarter")
-
     def test_price_by_date_partial_subscription(self):
         self.subscription.activation_date = date(2018, 7, 1)
         self.subscription.deactivation_date = date(2018, 9, 30)
+        for part in self.subscription.parts.all():
+            part.activation_date = date(2018, 7, 1)
+            part.deactivation_date = date(2018, 9, 30)
+            part.save()
         start_date = date(2018, 1, 1)
         end_date = date(2018, 12, 31)
         price = scale_subscription_price(self.subscription,

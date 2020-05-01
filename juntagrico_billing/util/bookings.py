@@ -20,7 +20,7 @@ def subscription_bookings_by_date(fromdate, tilldate):
 
     bookings = []
     for subs in subscriptions:
-        for subs_part in subs.active_parts.all():
+        for subs_part in subs.parts.all():
             booking = Booking()
             booking.date = max(fromdate, subs.activation_date or date.min)
             booking.activation_date = subs.activation_date

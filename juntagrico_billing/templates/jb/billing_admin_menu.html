@@ -1,10 +1,11 @@
+{% load i18n %}
 {% if perms.juntagrico.is_book_keeper %}
 <li class="nav-item">
-    <a class="nav-link" data-toggle="collapse" href="#jb">Rechnungen und Buchhaltung<i class="fas fa-angle-right"></i></a>
+    <a class="nav-link" data-toggle="collapse" href="#jb">{% trans "Bills and Bookkeping" %}<i class="fas fa-angle-right"></i></a>
     <div class="collapse" id="jb">
     <ul class="nav flex-column admin-menu subadmin-menu">
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'bills-list' %}">Rechnungen</a>
+            <a class="nav-link" href="{% url 'bills-list' %}">{% trans "Bills" %}</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="/jb/subscription_bookings">Abo Buchungen LEGACY</a>

@@ -1,0 +1,91 @@
+{% extends "management_lists/man_list_base.html" %}
+{% load i18n %}
+{% load config %}
+{% block page_title %}
+    <h3>
+        {% trans "Bills" %}
+    </h3>
+{% endblock %}
+{% block content %}
+    <div class="row mb-3">
+        <b class="col-md-12">{% trans "Bank Connection" %}</b>
+    </div>
+    <div class="row">
+            {% config "organisation_address" as addr %}
+    {{ addr.name }}
+    <br/>
+    {% if addr.extra %}
+        {{ addr.extra }}
+        <br/>
+    {% endif %}
+    {{ addr.street }} {{ addr.number }}
+    <br/>
+    {{ addr.zip }} {{ addr.city }}
+    <br/>
+    {% config "organisation_bank_connection" as bank %}
+    {{ bank.NAME }}
+    <br/>
+    {% if esr %}
+        {% trans "Account-Number" %}: {{ esr }}
+    {% else %}
+        {% trans "PC-Number" %}: {{ bank.PC }}
+        <br/>
+        {% trans "IBAN" %}: {{ bank.IBAN }}
+        <br/>
+        {% trans "BIC" %}: {{ bank.BIC }}
+    {% endif %}
+    </div>
+    <div class="row mb-3 mt-3">
+        <b class="col-md-12">{% trans "Overview" %}</b>
+    </div>
+    <div>
+            <table id="filter-table" class="table" style="display: table;">
+                <thead>
+                    <tr>
+                        <th>
+                            {% trans "Number" %}
+                        </th>
+                        <th>
+                            {% trans "Price" %}
+                        </th>
+                        <th>
+                            {% trans "State" %}
+                        </th>
+                        <th>
+                            {% trans "Amount Paid" %}
+                        </th>
+                        {% if esr %}
+                        <th>
+                            {% trans "Reference Number" %}
+                        </th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bill in bills %}
+                        <tr>
+                        <td>
+                            {{ bill.pk }}
+                        </td>
+                        <th>
+                            {{ bill.amount }}
+                        </th>
+                        <th>
+                            {{ bill.state }}
+                        </th>
+                        <th>
+                            {{ amount.paid  }}
+                        </th>
+                        {% if esr %}
+                        <th>
+                            {{ bill.ref_number }}
+                        </th>
+                        {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+
+{% endblock %}
