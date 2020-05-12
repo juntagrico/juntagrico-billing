@@ -17,6 +17,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'juntagrico',
     'juntagrico_billing',
+    'crispy_forms'
 ]
 
 DATABASES = {
