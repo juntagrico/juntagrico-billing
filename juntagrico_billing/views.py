@@ -81,7 +81,7 @@ def bills_delete(request, id):
 
 
 @login_required
-def bills(request):
+def bills_user(request):
     member = request.user.member
     subs = list(member.old_subscriptions.all())
     subs.append(member.subscription)
