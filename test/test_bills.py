@@ -1,7 +1,8 @@
 from datetime import date
+from decimal import Decimal
 from django.conf import settings
 
-from juntagrico_billing.util.billing import scale_subscription_price
+from juntagrico_billing.util.billing import scale_subscription_price, scale_extrasubscription_price
 from juntagrico_billing.util.billing import get_billable_subscriptions
 from juntagrico_billing.entity.bill import Bill, BusinessYear
 from test.test_base import SubscriptionTestBase
@@ -38,9 +39,56 @@ class ScaleSubscriptionPriceTest(SubscriptionTestBase):
         end_date = date(2018, 12, 31)
         price = scale_subscription_price(self.subscription,
                                          start_date, end_date)
-        price_expected = 1200.0 * (31 + 31 + 30) / 365
+        price_expected = round(1200.0 * (31 + 31 + 30) / 365, 2)
         self.assertEqual(price_expected, price,
                          "quarter subscription over a year")
+
+class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
+    
+    def test_full_year(self):
+        start_date = date(2018, 1, 1)
+        end_date = date(2018, 12, 31)
+
+        price = scale_extrasubscription_price(self.extrasubs, start_date, end_date)
+        self.assertEqual(300.00, price, "full year")
+
+    def test_first_half_year(self):
+        # first half year is exactly 1. extrasub period
+        start_date = date(2018, 1, 1)
+        end_date = date(2018, 6, 30)
+
+        price = scale_extrasubscription_price(self.extrasubs, start_date, end_date)
+        self.assertEqual(100.00, price, "first half year")
+
+    def test_second_half_year(self):
+        # second half year is exactly 2. extrasub period
+        start_date = date(2018, 7, 1)
+        end_date = date(2018, 12, 31)
+
+        price = scale_extrasubscription_price(self.extrasubs, start_date, end_date)
+        self.assertEqual(200.00, price, "second half year")
+
+    def test_partial_year(self):
+        start_date = date(2018, 3, 1)
+        end_date = date(2018, 10, 31)
+
+        price = scale_extrasubscription_price(self.extrasubs, start_date, end_date)
+        expected_price = (Decimal(100) * (31 + 30 + 31 + 30) / (31 + 28 + 31 + 30 + 31 + 30)) +\
+                         (Decimal(200) * (31 + 31 + 30 + 31) / (31 + 31 + 30 + 31 + 30 + 31))
+        self.assertEquals(round(expected_price, 2), price, "partial year")
+
+    def test_partial_active(self):
+        # full year but partial active extrasubscription
+        start_date = date(2018, 1, 1)
+        end_date = date(2018, 12, 31)
+
+        self.extrasubs.activation_date = date(2018, 3, 1)
+        self.extrasubs.deactivation_date = date(2018, 10, 31)
+
+        price = scale_extrasubscription_price(self.extrasubs, start_date, end_date)
+        expected_price = (Decimal(100) * (31 + 30 + 31 + 30) / (31 + 28 + 31 + 30 + 31 + 30)) +\
+                         (Decimal(200) * (31 + 31 + 30 + 31) / (31 + 31 + 30 + 31 + 30 + 31))
+        self.assertEquals(round(expected_price, 2), price, "partial active")
 
 class BillSubscriptionsTests(SubscriptionTestBase):
     def setUp(self):
@@ -79,4 +127,5 @@ class BillSubscriptionsTests(SubscriptionTestBase):
         self.assertEqual(3, len(to_bill_list))
         subscription = to_bill_list[0]
         self.assertEqual('Test', subscription.primary_member.last_name)
+
 
