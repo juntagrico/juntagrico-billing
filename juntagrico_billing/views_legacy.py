@@ -50,7 +50,7 @@ def subscription_bookings(request):
             'daterange_form': daterange_form,
             'bookings': bookings
         })
-        return render(request, "jb/subscription_bookings.html",
+        return render(request, "billing/subscription_bookings.html",
                       renderdict)
 
 

@@ -45,7 +45,7 @@ def bills(request):
         'email_form_disabled' : True
     })
 
-    return render(request, "jb/bills.html", renderdict)
+    return render(request, "billing/bills.html", renderdict)
 
 @permission_required('juntagrico.is_book_keeper')
 @require_POST
@@ -92,6 +92,6 @@ def bills_user(request):
         'esr': BConfig.esr(),
         'menu': {'bills': 'active'},
     })
-    return render(request, "jb/user_bills.html", renderdict)
+    return render(request, "billing/user_bills.html", renderdict)
 
 
