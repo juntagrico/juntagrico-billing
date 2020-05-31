@@ -27,10 +27,9 @@ def bills(request):
 
     # if no year set, choose most recent year
     selected_year = request.session.get('billing_businessyear', None)
-    if not selected_year:
-        if len(business_years):
-            selected_year = business_years.last()
-            request.session['billing_businessyear'] = selected_year
+    if not selected_year and len(business_years):
+        selected_year = business_years.last()
+        request.session['billing_businessyear'] = selected_year
 
     if selected_year:
         bills_list = selected_year.bills.all()
