@@ -60,8 +60,7 @@ class Bill(JuntagricoBaseModel):
 
     @property
     def paid(self):
-        amount_paid = self.amount_paid
-        return self.amount <= amount_paid
+        return self.amount <= self.amount_paid
 
     @property
     def amount_paid(self):
