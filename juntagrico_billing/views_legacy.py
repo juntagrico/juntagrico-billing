@@ -65,5 +65,4 @@ def export_bookings(bookings):
         'member_account': 'KS1 (Mitglied)'
     }
 
-    # return generate_excell(fields, bookings)
     return generate_excel(fields.items(), bookings, "buchungen")
