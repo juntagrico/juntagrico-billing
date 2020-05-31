@@ -38,14 +38,15 @@ def bills(request):
         bills_list = []
 
     renderdict.update({
-        'business_years' : business_years,
-        'selected_year' : selected_year,
-        'bills_list' : bills_list,
-        'billable_subscriptions' : get_billable_subscriptions(selected_year),
-        'email_form_disabled' : True
+        'business_years': business_years,
+        'selected_year': selected_year,
+        'bills_list': bills_list,
+        'billable_subscriptions': get_billable_subscriptions(selected_year),
+        'email_form_disabled': True
     })
 
     return render(request, "jb/bills.html", renderdict)
+
 
 @permission_required('juntagrico.is_book_keeper')
 @require_POST
@@ -93,5 +94,3 @@ def bills_user(request):
         'menu': {'bills': 'active'},
     })
     return render(request, "jb/user_bills.html", renderdict)
-
-

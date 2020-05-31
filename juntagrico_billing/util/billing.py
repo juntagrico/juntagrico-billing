@@ -1,6 +1,5 @@
 from datetime import date
 
-from juntagrico.dao.extrasubbillingperioddao import ExtraSubBillingPeriodDao
 from juntagrico.dao.extrasubscriptiondao import ExtraSubscriptionDao
 from juntagrico.dao.subscriptiondao import SubscriptionDao
 
@@ -18,9 +17,10 @@ def scale_subscription_price(subscription, fromdate, tilldate):
             part_start = max(part.activation_date or date.min, fromdate)
             part_end = min(part.deactivation_date or date.max, tilldate)
             days_part = (part_end - part_start).days + 1
-            result.append(part.type.price * days_part/days_period)
+            result.append(part.type.price * days_part / days_period)
 
     return round(sum(result), 2)
+
 
 def scale_extrasubscription_price(extrasub, fromdate, tilldate):
     """
@@ -68,8 +68,9 @@ def get_billable_subscriptions(business_year):
     # check if they already have a bill with billing date in the date range
     result_list = [sub for sub in subscriptions if sub not in bills_by_subs] + \
                   [e_sub for e_sub in extra_subs if e_sub not in bills_by_subs]
-    
+
     return result_list
+
 
 def create_bill(billable, businessyear, date, amount):
     bill = Bill.objects.create(billable=billable,
@@ -93,7 +94,7 @@ def create_extra_sub_bill(e_sub, businessyear, date):
     """
     create a bill for a extra subscription and a businessyear.
     """
-    price = scale_extrasubscription_price(e_sub, 
-                businessyear.start_date, businessyear.end_date)
+    price = scale_extrasubscription_price(e_sub,
+                                          businessyear.start_date, businessyear.end_date)
 
     return create_bill(e_sub, businessyear, date, price)

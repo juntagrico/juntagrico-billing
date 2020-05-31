@@ -118,7 +118,7 @@ def gen_document_number(entry, range_start):
 
     Structure of document number:
     YYMMDD<id of primary member 9-digits><id of subcription 9-digits>
-    
+
     If no member is assigned, the member part is all 0.
     """
     date_part = range_start.strftime('%y%m%d')

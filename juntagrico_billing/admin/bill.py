@@ -16,4 +16,3 @@ class BillAdmin(BaseAdmin):
         return bill.billable.get_real_instance()
 
     billable_inst.short_description = Bill._meta.get_field('billable').verbose_name
-    

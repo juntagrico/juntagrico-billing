@@ -1,9 +1,7 @@
-from datetime import date
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext as _
 from juntagrico.config import Config
-from django.core.exceptions import ValidationError
-
 from juntagrico.entity import JuntagricoBaseModel
 from juntagrico.entity.billing import Billable
 from juntagrico.entity.extrasubs import ExtraSubscription
@@ -32,6 +30,7 @@ class BusinessYear(JuntagricoBaseModel):
         if self.start_date and self.end_date:
             if self.end_date <= self.start_date:
                 raise ValidationError({'end_date': _('Businessyear end_date must be after start_date.')})
+
 
 class Bill(JuntagricoBaseModel):
     """

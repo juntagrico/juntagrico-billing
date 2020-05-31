@@ -13,4 +13,3 @@ urlpatterns = [
     # legacy
     path('jb/subscription_bookings', views_legacy.subscription_bookings)
 ]
-
