@@ -23,7 +23,7 @@ INSTALLED_APPS = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME':  'juntagrico.db',
+        'NAME': 'juntagrico.db',
     }
 }
 
@@ -33,7 +33,6 @@ AUTHENTICATION_BACKENDS = (
     'juntagrico.util.auth.AuthenticateWithEmail',
     'django.contrib.auth.backends.ModelBackend'
 )
-
 
 MIDDLEWARE = (
     'django.middleware.common.CommonMiddleware',
@@ -46,12 +45,11 @@ MIDDLEWARE = (
 EMAIL_HOST = os.environ.get('JUNTAGRICO_EMAIL_HOST')
 EMAIL_HOST_USER = os.environ.get('JUNTAGRICO_EMAIL_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('JUNTAGRICO_EMAIL_PASSWORD')
-EMAIL_PORT = os.environ.get('JUNTAGRICO_EMAIL_PORT', 2525 )
+EMAIL_PORT = os.environ.get('JUNTAGRICO_EMAIL_PORT', 2525)
 EMAIL_USE_TLS = os.environ.get('JUNTAGRICO_EMAIL_TLS', False)
 
-
-
 WHITELIST_EMAILS = []
+
 
 def whitelist_email_from_env(var_env_name):
     email = os.environ.get(var_env_name)
@@ -79,7 +77,7 @@ USE_I18N = True
 # calendars according to the current locale.
 USE_L10N = True
 
-DATE_INPUT_FORMATS =['%d.%m.%Y',]
+DATE_INPUT_FORMATS = ['%d.%m.%Y', ]
 
 # If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
@@ -103,7 +101,7 @@ TEMPLATES = [
                 'django.template.loaders.filesystem.Loader',
                 'django.template.loaders.app_directories.Loader'
             ],
-            'debug' : True
+            'debug': True
         },
     },
 ]
@@ -112,15 +110,14 @@ LOGIN_REDIRECT_URL = "/my/home"
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
-
 GOOGLE_API_KEY = 'AIzaSyCcii4Z71qyky54kEQtRhFbB_z-2zbSU28'
 
 BILLING = True
 
 CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-            'LOCATION': 'juntagrico_app_cache_table',
-            'TIMEOUT': None,
-        }
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'juntagrico_app_cache_table',
+        'TIMEOUT': None,
     }
+}
