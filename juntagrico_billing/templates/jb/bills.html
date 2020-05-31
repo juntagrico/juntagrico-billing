@@ -7,7 +7,7 @@
     </h3>
 {% endblock %}
 {% block management_cmd %}
-<form class="row mb-3" action="{% url 'bills-setyear' %}" method="POST">
+<form class="row mb-3" action="{% url 'jb:bills-setyear' %}" method="POST">
     {% csrf_token %} 
     <p class="col-md-2">{% trans "Year:" %} {{ selected_year.name }}</p>
     <div class="col-md-2">
@@ -23,7 +23,7 @@
         </button>
     </div>
 </form>
-<form class="row mb-3" action="{% url 'bills-generate' %}" method="POST">
+<form class="row mb-3" action="{% url 'jb:bills-generate' %}" method="POST">
     {% csrf_token %}
     <p class="col-md-4">{{ billable_subscriptions | length }} {% trans "pending bills for" %} {{ selected_year.name }}.</p>
     <div class="col-md-2">
@@ -81,7 +81,7 @@
                         {{ bill.paid }}
                     </td>
                     <td>
-                        <a href="{% url 'bills-delete' bill.id %}">Delete</a>
+                        <a href="{% url 'jb:bills-delete' bill.id %}">Delete</a>
                     </td>
                 </tr>
             {% endfor %}

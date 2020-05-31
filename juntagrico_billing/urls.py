@@ -2,6 +2,7 @@ from django.urls import path
 from juntagrico_billing import views
 from juntagrico_billing import views_legacy
 
+app_name = 'jb'
 urlpatterns = [
     path('jb/bills', views.bills, name='bills-list'),
     path('jb/bills_setyear', views.bills_setyear, name='bills-setyear'),
