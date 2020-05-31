@@ -27,9 +27,8 @@ class BusinessYear(JuntagricoBaseModel):
 
     def clean(self):
         # make sure end_date is before start_date
-        if self.start_date and self.end_date:
-            if self.end_date <= self.start_date:
-                raise ValidationError({'end_date': _('Businessyear end_date must be after start_date.')})
+        if self.start_date and self.end_date and self.end_date <= self.start_date:
+            raise ValidationError({'end_date': _('Businessyear end_date must be after start_date.')})
 
 
 class Bill(JuntagricoBaseModel):
