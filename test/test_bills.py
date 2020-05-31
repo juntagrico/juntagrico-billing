@@ -45,9 +45,9 @@ class ScaleSubscriptionPriceTest(SubscriptionTestBase):
 
 
 class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
-
-    expected_price = round((Decimal(100) * (31 + 30 + 31 + 30) / (31 + 28 + 31 + 30 + 31 + 30)) + \
-                     (Decimal(200) * (31 + 31 + 30 + 31) / (31 + 31 + 30 + 31 + 30 + 31)), 2)
+    expected_price = round(
+        (Decimal(100) * (31 + 30 + 31 + 30) / (31 + 28 + 31 + 30 + 31 + 30)) + (Decimal(200) * (31 + 31 + 30 + 31) / (31 + 31 + 30 + 31 + 30 + 31)),
+        2)
 
     def test_full_year(self):
         start_date = date(2018, 1, 1)
