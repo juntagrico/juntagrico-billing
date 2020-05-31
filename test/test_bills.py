@@ -46,6 +46,9 @@ class ScaleSubscriptionPriceTest(SubscriptionTestBase):
 
 class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
 
+    expected_price = round((Decimal(100) * (31 + 30 + 31 + 30) / (31 + 28 + 31 + 30 + 31 + 30)) + \
+                     (Decimal(200) * (31 + 31 + 30 + 31) / (31 + 31 + 30 + 31 + 30 + 31)), 2)
+
     def test_full_year(self):
         start_date = date(2018, 1, 1)
         end_date = date(2018, 12, 31)
@@ -74,9 +77,7 @@ class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
         end_date = date(2018, 10, 31)
 
         price = scale_extrasubscription_price(self.extrasubs, start_date, end_date)
-        expected_price = (Decimal(100) * (31 + 30 + 31 + 30) / (31 + 28 + 31 + 30 + 31 + 30)) + \
-                         (Decimal(200) * (31 + 31 + 30 + 31) / (31 + 31 + 30 + 31 + 30 + 31))
-        self.assertEquals(round(expected_price, 2), price, "partial year")
+        self.assertEquals(ScaleExtraSubscriptionPriceTest.expected_price, price, "partial year")
 
     def test_partial_active(self):
         # full year but partial active extrasubscription
@@ -87,9 +88,7 @@ class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
         self.extrasubs.deactivation_date = date(2018, 10, 31)
 
         price = scale_extrasubscription_price(self.extrasubs, start_date, end_date)
-        expected_price = (Decimal(100) * (31 + 30 + 31 + 30) / (31 + 28 + 31 + 30 + 31 + 30)) + \
-                         (Decimal(200) * (31 + 31 + 30 + 31) / (31 + 31 + 30 + 31 + 30 + 31))
-        self.assertEquals(round(expected_price, 2), price, "partial active")
+        self.assertEquals(ScaleExtraSubscriptionPriceTest.expected_price, price, "partial active")
 
 
 class BillSubscriptionsTests(SubscriptionTestBase):
