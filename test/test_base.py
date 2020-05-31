@@ -114,7 +114,7 @@ class SubscriptionTestBase(django.test.TestCase):
         part = SubscriptionPart.objects.create(
             subscription=subscription,
             type=type,
-            activation_date= date(2018,1,1)
+            activation_date=date(2018, 1, 1)
         )
         part.save()
 

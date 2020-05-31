@@ -43,8 +43,9 @@ class ScaleSubscriptionPriceTest(SubscriptionTestBase):
         self.assertEqual(price_expected, price,
                          "quarter subscription over a year")
 
+
 class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
-    
+
     def test_full_year(self):
         start_date = date(2018, 1, 1)
         end_date = date(2018, 12, 31)
@@ -73,7 +74,7 @@ class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
         end_date = date(2018, 10, 31)
 
         price = scale_extrasubscription_price(self.extrasubs, start_date, end_date)
-        expected_price = (Decimal(100) * (31 + 30 + 31 + 30) / (31 + 28 + 31 + 30 + 31 + 30)) +\
+        expected_price = (Decimal(100) * (31 + 30 + 31 + 30) / (31 + 28 + 31 + 30 + 31 + 30)) + \
                          (Decimal(200) * (31 + 31 + 30 + 31) / (31 + 31 + 30 + 31 + 30 + 31))
         self.assertEquals(round(expected_price, 2), price, "partial year")
 
@@ -86,23 +87,24 @@ class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
         self.extrasubs.deactivation_date = date(2018, 10, 31)
 
         price = scale_extrasubscription_price(self.extrasubs, start_date, end_date)
-        expected_price = (Decimal(100) * (31 + 30 + 31 + 30) / (31 + 28 + 31 + 30 + 31 + 30)) +\
+        expected_price = (Decimal(100) * (31 + 30 + 31 + 30) / (31 + 28 + 31 + 30 + 31 + 30)) + \
                          (Decimal(200) * (31 + 31 + 30 + 31) / (31 + 31 + 30 + 31 + 30 + 31))
         self.assertEquals(round(expected_price, 2), price, "partial active")
+
 
 class BillSubscriptionsTests(SubscriptionTestBase):
     def setUp(self):
         super().setUp()
 
         # create some more subscriptions
-        self.subs2 = self.create_subscription_and_member(self.subs_type, 
-                    date(2017, 1, 1), None, "Early", "Lastyear", "17321")
-        self.subs3 = self.create_subscription_and_member(self.subs_type, 
-                    date(2018, 3, 1), None, "Later", "Thisyear", "17321")
+        self.subs2 = self.create_subscription_and_member(self.subs_type,
+                                                         date(2017, 1, 1), None, "Early", "Lastyear", "17321")
+        self.subs3 = self.create_subscription_and_member(self.subs_type,
+                                                         date(2018, 3, 1), None, "Later", "Thisyear", "17321")
 
     def test_get_billable_subscriptions_without_bills(self):
-        year = BusinessYear.objects.create(start_date=date(2018,1,1),
-                                           end_date=date(2018,12,31),
+        year = BusinessYear.objects.create(start_date=date(2018, 1, 1),
+                                           end_date=date(2018, 12, 31),
                                            name="2018")
         to_bill_list = get_billable_subscriptions(year)
 
@@ -110,15 +112,14 @@ class BillSubscriptionsTests(SubscriptionTestBase):
         subscription = to_bill_list[0].subscription
         self.assertEqual('Test', subscription.primary_member.last_name)
 
-
     def test_get_billable_subscriptions(self):
-        year = BusinessYear.objects.create(start_date=date(2018,1,1),
-                                           end_date=date(2018,12,31),
+        year = BusinessYear.objects.create(start_date=date(2018, 1, 1),
+                                           end_date=date(2018, 12, 31),
                                            name="2018")
 
         # create bill for subs2
-        bill = Bill.objects.create(billable=self.subs2, business_year=year, 
-                    bill_date=date(2018, 1, 1), amount=1200)
+        bill = Bill.objects.create(billable=self.subs2, business_year=year,
+                                   bill_date=date(2018, 1, 1), amount=1200)
         bill.save()
 
         to_bill_list = get_billable_subscriptions(year)
@@ -127,5 +128,3 @@ class BillSubscriptionsTests(SubscriptionTestBase):
         self.assertEqual(3, len(to_bill_list))
         subscription = to_bill_list[0]
         self.assertEqual('Test', subscription.primary_member.last_name)
-
-

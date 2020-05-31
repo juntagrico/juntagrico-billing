@@ -33,13 +33,14 @@ class SubscriptionBookingsTest(SubscriptionTestBase):
         self.assertEqual("1100", booking.debit_account)
         self.assertEqual("", booking.credit_account)  # subscriptiontype account is not assigned
         self.assertEqual("4321", booking.member_account)
-        self.assertEqual("Abo: Normal - Grösse: Normal - Produkt: Test-Product, Michael Test, Teilperiode 01.07.18 - 30.09.18", booking.text)
+        self.assertEqual(
+            "Abo: Normal - Grösse: Normal - Produkt: Test-Product, Michael Test, Teilperiode 01.07.18 - 30.09.18",
+            booking.text)
 
     def test_generate_document_number_for_subscription(self):
         docnumber = gen_document_number(self.subscription, date(2018, 1, 1))
         docnumber_expected = "180101000000002000000001"
         self.assertEqual(docnumber_expected, docnumber, "document_number for subscription")
-
 
     def test_inactive_subscription(self):
         # subscription was deactivated before our interval
