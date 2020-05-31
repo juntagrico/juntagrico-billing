@@ -31,20 +31,17 @@ def scale_extrasubscription_price(extrasub, fromdate, tilldate):
     for period in extrasub.type.periods.all():
         period_start = date(fromdate.year, period.start_month, period.start_day)
         period_end = date(fromdate.year, period.end_month, period.end_day)
-        if (period_start > tilldate) or (period_end < fromdate):
-            # skip periods outside our interval
-            continue
+        if period_start <= tilldate and period_end >= fromdate:
+            # calculate the resulting start and end of the period that overlaps
+            # with the activation date and our requested date interval
+            eff_start = max(fromdate, max(period_start, extrasub.activation_date or date.min))
+            eff_end = min(tilldate, min(period_end, extrasub.deactivation_date or date.max))
 
-        # calculate the resulting start and end of the period that overlaps
-        # with the activation date and our requested date interval
-        eff_start = max(fromdate, max(period_start, extrasub.activation_date or date.min))
-        eff_end = min(tilldate, min(period_end, extrasub.deactivation_date or date.max))
+            # scale the period price
+            full_days = (period_end - period_start).days + 1
+            eff_days = (eff_end - eff_start).days + 1
 
-        # scale the period price
-        full_days = (period_end - period_start).days + 1
-        eff_days = (eff_end - eff_start).days + 1
-
-        period_prices.append(period.price * eff_days / full_days)
+            period_prices.append(period.price * eff_days / full_days)
 
     return round(sum(period_prices), 2)
 
