@@ -3,6 +3,8 @@ from datetime import date
 from django.contrib.auth.decorators import permission_required, login_required
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
+from django.template.loader import get_template
+
 from juntagrico.entity.extrasubs import ExtraSubscription
 from juntagrico.entity.subs import Subscription
 
@@ -33,14 +35,18 @@ def bills(request):
 
     if selected_year:
         bills_list = selected_year.bills.all()
+        subscription_list = get_billable_subscriptions(selected_year)
     else:
         bills_list = []
+        subscription_list = []
+        message = get_template('messages/no_businessyear.html').render()
+        renderdict['messages'].append(message)
 
     renderdict.update({
         'business_years': business_years,
         'selected_year': selected_year,
         'bills_list': bills_list,
-        'billable_subscriptions': get_billable_subscriptions(selected_year),
+        'billable_subscriptions': subscription_list,
         'email_form_disabled': True
     })
 
