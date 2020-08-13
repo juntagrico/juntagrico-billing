@@ -47,7 +47,8 @@ def bills(request):
         'selected_year': selected_year,
         'bills_list': bills_list,
         'billable_subscriptions': subscription_list,
-        'email_form_disabled': True
+        'email_form_disabled': True,
+        'change_date_disabled': True
     })
 
     return render(request, "jb/bills.html", renderdict)
