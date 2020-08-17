@@ -1,0 +1,8 @@
+{% load i18n %}
+{% load config %}
+<div class="alert alert-warning">
+    {% trans "There is no businessyear for bills defined." %}<br>
+    <a href="{% url 'admin:juntagrico_billing_businessyear_add' %}" style="text-decoration: underline">
+    {% trans "Please create one in the data administration." %}
+    </a>
+</div>

@@ -2,12 +2,12 @@ from django.template.loader import get_template
 from django.utils.translation import gettext as _
 
 from juntagrico.config import Config
-from juntagrico.mailer import send_mail
+from juntagrico.mailer import EmailSender, organisation_subject
 from juntagrico.management.commands.mailtexts import get_server
 
 
 def send_bill_share(bill, share, member):
-    plaintext = get_template(Config.emails('b_share'))
+    plaintext = get_template('mails/bill_share.txt')
     d = {
         'member': member,
         'bill': bill,
@@ -15,12 +15,14 @@ def send_bill_share(bill, share, member):
         'serverurl': get_server()
     }
     content = plaintext.render(d)
-    send_mail(_('{0} - Rechnung {1}').format(Config.organisation_name(), Config.vocabulary('share')),
-              content, Config.info_email(), [member.email])
+    EmailSender.get_sender(
+        organisation_subject(_('Bill {0}').format(Config.vocabulary('share'))),
+        content,
+    ).send_to(member.email)
 
 
 def send_bill_sub(bill, subscription, start, end, member):
-    plaintext = get_template(Config.emails('b_sub'))
+    plaintext = get_template('mails/bill_sub.txt')
     d = {
         'member': member,
         'bill': bill,
@@ -30,12 +32,16 @@ def send_bill_sub(bill, subscription, start, end, member):
         'serverurl': get_server()
     }
     content = plaintext.render(d)
-    send_mail(_('{0} - Rechnung {1}').format(Config.organisation_name(), Config.vocabulary('subscription')),
-              content, Config.info_email(), [member.email])
+
+    content = plaintext.render(d)
+    EmailSender.get_sender(
+        organisation_subject(_('Bill {0}').format(Config.vocabulary('subscription'))),
+        content,
+    ).send_to(member.email)
 
 
 def send_bill_extrasub(bill, extrasub, start, end, member):
-    plaintext = get_template(Config.emails('b_esub'))
+    plaintext = get_template('mails/bill_extrasub.txt')
     d = {
         'member': member,
         'bill': bill,
@@ -45,5 +51,9 @@ def send_bill_extrasub(bill, extrasub, start, end, member):
         'serverurl': get_server()
     }
     content = plaintext.render(d)
-    send_mail(_('{0} - Rechnung Extra-Abo').format(Config.organisation_name()),
-              content, Config.info_email(), [member.email])
+
+    content = plaintext.render(d)
+    EmailSender.get_sender(
+        organisation_subject(_('Bill Extra-Subscription')),
+        content,
+    ).send_to(member.email)

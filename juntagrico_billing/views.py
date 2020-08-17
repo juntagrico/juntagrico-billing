@@ -1,69 +1,102 @@
-import datetime
+from datetime import date
 
-from django import forms
-from django.contrib.auth.decorators import permission_required
-from django.shortcuts import render
-from juntagrico.util.temporal import start_of_business_year, start_of_next_business_year
-from juntagrico.util.xls import generate_excel
+from django.contrib.auth.decorators import permission_required, login_required
+from django.shortcuts import render, get_object_or_404
+from django.views.decorators.http import require_POST
+from django.template.loader import get_template
+
+from juntagrico.entity.extrasubs import ExtraSubscription
+from juntagrico.entity.subs import Subscription
+
+from juntagrico_billing.config import Config as BConfig
+from juntagrico.util import return_to_previous_location
 from juntagrico.views import get_menu_dict
 
-from juntagrico_billing.util.bookings import subscription_bookings_by_date, extrasub_bookings_by_date
+from juntagrico_billing.dao.billdao import BillDao
+from juntagrico_billing.entity.bill import BusinessYear, Bill
+from juntagrico_billing.util.billing import get_billable_subscriptions, create_subscription_bill, create_extra_sub_bill
 
 
 @permission_required('juntagrico.is_book_keeper')
-def subscription_bookings(request):
+def bills(request):
     """
-    List of subscriptions
+    List of bills per year
     """
+    renderdict = get_menu_dict(request)
 
-    class DateRangeForm(forms.Form):
-        fromdate = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control'}))
-        tilldate = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control'}))
+    # get all business years
+    business_years = BusinessYear.objects.all().order_by('start_date')
 
-    default_range = {
-        'fromdate': start_of_business_year(),
-        'tilldate': start_of_next_business_year() - datetime.timedelta(1)
-    }
+    # if no year set, choose most recent year
+    selected_year = request.session.get('billing_businessyear', None)
+    if not selected_year and len(business_years):
+        selected_year = business_years.last()
+        request.session['billing_businessyear'] = selected_year
 
-    if 'fromdate' in request.GET and 'tilldate' in request.GET:
-        # request with query parameter
-        daterange_form = DateRangeForm(request.GET)
+    if selected_year:
+        bills_list = selected_year.bills.all()
+        subscription_list = get_billable_subscriptions(selected_year)
     else:
-        daterange_form = DateRangeForm(default_range)
+        bills_list = []
+        subscription_list = []
+        message = get_template('messages/no_businessyear.html').render()
+        renderdict['messages'].append(message)
 
-    if daterange_form.is_valid():
-        fromdate = daterange_form.cleaned_data['fromdate']
-        tilldate = daterange_form.cleaned_data['tilldate']
-        # list of bookings for subscriptions and extra subscriptions
-        bookings = subscription_bookings_by_date(fromdate, tilldate)
-        bookings.extend(extrasub_bookings_by_date(fromdate, tilldate))
-        # sort by date and member
-        bookings.sort(key=lambda b: b.docnumber)
-    else:
-        bookings = []
+    renderdict.update({
+        'business_years': business_years,
+        'selected_year': selected_year,
+        'bills_list': bills_list,
+        'billable_subscriptions': subscription_list,
+        'email_form_disabled': True,
+        'change_date_disabled': True
+    })
 
-    if request.GET.get('format', '') == "xlsx":
-        return export_bookings(bookings)
-    else:
-        renderdict = get_menu_dict(request)
-        renderdict.update({
-            'daterange_form': daterange_form,
-            'bookings': bookings
-        })
-        return render(request, "jb/subscription_bookings.html",
-                      renderdict)
+    return render(request, "jb/bills.html", renderdict)
 
 
-def export_bookings(bookings):
-    fields = {
-        'date': 'Datum',
-        'docnumber': 'Belegnummer',
-        'text': 'Text',
-        'debit_account': 'Soll',
-        'credit_account': 'Haben',
-        'price': 'Betrag',
-        'member_account': 'KS1 (Mitglied)'
-    }
+@permission_required('juntagrico.is_book_keeper')
+@require_POST
+def bills_setyear(request):
+    # determine chosen billing year
+    year = request.POST.get('year')
+    request.session['billing_businessyear'] = year
+    return return_to_previous_location(request)
 
-    # return generate_excell(fields, bookings)
-    return generate_excel(fields.items(), bookings, "buchungen")
+
+@permission_required('juntagrico.is_book_keeper')
+def bills_generate(request):
+    # generate bills for current business year
+    year = request.session['billing_businessyear']
+    billable_subscriptions = get_billable_subscriptions(year)
+
+    for subs in billable_subscriptions:
+        if isinstance(subs, Subscription):
+            create_subscription_bill(subs, year, date.today())
+        if isinstance(subs, ExtraSubscription):
+            create_extra_sub_bill(subs, year, date.today())
+
+    return return_to_previous_location(request)
+
+
+@permission_required('juntagrico.is_book_keeper')
+def bills_delete(request, id):
+    # delete a bill
+    bill = get_object_or_404(Bill, pk=id)
+    bill.delete()
+
+    return return_to_previous_location(request)
+
+
+@login_required
+def bills_user(request):
+    member = request.user.member
+    subs = list(member.old_subscriptions.all())
+    subs.append(member.subscription)
+    subs.append(member.future_subscription)
+    renderdict = get_menu_dict(request)
+    renderdict.update({
+        'bills': BillDao.bills_for_billables(subs),
+        'esr': BConfig.esr(),
+        'menu': {'bills': 'active'},
+    })
+    return render(request, "jb/user_bills.html", renderdict)

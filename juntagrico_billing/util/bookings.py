@@ -4,7 +4,7 @@ from juntagrico.dao.extrasubscriptiondao import ExtraSubscriptionDao
 from juntagrico.dao.subscriptiondao import SubscriptionDao
 
 from juntagrico_billing.entity.settings import Settings
-from juntagrico_billing.util.bills import scale_subscription_price
+from juntagrico_billing.util.billing import scale_subscription_price
 
 
 def subscription_bookings_by_date(fromdate, tilldate):
@@ -20,14 +20,14 @@ def subscription_bookings_by_date(fromdate, tilldate):
 
     bookings = []
     for subs in subscriptions:
-        for subs_type in subs.types.all():
+        for subs_part in subs.parts.all():
             booking = Booking()
             booking.date = max(fromdate, subs.activation_date or date.min)
             booking.activation_date = subs.activation_date
             booking.deactivation_date = subs.deactivation_date
             booking.docnumber = gen_document_number(subs, fromdate)
             booking.member = subs.primary_member
-            booking.text = "Abo: %s, %s" % (subs_type, subs.primary_member)
+            booking.text = "Abo: %s, %s" % (subs_part.type, subs.primary_member)
             eff_start = max(fromdate, subs.activation_date or date.min)
             eff_end = min(tilldate, subs.deactivation_date or date.max)
             if (eff_start > fromdate) or (eff_end < tilldate):
@@ -41,8 +41,8 @@ def subscription_bookings_by_date(fromdate, tilldate):
                 booking.price = scale_subscription_price(subs, fromdate, tilldate)
                 # accounts
             booking.debit_account = debtor_account  # soll: debitor-konto
-            if hasattr(subs_type, "subscriptiontype_account"):
-                booking.credit_account = subs_type.subscriptiontype_account.account
+            if hasattr(subs_part.type, "subscriptiontype_account"):
+                booking.credit_account = subs_part.type.subscriptiontype_account.account
             else:
                 booking.credit_account = ""
             if hasattr(subs.primary_member, "member_account"):
@@ -118,7 +118,7 @@ def gen_document_number(entry, range_start):
 
     Structure of document number:
     YYMMDD<id of primary member 9-digits><id of subcription 9-digits>
-    
+
     If no member is assigned, the member part is all 0.
     """
     date_part = range_start.strftime('%y%m%d')

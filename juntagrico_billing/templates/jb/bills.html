@@ -1,0 +1,90 @@
+{% extends "management_lists/man_list_base.html" %}
+{% load i18n %}
+{% load config %}
+{% block page_title %}
+    <h3>
+        {% trans "Bills" %}
+    </h3>
+{% endblock %}
+{% block management_cmd %}
+<form class="row mb-3" action="{% url 'jb:bills-setyear' %}" method="POST">
+    {% csrf_token %} 
+    <p class="col-md-2">{% trans "Year:" %} {{ selected_year.name }}</p>
+    <div class="col-md-2">
+        <select class="form-control" name="year" id="year" value="{{ year }}">
+            {% for year in business_years %}
+            <option>{{ year.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <button type="submit" class="btn btn-success">
+            {% trans "Change" %}
+        </button>
+    </div>
+</form>
+<form class="row mb-3" action="{% url 'jb:bills-generate' %}" method="POST">
+    {% csrf_token %}
+    <p class="col-md-4">{{ billable_subscriptions | length }} {% trans "pending bills for" %} {{ selected_year.name }}.</p>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-success">{% trans "Generate" %}</button>
+    </div>
+</form>
+
+{% endblock %}
+{% block list %}
+    <table xid="filter-table" class="table">
+        <thead>
+            <tr>
+                <th scope="col" class="filter">
+                    {% trans "Number" %}
+                </th>
+                <th scope="col" class="filter">
+                    {% trans "Member" %}
+                </th>
+                <th scope="col" class="filter">
+                    {% trans "Kind" %}
+                </th>
+                <th scope="col" class="filter">
+                    {% trans "Date" %}
+                </th>
+                <th scope="col" class="filter">
+                    {% trans "Amount" %}
+                </th>
+                <th scope="col" class="filter">
+                    {% trans "Paid" %}
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bill in bills_list %}
+                <tr>
+                    <td>
+                        <a href="{% url 'admin:juntagrico_billing_bill_change' bill.id %}">
+                        {{ bill.id }}
+                        </a>
+                    </td>
+                    <td>
+                        {{ bill.member_name }}
+                    </td>
+                    <td>
+                        {{ bill.billable }}
+                    </td>
+                    <td>
+                        {{ bill.bill_date | date:"Y-m-d" }}
+                    </td>
+                    <td>
+                        {{ bill.amount }}
+                    </td>
+                    <td>
+                        {{ bill.paid }}
+                    </td>
+                    <td>
+                        <a href="{% url 'jb:bills-delete' bill.id %}">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
