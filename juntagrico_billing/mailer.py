@@ -16,7 +16,7 @@ def send_bill_share(bill, share, member):
     }
     content = plaintext.render(d)
     EmailSender.get_sender(
-        organisation_subject(_('Rechnung {0}').format(Config.vocabulary('share'))),
+        organisation_subject(_('Bill {0}').format(Config.vocabulary('share'))),
         content,
     ).send_to(member.email)
 
@@ -35,7 +35,7 @@ def send_bill_sub(bill, subscription, start, end, member):
 
     content = plaintext.render(d)
     EmailSender.get_sender(
-        organisation_subject(_('Rechnung {0}').format(Config.vocabulary('subscription'))),
+        organisation_subject(_('Bill {0}').format(Config.vocabulary('subscription'))),
         content,
     ).send_to(member.email)
 
@@ -54,6 +54,6 @@ def send_bill_extrasub(bill, extrasub, start, end, member):
 
     content = plaintext.render(d)
     EmailSender.get_sender(
-        organisation_subject(_('Rechnung Extra-Abo')),
+        organisation_subject(_('Bill Extra-Subscription')),
         content,
     ).send_to(member.email)

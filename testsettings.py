@@ -65,8 +65,10 @@ if DEBUG is True:
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 
-LANGUAGE_CODE = 'en'
-
+LANGUAGE_CODE = 'de'
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, 'juntagrico_billing/locale'),
+)
 SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not

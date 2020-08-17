@@ -1,5 +1,6 @@
 include LICENSE
 include README.md
 recursive-include juntagrico_billing/templates *
+recursive-include juntagrico_billing/locale *
 include requirements.txt
 global-exclude *.pyc
