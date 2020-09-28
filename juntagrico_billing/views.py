@@ -78,15 +78,6 @@ def bills_generate(request):
     return return_to_previous_location(request)
 
 
-@permission_required('juntagrico.is_book_keeper')
-def bills_delete(request, id):
-    # delete a bill
-    bill = get_object_or_404(Bill, pk=id)
-    bill.delete()
-
-    return return_to_previous_location(request)
-
-
 @login_required
 def bills_user(request):
     member = request.user.member
