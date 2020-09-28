@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load config %}
-{% config "billing" as billing_enabled %}
-{% if billing_enabled %}
+{% config "billing" as c_billing %}
+{% if c_billing %}
 <li class="nav-item">
         <a class="nav-link {{ menu.bills }}" href="{% url 'jb:user-bills' %}">
             {% trans "Bills" %}
