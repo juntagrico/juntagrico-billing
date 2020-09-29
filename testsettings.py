@@ -114,7 +114,7 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 GOOGLE_API_KEY = 'AIzaSyCcii4Z71qyky54kEQtRhFbB_z-2zbSU28'
 
-BILLING = True
+BILLS_USERMENU = True
 
 CACHES = {
     'default': {
