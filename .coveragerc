@@ -1,0 +1,5 @@
+[run]
+include =
+    juntagrico_billing/*
+omit =
+    juntagrico_billing/migrations/*
