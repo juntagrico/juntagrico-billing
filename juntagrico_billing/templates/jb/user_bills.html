@@ -11,6 +11,7 @@
         <b class="col-md-12">{% trans "Bank Connection" %}</b>
     </div>
     <div class="row">
+        <div class="col-md-12">
             {% config "organisation_address" as addr %}
     {{ addr.name }}
     <br/>
@@ -34,64 +35,65 @@
         <br/>
         {% trans "BIC" %}: {{ bank.BIC }}
     {% endif %}
+        </div>
     </div>
     <div class="row mb-3 mt-3">
         <b class="col-md-12">{% trans "Overview" %}</b>
     </div>
     <div>
-            <table id="filter-table" class="table" style="display: table;">
-                <thead>
+        <table id="filter-table" class="list table" style="display: table;">
+            <thead>
+                <tr>
+                    <th>
+                        {% trans "Number" %}
+                    </th>
+                    <th>
+                        {% trans "Billable" %}
+                    </th>
+                    <th>
+                        {% trans "Price" %}
+                    </th>
+                    <th>
+                        {% trans "State" %}
+                    </th>
+                    <th>
+                        {% trans "Amount Paid" %}
+                    </th>
+                    {% if esr %}
+                    <th>
+                        {% trans "Reference Number" %}
+                    </th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for bill in bills %}
                     <tr>
-                        <th>
-                            {% trans "Number" %}
-                        </th>
-                        <th>
-                            {% trans "Billable" %}
-                        </th>
-                        <th>
-                            {% trans "Price" %}
-                        </th>
-                        <th>
-                            {% trans "State" %}
-                        </th>
-                        <th>
-                            {% trans "Amount Paid" %}
-                        </th>
-                        {% if esr %}
-                        <th>
-                            {% trans "Reference Number" %}
-                        </th>
-                        {% endif %}
+                    <td>
+                        {{ bill.pk }}
+                    </td>
+                    <td>
+                        {{ bill.billable }}
+                    </td>
+                    <td>
+                        {{ bill.amount }}
+                    </td>
+                    <td>
+                        {{ bill.state }}
+                    </td>
+                    <td>
+                        {{ amount.paid  }}
+                    </td>
+                    {% if esr %}
+                    <td>
+                        {{ bill.ref_number }}
+                    </td>
+                    {% endif %}
                     </tr>
-                </thead>
-                <tbody>
-                    {% for bill in bills %}
-                        <tr>
-                        <td>
-                            {{ bill.pk }}
-                        </td>
-                        <th>
-                            {{ bill.billable }}
-                        </th>
-                        <th>
-                            {{ bill.amount }}
-                        </th>
-                        <th>
-                            {{ bill.state }}
-                        </th>
-                        <th>
-                            {{ amount.paid  }}
-                        </th>
-                        {% if esr %}
-                        <th>
-                            {{ bill.ref_number }}
-                        </th>
-                        {% endif %}
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
 
 {% endblock %}

@@ -54,7 +54,6 @@
                 <th scope="col" class="filter">
                     {% trans "Paid" %}
                 </th>
-                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -79,9 +78,6 @@
                     </td>
                     <td>
                         {{ bill.paid }}
-                    </td>
-                    <td>
-                        <a href="{% url 'jb:bills-delete' bill.id %}">Delete</a>
                     </td>
                 </tr>
             {% endfor %}

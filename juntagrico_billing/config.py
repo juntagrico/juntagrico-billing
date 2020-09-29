@@ -1,22 +1,22 @@
 from django.conf import settings
 
+from juntagrico.config import _get_setting, _get_setting_with_key
+
 
 class Config:
-    def __init__(self):
-        pass
+    """
+    billing specific settings.
+    Config class is registered with juntagrico.addons.
+    """
+    esr = _get_setting('ESR', '')
 
-    @staticmethod
-    def esr():
-        if hasattr(settings, 'ESR'):
-            return settings.ESR
-        return ''
+    bill_emails = _get_setting_with_key(
+        'BILL_EMAILS',
+        {
+            'b_share': 'mails/bill_share.txt',
+            'b_sub': 'mails/bill_sub.txt',
+            'b_esub': 'mails/bill_extrasub.txt'
+        }
+    )
 
-    @staticmethod
-    def bill_emails(key):
-        if hasattr(settings, 'BILL_EMAILS'):
-            if key in settings.BILL_EMAILS:
-                return settings.BILL_EMAILS[key]
-        return {'b_share': 'mails/bill_share.txt',
-                'b_sub': 'mails/bill_sub.txt',
-                'b_esub': 'mails/bill_extrasub.txt'
-                }[key]
+    bills_usermenu = _get_setting('BILLS_USERMENU', False)
