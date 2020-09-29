@@ -10,11 +10,13 @@ class Config:
     """
     esr = _get_setting('ESR', '')
 
-    bill_emails = _get_setting_with_key('BILL_EMAILS',
+    bill_emails = _get_setting_with_key(
+        'BILL_EMAILS',
         {
             'b_share': 'mails/bill_share.txt',
             'b_sub': 'mails/bill_sub.txt',
             'b_esub': 'mails/bill_extrasub.txt'
-        })
+        }
+    )
 
     bills_usermenu = _get_setting('BILLS_USERMENU', False)
