@@ -1,5 +1,8 @@
 from datetime import date
 
+from juntagrico.config import Config
+from juntagrico.entity.subs import Subscription
+from juntagrico.entity.extrasubs import ExtraSubscription
 from juntagrico.dao.extrasubscriptiondao import ExtraSubscriptionDao
 from juntagrico.dao.subscriptiondao import SubscriptionDao
 
@@ -134,6 +137,57 @@ def gen_document_number(entry, range_start):
     entry_part = str(entry.id).rjust(9, '0')
     return date_part + member_part + entry_part
 
+def get_bill_bookings(year):
+    bills = year.bills.all()
+
+    # global debtor account on settings object
+    debtor_account = Settings.objects.first().debtor_account
+
+    bookings = []
+
+    for bill in bills:
+        booking = Booking()
+        bookings.append(booking)
+
+        # use bill.date if during the year, year date if bill is earlier
+        if bill.bill_date > year.start_date:
+            booking.date = bill.bill_date
+        else:
+            booking.date = year.start_date
+        booking.docnumber = bill.id
+        bill_type = '?'
+        if isinstance(bill.billable, Subscription): 
+            bill_type = Config.vocabulary('subscription') 
+            subs = bill.billable
+            # we take the credit_account from the first subscription part
+            subs_part = subs.parts.all()[0]
+            if hasattr(subs_part.type, "subscriptiontype_account"):
+                booking.credit_account = subs_part.type.subscriptiontype_account.account
+            else:
+                booking.credit_account = ""
+
+        if isinstance(bill.billable, ExtraSubscription):
+            bill_type = Config.vocabulary('extrasubscription')
+            extrasub = bill.billable
+            if hasattr(extrasub.type.category, "extrasub_account"):
+                booking.credit_account = extrasub.type.category.extrasub_account.account
+            else: 
+                booking.credit_account = ''
+
+        # todo: translate
+        booking.text = "Rechnung %s %s" % (bill_type, bill.member_name)
+        booking.debit_account = debtor_account
+        booking.price = bill.amount
+        member = bill.billable.primary_member_nullsave()
+        if hasattr(member, "member_account"):
+            booking.member_account = member.member_account.account
+        else:
+            booking.member_account = ""
+
+    return bookings
+        
+def get_payment_bookings(fromdate, tilldate):
+    pass
 
 class Booking(object):
     pass
