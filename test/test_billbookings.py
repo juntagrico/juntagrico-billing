@@ -16,7 +16,7 @@ class BillBookingsTest(SubscriptionTestBase):
 
     def test_bill_bookings(self):
         bill = create_subscription_bill(self.subscription, self.year, self.year.start_date)    
-        bookings = get_bill_bookings(self.year)  
+        bookings = get_bill_bookings(date(2018, 1, 1), date(2018, 12, 31))  
 
         self.assertEquals(1, len(bookings)) 
         booking = bookings[0]

@@ -84,11 +84,11 @@ def bills_generate(request):
 class DateRangeForm(forms.Form):
     fromdate = forms.DateField(
                 widget=forms.DateInput(
-                    attrs={'class': 'col-sm-2 form-control',
+                    attrs={'class': 'col-md-2 form-control',
                             'id': 'id_fromdate'}))
     tilldate = forms.DateField(
                 widget=forms.DateInput(
-                    attrs={'class': 'col-sm-2 form-control',
+                    attrs={'class': 'col-md-2 form-control',
                             'id': 'id_tilldate'}))
 
 
@@ -102,47 +102,35 @@ def bookings_export(request):
 
     renderdict = get_menu_dict(request)
 
-    # get all business years
-    business_years = BusinessYear.objects.all().order_by('start_date')
-
-    # if no year set in request, get from session or choose most recent year
-    businessyear = request.GET.get('businessyear', None)
-    if not businessyear:
-        businessyear = request.session.get('billing_businessyear', None)
-        if not businessyear and len(business_years):
-            businessyear = business_years.last()
-
-    # daterange for payments export
+    # daterange for bookings export
     if 'fromdate' in request.GET and 'tilldate' in request.GET:
         # request with query parameter
         daterange_form = DateRangeForm(request.GET)
     else:
         daterange_form = DateRangeForm(default_range)
 
-    renderdict.update({
-        'business_years': business_years,
-        'businessyear': businessyear,
+    if daterange_form.is_valid():
+        fromdate = daterange_form.cleaned_data['fromdate']
+        tilldate = daterange_form.cleaned_data['tilldate']
+        bill_bookings = get_bill_bookings(fromdate, tilldate)
+        payment_bookings = get_payment_bookings(fromdate, tilldate)
+    else:
+        bill_bookings = []
+        payment_bookings = []
+
+    # export button pressed and date fields OK -> do excel export
+    if ('export' in request.GET) and daterange_form.is_valid():
+        return export_bookings(bill_bookings + payment_bookings, "bookings")
+
+    # otherwise return page
+    renderdict.update({ 
         'daterange_form': daterange_form,
+        'bill_bookings_count': len(bill_bookings),
+        'payment_bookings_count': len(payment_bookings),
     })
 
     return render(request, 'jb/bookings_export.html', renderdict)
-
-@permission_required('juntagrico.is_book_keeper')
-def bill_bookings(request):
-    year = request.GET['businessyear']
-    businessyear = BillDao.businessyear_by_name(year)
-
-    bookings = get_bill_bookings(businessyear)
-    return export_bookings(bookings, "bills")
-
-
-@permission_required('juntagrico.is_book_keeper')
-def payment_bookings(request):
-    daterange_form = DateRangeForm(request.GET)
-
-    bookings = get_payment_bookings(daterange_form.fromdate, daterange_form.tilldate)
-    return export_bookings(bookings, "payments")
-    
+ 
 
 def export_bookings(bookings, filename):
     fields = {

@@ -6,6 +6,7 @@ from juntagrico.entity.extrasubs import ExtraSubscription
 from juntagrico.dao.extrasubscriptiondao import ExtraSubscriptionDao
 from juntagrico.dao.subscriptiondao import SubscriptionDao
 
+from juntagrico_billing.dao.billdao import BillDao
 from juntagrico_billing.entity.settings import Settings
 from juntagrico_billing.util.billing import scale_subscription_price
 
@@ -137,8 +138,10 @@ def gen_document_number(entry, range_start):
     entry_part = str(entry.id).rjust(9, '0')
     return date_part + member_part + entry_part
 
-def get_bill_bookings(year):
-    bills = year.bills.all()
+def get_bill_bookings(fromdate, tilldate):
+    # get all bills by business-year start, end
+
+    bills = BillDao.bills_for_daterange(fromdate, tilldate)
 
     # global debtor account on settings object
     debtor_account = Settings.objects.first().debtor_account
@@ -149,11 +152,7 @@ def get_bill_bookings(year):
         booking = Booking()
         bookings.append(booking)
 
-        # use bill.date if during the year, year date if bill is earlier
-        if bill.bill_date > year.start_date:
-            booking.date = bill.bill_date
-        else:
-            booking.date = year.start_date
+        booking.date = bill.bill_date
         booking.docnumber = bill.id
         bill_type = '?'
         if isinstance(bill.billable, Subscription): 
@@ -187,7 +186,7 @@ def get_bill_bookings(year):
     return bookings
         
 def get_payment_bookings(fromdate, tilldate):
-    pass
+    return []
 
 class Booking(object):
     pass
