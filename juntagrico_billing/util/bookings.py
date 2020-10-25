@@ -149,39 +149,36 @@ def get_bill_bookings(fromdate, tilldate):
     bookings = []
 
     for bill in bills:
-        booking = Booking()
-        bookings.append(booking)
+        for idx, item in enumerate(bill.items.all()):
+            booking = Booking()
+            bookings.append(booking)
 
-        booking.date = bill.bill_date
-        booking.docnumber = bill.id
-        bill_type = '?'
-        if isinstance(bill.billable, Subscription): 
-            bill_type = Config.vocabulary('subscription') 
-            subs = bill.billable
-            # we take the credit_account from the first subscription part
-            subs_part = subs.parts.all()[0]
-            if hasattr(subs_part.type, "subscriptiontype_account"):
-                booking.credit_account = subs_part.type.subscriptiontype_account.account
+            booking.date = bill.booking_date
+            bill_type = item.short_description
+            if item.subscription_type: 
+                if hasattr(item.subscription_type, "subscriptiontype_account"):
+                    booking.credit_account = item.subscription_type.subscriptiontype_account.account
+                else:
+                    booking.credit_account = ""
+
+            if item.extrasubscription_type:
+                category = item.extrasubscription_type.category
+                if hasattr(category, "extrasub_account"):
+                    booking.credit_account = category.extrasub_account.account
+                else: 
+                    booking.credit_account = ""
+
+            # docnumber is id of bill*10 + sequence number of bill item
+            booking.docnumber = str((bill.id * 10) + idx)
+
+            # todo: translate
+            booking.text = "Rechnung %s %s" % (bill_type, bill.member)
+            booking.debit_account = debtor_account
+            booking.price = bill.amount
+            if hasattr(bill.member, "member_account"):
+                booking.member_account = bill.member.member_account.account
             else:
-                booking.credit_account = ""
-
-        if isinstance(bill.billable, ExtraSubscription):
-            bill_type = Config.vocabulary('extrasubscription')
-            extrasub = bill.billable
-            if hasattr(extrasub.type.category, "extrasub_account"):
-                booking.credit_account = extrasub.type.category.extrasub_account.account
-            else: 
-                booking.credit_account = ''
-
-        # todo: translate
-        booking.text = "Rechnung %s %s" % (bill_type, bill.member_name)
-        booking.debit_account = debtor_account
-        booking.price = bill.amount
-        member = bill.billable.primary_member_nullsave()
-        if hasattr(member, "member_account"):
-            booking.member_account = member.member_account.account
-        else:
-            booking.member_account = ""
+                booking.member_account = ""
 
     return bookings
         

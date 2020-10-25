@@ -17,7 +17,7 @@ from juntagrico.views import get_menu_dict
 
 from juntagrico_billing.dao.billdao import BillDao
 from juntagrico_billing.entity.bill import BusinessYear, Bill
-from juntagrico_billing.util.billing import get_billable_subscriptions, create_subscription_bill, create_extra_sub_bill
+from juntagrico_billing.util.billing import get_billable_items, group_billables_by_member, create_bills_for_items
 from juntagrico_billing.util.bookings import get_bill_bookings, get_payment_bookings
 
 @permission_required('juntagrico.is_book_keeper')
@@ -38,10 +38,12 @@ def bills(request):
 
     if selected_year:
         bills_list = selected_year.bills.all()
-        subscription_list = get_billable_subscriptions(selected_year)
+        billable_items = get_billable_items(selected_year)
+        pending_bills = len(group_billables_by_member(billable_items))
     else:
         bills_list = []
-        subscription_list = []
+        billable_items = []
+        pending_bills = 0
         message = get_template('messages/no_businessyear.html').render()
         renderdict['messages'].append(message)
 
@@ -49,7 +51,7 @@ def bills(request):
         'business_years': business_years,
         'selected_year': selected_year,
         'bills_list': bills_list,
-        'billable_subscriptions': subscription_list,
+        'pending_bills': pending_bills,
         'email_form_disabled': True,
         'change_date_disabled': True
     })
@@ -70,13 +72,9 @@ def bills_setyear(request):
 def bills_generate(request):
     # generate bills for current business year
     year = request.session['billing_businessyear']
-    billable_subscriptions = get_billable_subscriptions(year)
+    billable_items = get_billable_items(year)
 
-    for subs in billable_subscriptions:
-        if isinstance(subs, Subscription):
-            create_subscription_bill(subs, year, date.today())
-        if isinstance(subs, ExtraSubscription):
-            create_extra_sub_bill(subs, year, date.today())
+    create_bills_for_items(billable_items, year, date.today())
 
     return return_to_previous_location(request)
 

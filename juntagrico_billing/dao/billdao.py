@@ -10,8 +10,8 @@ class BillDao:
     @staticmethod
     def bills_for_daterange(fromdate, tilldate):
         return Bill.objects.filter(
-                bill_date__gte=fromdate,
-                bill_date__lte=tilldate)
+                booking_date__gte=fromdate,
+                booking_date__lte=tilldate)
 
     @staticmethod
     def businessyear_by_name(yearname):

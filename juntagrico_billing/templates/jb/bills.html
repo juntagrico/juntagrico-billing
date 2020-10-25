@@ -25,7 +25,7 @@
 </form>
 <form class="row mb-3" action="{% url 'jb:bills-generate' %}" method="POST">
     {% csrf_token %}
-    <p class="col-md-4">{{ billable_subscriptions | length }} {% trans "pending bills for" %} {{ selected_year.name }}.</p>
+    <p class="col-md-4">{{ pending_bills }} {% trans "pending bills for" %} {{ selected_year.name }}.</p>
     <div class="col-md-2">
         <button type="submit" class="btn btn-success">{% trans "Generate" %}</button>
     </div>
@@ -65,10 +65,10 @@
                         </a>
                     </td>
                     <td>
-                        {{ bill.member_name }}
+                        {{ bill.member }}
                     </td>
                     <td>
-                        {{ bill.billable }}
+                        {{ bill.short_description }}
                     </td>
                     <td>
                         {{ bill.bill_date | date:"Y-m-d" }}

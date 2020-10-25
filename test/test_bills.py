@@ -2,8 +2,10 @@ from datetime import date
 from decimal import Decimal
 from django.conf import settings
 
+from juntagrico.entity.subs import SubscriptionPart
+
 from juntagrico_billing.util.billing import scale_subscription_price, scale_extrasubscription_price
-from juntagrico_billing.util.billing import get_billable_subscriptions
+from juntagrico_billing.util.billing import get_billable_items, create_bill, create_bills_for_items
 from juntagrico_billing.entity.bill import Bill, BusinessYear
 from test.test_base import SubscriptionTestBase
 
@@ -46,7 +48,7 @@ class ScaleSubscriptionPriceTest(SubscriptionTestBase):
 
 class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
     expected_price = round(
-        (Decimal(100) * (31 + 30 + 31 + 30) / (31 + 28 + 31 + 30 + 31 + 30)) + (Decimal(200) * (31 + 31 + 30 + 31) / (31 + 31 + 30 + 31 + 30 + 31)),
+        (100.0 * (31 + 30 + 31 + 30) / (31 + 28 + 31 + 30 + 31 + 30)) + (200.0 * (31 + 31 + 30 + 31) / (31 + 31 + 30 + 31 + 30 + 31)),
         2)
 
     def test_full_year(self):
@@ -101,29 +103,58 @@ class BillSubscriptionsTests(SubscriptionTestBase):
         self.subs3 = self.create_subscription_and_member(self.subs_type,
                                                          date(2018, 3, 1), None, "Later", "Thisyear", "17321")
 
-    def test_get_billable_subscriptions_without_bills(self):
-        year = BusinessYear.objects.create(start_date=date(2018, 1, 1),
-                                           end_date=date(2018, 12, 31),
-                                           name="2018")
-        to_bill_list = get_billable_subscriptions(year)
+        self.year = BusinessYear.objects.create(start_date=date(2018, 1, 1),
+                                                end_date=date(2018, 12, 31),
+                                                name="2018")
 
-        self.assertEqual(4, len(to_bill_list))
-        subscription = to_bill_list[0].subscription
+
+    def test_get_billable_subscriptions_without_bills(self):
+        billable_items = get_billable_items(self.year)
+        self.assertTrue(billable_items)
+        billable_subscription_parts = [part for part in billable_items if isinstance(part, SubscriptionPart)]
+
+        self.assertEqual(3, len(billable_subscription_parts))
+        subscription = billable_subscription_parts[0].subscription
         self.assertEqual('Test', subscription.primary_member.last_name)
+
 
     def test_get_billable_subscriptions(self):
-        year = BusinessYear.objects.create(start_date=date(2018, 1, 1),
-                                           end_date=date(2018, 12, 31),
-                                           name="2018")
-
         # create bill for subs2
-        bill = Bill.objects.create(billable=self.subs2, business_year=year,
-                                   bill_date=date(2018, 1, 1), amount=1200)
-        bill.save()
+        bill = create_bill(self.subs2.parts.all(), self.year, self.year.start_date)
 
-        to_bill_list = get_billable_subscriptions(year)
+        billable_items = get_billable_items(self.year)
+        self.assertTrue(billable_items)
+
+        billable_subscription_parts = [part for part in billable_items if isinstance(part, SubscriptionPart)]
 
         # we expect only 2 billable subscriptions
-        self.assertEqual(3, len(to_bill_list))
-        subscription = to_bill_list[0]
+        self.assertEqual(2, len(billable_subscription_parts))
+        subscription = billable_subscription_parts[0].subscription
         self.assertEqual('Test', subscription.primary_member.last_name)
+
+    def test_create_bill_multiple_members(self):
+        # creating a bill for billable items from different members 
+        # should result in an error
+        billable_items = get_billable_items(self.year)
+        with self.assertRaisesMessage(Exception, 'billable items belong to different members'):
+            bill = create_bill(billable_items, self.year, self.year.start_date)
+
+    def test_create_bill(self):
+        billable_items = [self.subscription.parts.all()[0], self.extrasubs]
+        bill = create_bill(billable_items, self.year, self.year.start_date)
+
+        self.assertEquals(2, len(bill.items.all()))
+        self.assertEquals('Subscription, ExtraSubscription', bill.short_description)
+
+
+    def test_create_bill_for_all(self):
+        
+        billable_items = get_billable_items(self.year)
+        bills = create_bills_for_items(billable_items, self.year, self.year.start_date)
+
+        self.assertEqual(3, len(bills))
+
+        # there should be no billable items left
+        billable_items = get_billable_items(self.year)
+        self.assertEqual(0, len(billable_items))
+

@@ -3,16 +3,15 @@ from django.db import models
 from django.utils.translation import gettext as _
 from juntagrico.config import Config
 from juntagrico.entity import JuntagricoBaseModel
-from juntagrico.entity.billing import Billable
-from juntagrico.entity.extrasubs import ExtraSubscription
-from juntagrico.entity.subs import Subscription
+from juntagrico.entity.extrasubs import ExtraSubscriptionType
+from juntagrico.entity.subtypes import SubscriptionType
+from juntagrico.entity.member import Member
 
 from juntagrico_billing.util.esr import generate_ref_number
 
-
 class BusinessYear(JuntagricoBaseModel):
     """
-    Business Year for Bills
+    Business Year for Billing.
     """
     start_date = models.DateField(_('start date'), unique=True)
     end_date = models.DateField(_('end date'))
@@ -33,55 +32,41 @@ class BusinessYear(JuntagricoBaseModel):
 
 class Bill(JuntagricoBaseModel):
     """
-    Actuall Bill for billables
+    Bill (invoice) class.
+    Consists of several BillItems currently for subscription parts and extrasubscriptions.
     """
-    billable = models.ForeignKey(Billable, related_name='bills',
-                                 null=False, blank=False,
-                                 on_delete=models.PROTECT,
-                                 verbose_name=_('Billable object'))
-    business_year = models.ForeignKey('BusinessYear', related_name='bills',
+    business_year = models.ForeignKey(BusinessYear, related_name='bills',
                                       null=False, blank=False,
                                       on_delete=models.PROTECT,
                                       verbose_name=_('Business Year'))
-    exported = models.BooleanField(_('exported'), default=False)
+
+    member = models.ForeignKey(Member, related_name='bills',
+                                null=False, blank=False,
+                                on_delete=models.PROTECT,
+                                verbose_name=_('Member'))
+
     bill_date = models.DateField(
-        _('Billing date'), null=True, blank=True)
-    amount = models.FloatField(_('Amount'), null=False, blank=False)
+        _('Billing date'))
+    booking_date = models.DateField(
+        _('Booking date'))
+    
+    amount = models.FloatField(_('Amount'), null=False, blank=False, default=0.0)
+    paid = models.BooleanField(_('Paid'), null=False, blank=False, default=False)
     public_notes = models.TextField(_('Notes visible to {}').format(Config.vocabulary('member_pl')), null=True, blank=True)
     private_notes = models.TextField(_('Notes not visible to {}').format(Config.vocabulary('member_pl')), null=True, blank=True)
 
     # derived properties
     @property
-    def member_name(self):
-        if self.billable:
-            return self.billable.primary_member_nullsave()
-        return ""
-
-    @property
-    def paid(self):
-        return self.amount <= self.amount_paid
-
-    @property
     def amount_paid(self):
         return sum([p.amount for p in self.payments.all()])
 
     @property
-    def state(self):
-        amount_paid = self.amount_paid
-        if amount_paid < self.amount:
-            return _('unpaid')
-        elif amount_paid == self.amount:
-            return _('paid')
-        else:
-            return _('overpaid')
-
-    @property
-    def ref_number(self):
-        if isinstance(self.billable, Subscription):
-            billtype = 'subscription'
-        if isinstance(self.billable, ExtraSubscription):
-            billtype = 'extra'
-        return generate_ref_number(billtype, self.pk, self.billable.pk)
+    def short_description(self):
+        """
+        short description for displaying in lists.
+        shows, what items the bill contains.
+        """
+        return ', '.join([itm.short_description for itm in self.items.all()])
 
     def __str__(self):
         return '{}'.format(self.id)
@@ -91,6 +76,45 @@ class Bill(JuntagricoBaseModel):
         verbose_name_plural = _('Bills')
 
 
+class BillItem(JuntagricoBaseModel):
+    """
+    Item on a bill.
+    Is created based on the state of billable items 
+    when the bill is created.
+    Used for displaying details for the bill and
+    for creating booking records.
+    """
+    bill = models.ForeignKey(Bill, related_name='items',
+                null=False, blank=False,
+                on_delete=models.CASCADE, verbose_name=_('Bill'))
+
+    # a bill item has either a subscription type or a extrasubscription type assigned
+    subscription_type = models.ForeignKey(SubscriptionType, related_name='bill_items',
+                            null=True, blank=True,
+                            on_delete=models.PROTECT, verbose_name=_('Subscription'))
+    extrasubscription_type = models.ForeignKey(ExtraSubscriptionType, related_name='bill_items',
+                            null=True, blank=True,
+                            on_delete=models.PROTECT, verbose_name=_('Extrasubscription'))
+
+    description = models.TextField(_('Description'), null=True, blank=True)
+
+    amount = models.FloatField(_('Amount'), null=False, blank=False, default=0.0)
+
+    # derived property
+    @property
+    def billable_reference(self):
+        return self.subscription_type or self.extrasubscription_type
+
+    @property
+    def short_description(self):
+        """
+        short description used for showing bills in a list.
+        """
+        if self.subscription_type:
+            return _('Subscription')
+        else:
+            return _('ExtraSubscription') 
+
 class Payment(JuntagricoBaseModel):
     """
     Payment for bill
@@ -99,7 +123,7 @@ class Payment(JuntagricoBaseModel):
                              null=False, blank=False,
                              on_delete=models.PROTECT, verbose_name=_('Bill'))
     paid_date = models.DateField(_('Payment date'), null=True, blank=True)
-    amount = models.FloatField(_('Amount'), null=False, blank=False)
+    amount = models.FloatField(_('Amount'), null=False, blank=False, default=0.0)
     private_notes = models.TextField(_('Notes not visible to {}').format(Config.vocabulary('member_pl')), null=True, blank=True)
 
     def __str__(self):
@@ -108,3 +132,4 @@ class Payment(JuntagricoBaseModel):
     class Meta:
         verbose_name = _('Payment')
         verbose_name_plural = _('Payment')
+
