@@ -154,7 +154,6 @@ def get_bill_bookings(fromdate, tilldate):
             bookings.append(booking)
 
             booking.date = bill.booking_date
-            bill_type = item.short_description
             if item.subscription_type: 
                 if hasattr(item.subscription_type, "subscriptiontype_account"):
                     booking.credit_account = item.subscription_type.subscriptiontype_account.account
@@ -172,7 +171,7 @@ def get_bill_bookings(fromdate, tilldate):
             booking.docnumber = str((bill.id * 10) + idx)
 
             # todo: translate
-            booking.text = "Rechnung %s %s" % (bill_type, bill.member)
+            booking.text = "Rechnung %s %s" % (item.item_kind, bill.member)
             booking.debit_account = debtor_account
             booking.price = bill.amount
             if hasattr(bill.member, "member_account"):

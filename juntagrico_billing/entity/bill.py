@@ -61,12 +61,12 @@ class Bill(JuntagricoBaseModel):
         return sum([p.amount for p in self.payments.all()])
 
     @property
-    def short_description(self):
+    def item_kinds(self):
         """
         short description for displaying in lists.
         shows, what items the bill contains.
         """
-        return ', '.join([itm.short_description for itm in self.items.all()])
+        return ', '.join([itm.item_kind for itm in self.items.all()])
 
     def __str__(self):
         return '{}'.format(self.id)
@@ -106,7 +106,7 @@ class BillItem(JuntagricoBaseModel):
         return self.subscription_type or self.extrasubscription_type
 
     @property
-    def short_description(self):
+    def item_kind(self):
         """
         short description used for showing bills in a list.
         """
