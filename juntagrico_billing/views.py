@@ -148,12 +148,9 @@ def export_bookings(bookings, filename):
 @login_required
 def bills_user(request):
     member = request.user.member
-    subs = list(member.old_subscriptions.all())
-    subs.append(member.subscription)
-    subs.append(member.future_subscription)
     renderdict = get_menu_dict(request)
     renderdict.update({
-        'bills': BillDao.bills_for_billables(subs),
+        'bills': BillDao.bills_for_member(member),
         'esr': BConfig.esr(),
         'menu': {'bills': 'active'},
     })

@@ -48,13 +48,13 @@
                         {% trans "Number" %}
                     </th>
                     <th>
-                        {% trans "Billable" %}
+                        {% trans "Kind" %}
                     </th>
                     <th>
-                        {% trans "Price" %}
+                        {% trans "Amount" %}
                     </th>
                     <th>
-                        {% trans "State" %}
+                        {% trans "Paid" %}
                     </th>
                     <th>
                         {% trans "Amount Paid" %}
@@ -73,16 +73,18 @@
                         {{ bill.pk }}
                     </td>
                     <td>
-                        {{ bill.billable }}
+                        {{ bill.description | linebreaks }}
                     </td>
                     <td>
                         {{ bill.amount }}
                     </td>
                     <td>
-                        {{ bill.state }}
+                        {% if bill.paid %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}
                     </td>
                     <td>
+                        {% if not bill.paid %}
                         {{ amount.paid  }}
+                        {% endif %}
                     </td>
                     {% if esr %}
                     <td>
