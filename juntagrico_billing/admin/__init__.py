@@ -2,9 +2,9 @@ from django.contrib import admin
 
 from juntagrico_billing.admin.bill import BillAdmin
 from juntagrico_billing.admin.businessyear import BusinessYearAdmin
-from juntagrico_billing.admin.payment import PaymentAdmin
+from juntagrico_billing.admin.payment import PaymentAdmin, PaymentTypeAdmin
 from juntagrico_billing.entity.account import MemberAccount, SubscriptionTypeAccount, ExtraSubscriptionCategoryAccount
-from juntagrico_billing.entity.bill import Bill, Payment, BusinessYear
+from juntagrico_billing.entity.bill import Bill, Payment, PaymentType, BusinessYear
 from juntagrico_billing.entity.settings import Settings
 
 '''
@@ -46,4 +46,5 @@ end of legacy
 '''
 admin.site.register(Bill, BillAdmin)
 admin.site.register(Payment, PaymentAdmin)
+admin.site.register(PaymentType, PaymentTypeAdmin)
 admin.site.register(BusinessYear, BusinessYearAdmin)

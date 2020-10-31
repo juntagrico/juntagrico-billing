@@ -212,7 +212,7 @@ def get_payment_bookings(fromdate, tilldate):
         bill = payment.bill
         booking.text = "%s %s %d: %s %s" % (_('Payment'), _('Bill'), bill.id, bill.item_kinds, bill.member)
         # todo where to get bank account from?
-        booking.debit_account = "Bank Account"
+        booking.debit_account = payment.type.booking_account
         booking.price = payment.amount
         if hasattr(payment.bill.member, "member_account"):
             booking.member_account = payment.bill.member.member_account.account

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-27 11:02+0100\n"
+"POT-Creation-Date: 2020-10-31 18:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -57,14 +57,16 @@ msgid "Booking date"
 msgstr "Buchungsdatum"
 
 #: .\juntagrico_billing\entity\bill.py:53
-#: .\juntagrico_billing\entity\bill.py:103
-#: .\juntagrico_billing\entity\bill.py:131
+#: .\juntagrico_billing\entity\bill.py:110
+#: .\juntagrico_billing\entity\bill.py:143
 #: .\juntagrico_billing\templates\jb\bills.html:52
+#: .\juntagrico_billing\templates\jb\user_bills.html:54
 msgid "Amount"
 msgstr "Betrag"
 
 #: .\juntagrico_billing\entity\bill.py:54
 #: .\juntagrico_billing\templates\jb\bills.html:55
+#: .\juntagrico_billing\templates\jb\user_bills.html:57
 msgid "Paid"
 msgstr "Bezahlt"
 
@@ -73,7 +75,7 @@ msgid "Notes visible to {}"
 msgstr "Notizen sichtbar für {}"
 
 #: .\juntagrico_billing\entity\bill.py:56
-#: .\juntagrico_billing\entity\bill.py:132
+#: .\juntagrico_billing\entity\bill.py:144
 msgid "Notes not visible to {}"
 msgstr "Notizen nicht sichtbar für {}"
 
@@ -81,13 +83,14 @@ msgstr "Notizen nicht sichtbar für {}"
 msgid "Amount paid"
 msgstr "Betrag bezahlt"
 
-#: .\juntagrico_billing\entity\bill.py:77
-#: .\juntagrico_billing\entity\bill.py:91
-#: .\juntagrico_billing\entity\bill.py:129
+#: .\juntagrico_billing\entity\bill.py:84
+#: .\juntagrico_billing\entity\bill.py:98
+#: .\juntagrico_billing\entity\bill.py:138
+#: .\juntagrico_billing\util\bookings.py:213
 msgid "Bill"
 msgstr "Rechnung"
 
-#: .\juntagrico_billing\entity\bill.py:78
+#: .\juntagrico_billing\entity\bill.py:85
 #: .\juntagrico_billing\templates\jb\billing_admin_menu.html:8
 #: .\juntagrico_billing\templates\jb\billing_user_menu.html:7
 #: .\juntagrico_billing\templates\jb\bills.html:6
@@ -95,36 +98,55 @@ msgstr "Rechnung"
 msgid "Bills"
 msgstr "Rechnungen"
 
-#: .\juntagrico_billing\entity\bill.py:96
-#: .\juntagrico_billing\entity\bill.py:117
+#: .\juntagrico_billing\entity\bill.py:103
+#: .\juntagrico_billing\entity\bill.py:124
 msgid "Subscription"
 msgstr "Abo"
 
-#: .\juntagrico_billing\entity\bill.py:99
-#: .\juntagrico_billing\entity\bill.py:119
+#: .\juntagrico_billing\entity\bill.py:106
+#: .\juntagrico_billing\entity\bill.py:126
 msgid "Extrasubscription"
 msgstr "Zusatzabo"
 
-#: .\juntagrico_billing\entity\bill.py:101
+#: .\juntagrico_billing\entity\bill.py:108
 msgid "Description"
 msgstr "Beschreibung"
 
-#: .\juntagrico_billing\entity\bill.py:121
+#: .\juntagrico_billing\entity\bill.py:130
 msgid "Item kind"
 msgstr "Art"
 
-#: .\juntagrico_billing\entity\bill.py:130
+#: .\juntagrico_billing\entity\bill.py:141
+#: .\juntagrico_billing\entity\bill.py:164
+msgid "Payment type"
+msgstr "Zahlungstyp"
+
+#: .\juntagrico_billing\entity\bill.py:142
 msgid "Payment date"
 msgstr "Zahlungsdatum"
 
-#: .\juntagrico_billing\entity\bill.py:138
-#: .\juntagrico_billing\entity\bill.py:139
+#: .\juntagrico_billing\entity\bill.py:150
+#: .\juntagrico_billing\util\bookings.py:213
 msgid "Payment"
 msgstr "Zahlung"
 
+#: .\juntagrico_billing\entity\bill.py:151
+msgid "Payments"
+msgstr "Zahlungen"
+
+#: .\juntagrico_billing\entity\bill.py:160
+msgid "Name"
+msgstr "Name"
+
+#: .\juntagrico_billing\entity\bill.py:161
+msgid "Booking account"
+msgstr "Buchungskonto"
+
+#: .\juntagrico_billing\entity\bill.py:165
+msgid "Payment types"
+msgstr "Zahlungstypen"
+
 #: .\juntagrico_billing\mailer.py:19 .\juntagrico_billing\mailer.py:38
-#, fuzzy, python-brace-format
-#| msgid "Bill"
 msgid "Bill {0}"
 msgstr "Rechnung {0}"
 
@@ -158,6 +180,7 @@ msgid "Number"
 msgstr "Nummer"
 
 #: .\juntagrico_billing\templates\jb\bills.html:46
+#: .\juntagrico_billing\templates\jb\user_bills.html:51
 msgid "Kind"
 msgstr "Art"
 
@@ -189,25 +212,21 @@ msgstr "BIC"
 msgid "Overview"
 msgstr "Übersicht"
 
-#: .\juntagrico_billing\templates\jb\user_bills.html:51
-msgid "Billable"
-msgstr "Verechenbares Objekt"
-
-#: .\juntagrico_billing\templates\jb\user_bills.html:54
-msgid "Price"
-msgstr "Preis"
-
-#: .\juntagrico_billing\templates\jb\user_bills.html:57
-msgid "State"
-msgstr "Status"
-
 #: .\juntagrico_billing\templates\jb\user_bills.html:60
 msgid "Amount Paid"
 msgstr "Bezahlter Betrag"
 
 #: .\juntagrico_billing\templates\jb\user_bills.html:64
 msgid "Reference Number"
-msgstr "Referenz Nummer"
+msgstr "Referenznummer"
+
+#: .\juntagrico_billing\templates\jb\user_bills.html:82
+msgid "Yes"
+msgstr "Ja"
+
+#: .\juntagrico_billing\templates\jb\user_bills.html:82
+msgid "No"
+msgstr "Nein"
 
 #: .\juntagrico_billing\templates\mails\bill_extrasub.txt:7
 #: .\juntagrico_billing\templates\mails\bill_share.txt:10
@@ -298,6 +317,15 @@ msgstr "Es ist kein Geschäftsjahr für Rechnungen definiert"
 #: .\juntagrico_billing\templates\messages\no_businessyear.html:6
 msgid "Please create one in the data administration."
 msgstr "Bitte erstelle eines in der Datenadministration"
+
+#~ msgid "Billable"
+#~ msgstr "Verechenbares Objekt"
+
+#~ msgid "Price"
+#~ msgstr "Preis"
+
+#~ msgid "State"
+#~ msgstr "Status"
 
 #~ msgid "Billable object"
 #~ msgstr "Verechenbares Objekt"

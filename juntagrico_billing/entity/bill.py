@@ -136,6 +136,9 @@ class Payment(JuntagricoBaseModel):
     bill = models.ForeignKey('Bill', related_name='payments',
                              null=False, blank=False,
                              on_delete=models.PROTECT, verbose_name=_('Bill'))
+    type = models.ForeignKey('PaymentType', related_name='payments',
+                             null=False, blank=False, 
+                             on_delete=models.PROTECT, verbose_name=_('Payment type'))
     paid_date = models.DateField(_('Payment date'), null=True, blank=True)
     amount = models.FloatField(_('Amount'), null=False, blank=False, default=0.0)
     private_notes = models.TextField(_('Notes not visible to {}').format(Config.vocabulary('member_pl')), null=True, blank=True)
@@ -145,5 +148,25 @@ class Payment(JuntagricoBaseModel):
 
     class Meta:
         verbose_name = _('Payment')
-        verbose_name_plural = _('Payment')
+        verbose_name_plural = _('Payments')
+
+
+class PaymentType(JuntagricoBaseModel):
+    """
+    Payment type,
+    defining bank and booking account
+    """
+    iban = models.TextField('IBAN', null=True, blank=True)
+    name = models.TextField(_('Name'), null=True, blank=True)
+    booking_account = models.TextField(_('Booking account'))
+
+
+    def __str__(self):
+        return self.name
+
+
+    class Meta:
+        verbose_name = _('Payment type')
+        verbose_name_plural = _('Payment types')
+
 

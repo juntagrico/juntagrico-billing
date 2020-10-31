@@ -1,7 +1,7 @@
 from datetime import date
 from test.test_base import SubscriptionTestBase
 
-from juntagrico_billing.entity.bill import BusinessYear, Payment
+from juntagrico_billing.entity.bill import BusinessYear, Payment, PaymentType
 from juntagrico_billing.util.billing import create_bill
 from juntagrico_billing.util.bookings import get_bill_bookings, get_payment_bookings
 
@@ -13,18 +13,25 @@ class BillBookingsTest(SubscriptionTestBase):
         self.year = BusinessYear.objects.create(start_date=date(2018, 1, 1),
                                            end_date=date(2018, 12, 31),
                                            name="2018")
+
+        self.paymenttype = PaymentType.objects.create(
+                            name="ABS",
+                            iban="CH4108390031346010006",
+                            booking_account="1010")
                                         
         self.bill = create_bill(self.subscription.parts.all(), self.year, self.year.start_date) 
         self.payment1 = Payment.objects.create(
             bill = self.bill,
             paid_date = date(2018, 2, 1),
-            amount = 500.0
+            amount = 500.0,
+            type = self.paymenttype
         )  
 
         self.payment2 = Payment.objects.create(
             bill = self.bill,
             paid_date = date(2018, 7, 2),
-            amount = 700.0
+            amount = 700.0,
+            type = self.paymenttype
         )
 
 
@@ -36,7 +43,7 @@ class BillBookingsTest(SubscriptionTestBase):
 
         self.assertEquals(self.year.start_date, booking.date)
         self.assertEquals("500011", booking.docnumber)
-        self.assertEquals("Rechnung Abo Michael Test", booking.text)
+        self.assertEquals("Rechnung 1: Abo Michael Test", booking.text)
         self.assertEquals("1100", booking.debit_account)
         # todo add account nr to test
         self.assertEquals("3001", booking.credit_account)
@@ -53,7 +60,7 @@ class BillBookingsTest(SubscriptionTestBase):
         self.assertEquals("Zahlung Rechnung 1: Abo Michael Test", booking.text)
         self.assertEquals(500.0, booking.price)
         self.assertEquals('1100', booking.credit_account)
-        self.assertEquals('Bank Account', booking.debit_account)
+        self.assertEquals('1010', booking.debit_account)
         self.assertEquals('4321', booking.member_account)
 
 
