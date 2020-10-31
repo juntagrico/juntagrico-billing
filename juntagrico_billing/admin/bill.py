@@ -6,5 +6,5 @@ from juntagrico_billing.entity.bill import Bill
 
 class BillAdmin(BaseAdmin):
     readonly_fields = ['business_year']
-    list_display = ['business_year', 'member', 'bill_date', 'item_kinds', 'amount', 'paid']
+    list_display = ['id', 'business_year', 'member', 'bill_date', 'item_kinds', 'amount', 'paid']
     inlines = [BillItemInline, PaymentInline, ]

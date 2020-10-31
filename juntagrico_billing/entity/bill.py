@@ -122,8 +122,10 @@ class BillItem(JuntagricoBaseModel):
         """
         if self.subscription_type:
             return _('Subscription')
-        else:
+        elif self.extrasubscription_type:
             return _('Extrasubscription') 
+        else:
+            return ''
     
     item_kind.fget.short_description = _('Item kind')
 

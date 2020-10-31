@@ -1,5 +1,6 @@
 from datetime import date
 
+from django.utils.translation import gettext as _
 from juntagrico.config import Config
 from juntagrico.entity.subs import Subscription
 from juntagrico.entity.extrasubs import ExtraSubscription
@@ -7,8 +8,16 @@ from juntagrico.dao.extrasubscriptiondao import ExtraSubscriptionDao
 from juntagrico.dao.subscriptiondao import SubscriptionDao
 
 from juntagrico_billing.dao.billdao import BillDao
+from juntagrico_billing.dao.paymentdao import PaymentDao
 from juntagrico_billing.entity.settings import Settings
 from juntagrico_billing.util.billing import scale_subscription_price
+
+# Offset for generating Document numbers for bookings
+DOCNUMBER_OFFSET_BILL = 500000
+DOCNUMBER_OFFSET_PAYMENT = 600000
+
+class Booking(object):
+    pass
 
 
 def subscription_bookings_by_date(fromdate, tilldate):
@@ -154,24 +163,25 @@ def get_bill_bookings(fromdate, tilldate):
             bookings.append(booking)
 
             booking.date = bill.booking_date
+            booking.credit_account= ""
             if item.subscription_type: 
                 if hasattr(item.subscription_type, "subscriptiontype_account"):
                     booking.credit_account = item.subscription_type.subscriptiontype_account.account
                 else:
                     booking.credit_account = ""
 
-            if item.extrasubscription_type:
+            elif item.extrasubscription_type:
                 category = item.extrasubscription_type.category
                 if hasattr(category, "extrasub_account"):
                     booking.credit_account = category.extrasub_account.account
                 else: 
                     booking.credit_account = ""
 
-            # docnumber is id of bill*10 + sequence number of bill item
-            booking.docnumber = str((bill.id * 10) + idx)
+            # docnumber is DOCNUMBER_OFFSET_BILL + id of bill*10 + sequencenumber of bill item
+            booking.docnumber = str(DOCNUMBER_OFFSET_BILL + bill.id * 10 + idx+1)
 
             # todo: translate
-            booking.text = "Rechnung %s %s" % (item.item_kind, bill.member)
+            booking.text = "Rechnung %d: %s %s" % (bill.id, item.item_kind, bill.member)
             booking.debit_account = debtor_account
             booking.price = bill.amount
             if hasattr(bill.member, "member_account"):
@@ -182,7 +192,31 @@ def get_bill_bookings(fromdate, tilldate):
     return bookings
         
 def get_payment_bookings(fromdate, tilldate):
-    return []
+    payments = PaymentDao.payments_for_daterange(fromdate, tilldate)
 
-class Booking(object):
-    pass
+    # global debtor account on settings object
+    debtor_account = Settings.objects.first().debtor_account
+
+    bookings = []
+
+    for payment in payments:
+        booking = Booking()
+        bookings.append(booking)
+
+        booking.date = payment.paid_date
+        booking.credit_account = debtor_account
+
+        # docnumber is DOCNUMBER_OFFSET_PAYMENT + of bill*10 + sequence number of bill item
+        booking.docnumber = str(DOCNUMBER_OFFSET_PAYMENT + payment.id) 
+
+        bill = payment.bill
+        booking.text = "%s %s %d: %s %s" % (_('Payment'), _('Bill'), bill.id, bill.item_kinds, bill.member)
+        # todo where to get bank account from?
+        booking.debit_account = "Bank Account"
+        booking.price = payment.amount
+        if hasattr(payment.bill.member, "member_account"):
+            booking.member_account = payment.bill.member.member_account.account
+        else:
+            booking.member_account = ""
+
+    return bookings

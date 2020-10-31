@@ -31,7 +31,7 @@ class SubscriptionBookingsTest(SubscriptionTestBase):
         self.assertEqual(date(2018, 7, 1), booking.date)
         self.assertEqual("180101000000002000000001", booking.docnumber)
         self.assertEqual("1100", booking.debit_account)
-        self.assertEqual("", booking.credit_account)  # subscriptiontype account is not assigned
+        self.assertEqual("3001", booking.credit_account)
         self.assertEqual("4321", booking.member_account)
         self.assertEqual(
             "Abo: Normal - Grösse: Normal - Produkt: Test-Product, Michael Test, Teilperiode 01.07.18 - 30.09.18",
@@ -77,7 +77,7 @@ class ExtraSubscriptionBookingsTest(SubscriptionTestBase):
         self.assertEqual(date(2018, 1, 1), booking.date)
         self.assertEqual("180101000000002000000002", booking.docnumber)
         self.assertEqual("1100", booking.debit_account)
-        self.assertEqual("", booking.credit_account)  # subscriptiontype account is not assigned
+        self.assertEqual("3010", booking.credit_account)
         self.assertEqual("4321", booking.member_account)
         self.assertEqual("Zusatz: Extra 1, 01.01.18-30.06.18, Michael Test", booking.text)
 
@@ -86,7 +86,7 @@ class ExtraSubscriptionBookingsTest(SubscriptionTestBase):
         self.assertEqual(date(2018, 7, 1), booking.date)
         self.assertEqual("180701000000002000000002", booking.docnumber)
         self.assertEqual("1100", booking.debit_account)
-        self.assertEqual("", booking.credit_account)  # subscriptiontype account is not assigned
+        self.assertEqual("3010", booking.credit_account)
         self.assertEqual("4321", booking.member_account)
         self.assertEqual("Zusatz: Extra 1, 01.07.18-31.12.18, Michael Test", booking.text)
 
@@ -109,7 +109,7 @@ class ExtraSubscriptionBookingsTest(SubscriptionTestBase):
         self.assertEqual(date(2018, 1, 1), booking.date)
         self.assertEqual("180101000000002000000002", booking.docnumber)
         self.assertEqual("1100", booking.debit_account)
-        self.assertEqual("", booking.credit_account)  # subscriptiontype account is not assigned
+        self.assertEqual("3010", booking.credit_account)
         self.assertEqual("4321", booking.member_account)
         self.assertEqual("Zusatz: Extra 1, 01.03.18-30.06.18, Michael Test", booking.text)
 
@@ -118,7 +118,7 @@ class ExtraSubscriptionBookingsTest(SubscriptionTestBase):
         self.assertEqual(date(2018, 7, 1), booking.date)
         self.assertEqual("180701000000002000000002", booking.docnumber)
         self.assertEqual("1100", booking.debit_account)
-        self.assertEqual("", booking.credit_account)  # subscriptiontype account is not assigned
+        self.assertEqual("3010", booking.credit_account)
         self.assertEqual("4321", booking.member_account)
         self.assertEqual("Zusatz: Extra 1, 01.07.18-31.12.18, Michael Test", booking.text)
 
@@ -137,7 +137,7 @@ class ExtraSubscriptionBookingsTest(SubscriptionTestBase):
         self.assertEqual(date(2018, 1, 1), booking.date)
         self.assertEqual("180101000000002000000002", booking.docnumber)
         self.assertEqual("1100", booking.debit_account)
-        self.assertEqual("", booking.credit_account)
+        self.assertEqual("3010", booking.credit_account)
         self.assertEqual("4321", booking.member_account)
         self.assertEqual("Zusatz: Extra 1, 01.01.18-30.06.18, Michael Test", booking.text)
 
@@ -156,7 +156,7 @@ class ExtraSubscriptionBookingsTest(SubscriptionTestBase):
         self.assertEqual(date(2018, 1, 1), booking.date)
         self.assertEqual("180101000000002000000002", booking.docnumber)
         self.assertEqual("1100", booking.debit_account)
-        self.assertEqual("", booking.credit_account)
+        self.assertEqual("3010", booking.credit_account)
         self.assertEqual("4321", booking.member_account)
         self.assertEqual("Zusatz: Extra 1, 01.02.18-30.06.18, Michael Test", booking.text)
 
@@ -165,6 +165,6 @@ class ExtraSubscriptionBookingsTest(SubscriptionTestBase):
         self.assertEqual(date(2018, 7, 1), booking.date)
         self.assertEqual("180701000000002000000002", booking.docnumber)
         self.assertEqual("1100", booking.debit_account)
-        self.assertEqual("", booking.credit_account)
+        self.assertEqual("3010", booking.credit_account)
         self.assertEqual("4321", booking.member_account)
         self.assertEqual("Zusatz: Extra 1, 01.07.18-30.11.18, Michael Test", booking.text)

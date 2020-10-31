@@ -9,7 +9,7 @@ from juntagrico.entity.subs import Subscription, SubscriptionPart
 from juntagrico.entity.subtypes import SubscriptionProduct, SubscriptionSize, SubscriptionType
 
 from juntagrico_billing.entity.settings import Settings
-from juntagrico_billing.entity.account import MemberAccount
+from juntagrico_billing.entity.account import MemberAccount, SubscriptionTypeAccount, ExtraSubscriptionCategoryAccount
 
 
 class SubscriptionTestBase(django.test.TestCase):
@@ -26,12 +26,18 @@ class SubscriptionTestBase(django.test.TestCase):
             product=subs_product
         )
 
+        # subscription type and account
         self.subs_type = SubscriptionType.objects.create(
             name="Normal",
             size=subs_size,
             shares=1,
             required_assignments=5,
             price=1200,
+        )
+
+        SubscriptionTypeAccount.objects.create(
+            subscriptiontype = self.subs_type,
+            account = "3001"
         )
 
         self.depot = Depot.objects.create(
@@ -44,8 +50,14 @@ class SubscriptionTestBase(django.test.TestCase):
         self.subscription = self.create_subscription_and_member(self.subs_type, date(2018, 1, 1), None,
                                                                 "Michael", "Test", "4321")
 
+        # extra subscription category and account
         extrasub_category = ExtraSubscriptionCategory.objects.create(
             name="ExtraCat1"
+        )
+
+        ExtraSubscriptionCategoryAccount.objects.create(
+            extrasubcategory = extrasub_category,
+            account = "3010"
         )
 
         extrasub_type = ExtraSubscriptionType.objects.create(

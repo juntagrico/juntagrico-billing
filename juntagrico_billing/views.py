@@ -31,10 +31,14 @@ def bills(request):
     business_years = BusinessYear.objects.all().order_by('start_date')
 
     # if no year set, choose most recent year
-    selected_year = request.session.get('billing_businessyear', None)
-    if not selected_year and len(business_years):
-        selected_year = business_years.last()
-        request.session['billing_businessyear'] = selected_year
+    selected_year = None
+    selected_year_name = request.session.get('billing_businessyear', None)
+    if selected_year_name:
+        selected_year = [year for year in business_years if year.name == selected_year_name][0]
+    else:
+        if len(business_years):
+            selected_year = business_years.last()
+            request.session['billing_businessyear'] = selected_year.name
 
     if selected_year:
         bills_list = selected_year.bills.all()
@@ -71,7 +75,9 @@ def bills_setyear(request):
 @permission_required('juntagrico.is_book_keeper')
 def bills_generate(request):
     # generate bills for current business year
-    year = request.session['billing_businessyear']
+    year_name = request.session['billing_businessyear']
+    year = BusinessYear.objects.filter(name=year_name).first()
+
     billable_items = get_billable_items(year)
 
     create_bills_for_items(billable_items, year, date.today())
@@ -118,7 +124,10 @@ def bookings_export(request):
 
     # export button pressed and date fields OK -> do excel export
     if ('export' in request.GET) and daterange_form.is_valid():
-        return export_bookings(bill_bookings + payment_bookings, "bookings")
+        # sort bookings on date and docnumber
+        bookings = sorted(bill_bookings + payment_bookings,
+                            key=lambda bk: (bk.date, bk.docnumber))
+        return export_bookings(bookings, "bookings")
 
     # otherwise return page
     renderdict.update({ 

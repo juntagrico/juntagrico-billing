@@ -144,7 +144,7 @@ class BillSubscriptionsTests(SubscriptionTestBase):
         bill = create_bill(billable_items, self.year, self.year.start_date)
 
         self.assertEquals(2, len(bill.items.all()))
-        self.assertEquals('Subscription, ExtraSubscription', bill.item_kinds)
+        self.assertEquals('Abo, Zusatzabo', bill.item_kinds)
 
 
     def test_create_bill_for_all(self):
