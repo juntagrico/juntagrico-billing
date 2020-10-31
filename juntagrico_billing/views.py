@@ -17,6 +17,7 @@ from juntagrico.views import get_menu_dict
 
 from juntagrico_billing.dao.billdao import BillDao
 from juntagrico_billing.entity.bill import BusinessYear, Bill
+from juntagrico_billing.entity.settings import Settings
 from juntagrico_billing.util.billing import get_billable_items, group_billables_by_member, create_bills_for_items
 from juntagrico_billing.util.bookings import get_bill_bookings, get_payment_bookings
 
@@ -157,10 +158,11 @@ def export_bookings(bookings, filename):
 @login_required
 def bills_user(request):
     member = request.user.member
+    settings = Settings.objects.first()
     renderdict = get_menu_dict(request)
     renderdict.update({
         'bills': BillDao.bills_for_member(member),
-        'esr': BConfig.esr(),
+        'paymenttype': settings.default_paymenttype,
         'menu': {'bills': 'active'},
     })
     return render(request, "jb/user_bills.html", renderdict)

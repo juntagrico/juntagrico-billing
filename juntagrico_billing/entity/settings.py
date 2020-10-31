@@ -9,6 +9,8 @@ class Settings(models.Model):
         verbose_name_plural = "Settings"
 
     debtor_account = models.CharField('Debitor-Konto', max_length=10)
+    default_paymenttype = models.ForeignKey('PaymentType', null=True,
+                            on_delete=models.SET_NULL)
 
     def save(self, *args, **kwargs):
         # make sure there is only 1 instance of settings
