@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-31 18:32+0100\n"
+"POT-Creation-Date: 2020-11-03 15:26+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -60,13 +60,13 @@ msgstr "Buchungsdatum"
 #: .\juntagrico_billing\entity\bill.py:110
 #: .\juntagrico_billing\entity\bill.py:143
 #: .\juntagrico_billing\templates\jb\bills.html:52
-#: .\juntagrico_billing\templates\jb\user_bills.html:54
+#: .\juntagrico_billing\templates\jb\user_bills.html:32
 msgid "Amount"
 msgstr "Betrag"
 
 #: .\juntagrico_billing\entity\bill.py:54
 #: .\juntagrico_billing\templates\jb\bills.html:55
-#: .\juntagrico_billing\templates\jb\user_bills.html:57
+#: .\juntagrico_billing\templates\jb\user_bills.html:35
 msgid "Paid"
 msgstr "Bezahlt"
 
@@ -117,7 +117,7 @@ msgid "Item kind"
 msgstr "Art"
 
 #: .\juntagrico_billing\entity\bill.py:141
-#: .\juntagrico_billing\entity\bill.py:164
+#: .\juntagrico_billing\entity\bill.py:169
 msgid "Payment type"
 msgstr "Zahlungstyp"
 
@@ -134,7 +134,7 @@ msgstr "Zahlung"
 msgid "Payments"
 msgstr "Zahlungen"
 
-#: .\juntagrico_billing\entity\bill.py:160
+#: .\juntagrico_billing\entity\bill.py:159
 msgid "Name"
 msgstr "Name"
 
@@ -142,11 +142,12 @@ msgstr "Name"
 msgid "Booking account"
 msgstr "Buchungskonto"
 
-#: .\juntagrico_billing\entity\bill.py:165
+#: .\juntagrico_billing\entity\bill.py:170
 msgid "Payment types"
 msgstr "Zahlungstypen"
 
 #: .\juntagrico_billing\mailer.py:19 .\juntagrico_billing\mailer.py:38
+#, python-brace-format
 msgid "Bill {0}"
 msgstr "Rechnung {0}"
 
@@ -175,12 +176,12 @@ msgid "Generate"
 msgstr "Generieren"
 
 #: .\juntagrico_billing\templates\jb\bills.html:40
-#: .\juntagrico_billing\templates\jb\user_bills.html:48
+#: .\juntagrico_billing\templates\jb\user_bills.html:26
 msgid "Number"
 msgstr "Nummer"
 
 #: .\juntagrico_billing\templates\jb\bills.html:46
-#: .\juntagrico_billing\templates\jb\user_bills.html:51
+#: .\juntagrico_billing\templates\jb\user_bills.html:29
 msgid "Kind"
 msgstr "Art"
 
@@ -189,42 +190,26 @@ msgid "Date"
 msgstr "Datum"
 
 #: .\juntagrico_billing\templates\jb\user_bills.html:11
-msgid "Bank Connection"
-msgstr "Bank Verbindung"
+msgid "Payment details"
+msgstr "Zahlungsverbindung"
 
-#: .\juntagrico_billing\templates\jb\user_bills.html:30
-msgid "Account-Number"
-msgstr "Kontonummer"
-
-#: .\juntagrico_billing\templates\jb\user_bills.html:32
-msgid "PC-Number"
-msgstr "PC-Nummer"
-
-#: .\juntagrico_billing\templates\jb\user_bills.html:34
+#: .\juntagrico_billing\templates\jb\user_bills.html:17
 msgid "IBAN"
 msgstr "IBAN"
 
-#: .\juntagrico_billing\templates\jb\user_bills.html:36
-msgid "BIC"
-msgstr "BIC"
-
-#: .\juntagrico_billing\templates\jb\user_bills.html:41
-msgid "Overview"
-msgstr "Übersicht"
-
-#: .\juntagrico_billing\templates\jb\user_bills.html:60
+#: .\juntagrico_billing\templates\jb\user_bills.html:38
 msgid "Amount Paid"
 msgstr "Bezahlter Betrag"
 
-#: .\juntagrico_billing\templates\jb\user_bills.html:64
+#: .\juntagrico_billing\templates\jb\user_bills.html:42
 msgid "Reference Number"
 msgstr "Referenznummer"
 
-#: .\juntagrico_billing\templates\jb\user_bills.html:82
+#: .\juntagrico_billing\templates\jb\user_bills.html:60
 msgid "Yes"
 msgstr "Ja"
 
-#: .\juntagrico_billing\templates\jb\user_bills.html:82
+#: .\juntagrico_billing\templates\jb\user_bills.html:60
 msgid "No"
 msgstr "Nein"
 
@@ -317,33 +302,3 @@ msgstr "Es ist kein Geschäftsjahr für Rechnungen definiert"
 #: .\juntagrico_billing\templates\messages\no_businessyear.html:6
 msgid "Please create one in the data administration."
 msgstr "Bitte erstelle eines in der Datenadministration"
-
-#~ msgid "Billable"
-#~ msgstr "Verechenbares Objekt"
-
-#~ msgid "Price"
-#~ msgstr "Preis"
-
-#~ msgid "State"
-#~ msgstr "Status"
-
-#~ msgid "Billable object"
-#~ msgstr "Verechenbares Objekt"
-
-#~ msgid "exported"
-#~ msgstr "exportiert"
-
-#~ msgid "unpaid"
-#~ msgstr "nicht bezahlt"
-
-#~ msgid "paid"
-#~ msgstr "bezahlt"
-
-#~ msgid "overpaid"
-#~ msgstr "zu viel bezahlt"
-
-#~ msgid "Rechnung {0}"
-#~ msgstr "Rechnung {0}"
-
-#~ msgid "Rechnung Extra-Abo"
-#~ msgstr "Rechnung Extra-Abo"

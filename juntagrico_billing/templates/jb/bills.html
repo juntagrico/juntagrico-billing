@@ -11,9 +11,9 @@
     {% csrf_token %} 
     <p class="col-md-2">{% trans "Year:" %} {{ selected_year.name }}</p>
     <div class="col-md-2">
-        <select class="form-control" name="year" id="year" value="{{ year }}">
+        <select class="form-control" name="year" id="year">
             {% for year in business_years %}
-            <option>{{ year.name }}</option>
+            <option {% if year == selected_year %}selected="selected"{% endif %}>{{ year.name }}</option>
             {% endfor %}
         </select>
     </div>

@@ -29,7 +29,7 @@ def bills(request):
     renderdict = get_menu_dict(request)
 
     # get all business years
-    business_years = BusinessYear.objects.all().order_by('start_date')
+    business_years = list(BusinessYear.objects.all().order_by('start_date'))
 
     # if no year set, choose most recent year
     selected_year = None

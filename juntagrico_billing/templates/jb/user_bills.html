@@ -26,6 +26,9 @@
                         {% trans "Number" %}
                     </th>
                     <th>
+                        {% trans "Date" %}
+                    </th>
+                    <th>
                         {% trans "Kind" %}
                     </th>
                     <th>
@@ -33,9 +36,6 @@
                     </th>
                     <th>
                         {% trans "Paid" %}
-                    </th>
-                    <th>
-                        {% trans "Amount Paid" %}
                     </th>
                     {% if esr %}
                     <th>
@@ -49,6 +49,9 @@
                     <tr>
                     <td>
                         {{ bill.pk }}
+                    </td>
+                    <td>
+                        {{ bill.bill_date | date:"SHORT_DATE_FORMAT" }}
                     </td>
                     <td>
                         {{ bill.description | linebreaks }}
