@@ -105,7 +105,7 @@ class BillItem(JuntagricoBaseModel):
                             null=True, blank=True,
                             on_delete=models.PROTECT, verbose_name=_('Extrasubscription'))
 
-    description = models.TextField(_('Description'), null=True, blank=True)
+    description = models.CharField(_('Description'), null=True, blank=True, max_length=100)
 
     amount = models.FloatField(_('Amount'), null=False, blank=False, default=0.0)
 
@@ -156,9 +156,9 @@ class PaymentType(JuntagricoBaseModel):
     Payment type,
     defining bank and booking account
     """
-    iban = models.TextField('IBAN', null=True, blank=True)
-    name = models.TextField(_('Name'), null=True, blank=True)
-    booking_account = models.TextField(_('Booking account'))
+    name = models.CharField(_('Name'), null=True, blank=True, max_length=50)
+    iban = models.CharField('IBAN', null=True, blank=True, max_length=30)
+    booking_account = models.CharField(_('Booking account'), max_length=10)
 
 
     def __str__(self):
