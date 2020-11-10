@@ -11,6 +11,7 @@ from juntagrico_billing.dao.billdao import BillDao
 from juntagrico_billing.dao.paymentdao import PaymentDao
 from juntagrico_billing.entity.settings import Settings
 from juntagrico_billing.util.billing import scale_subscription_price
+from juntagrico_billing.dao.subscriptions import subscriptions_by_date, extrasubscriptions_by_date
 
 # Offset for generating Document numbers for bookings
 DOCNUMBER_OFFSET_BILL = 500000
@@ -26,7 +27,7 @@ def subscription_bookings_by_date(fromdate, tilldate):
     For each type that is assigned to a subscription, a separate booking
     is generated.
     """
-    subscriptions = SubscriptionDao.subscriptions_by_date(fromdate, tilldate)
+    subscriptions = subscriptions_by_date(fromdate, tilldate)
 
     # global debtor account on settings object
     debtor_account = Settings.objects.first().debtor_account
@@ -72,7 +73,7 @@ def extrasub_bookings_by_date(fromdate, tilldate):
     Generate a list of booking for extra subscriptions.
     We generate a booking for each period.
     """
-    extrasubs = ExtraSubscriptionDao.extrasubscriptions_by_date(fromdate, tilldate)
+    extrasubs = extrasubscriptions_by_date(fromdate, tilldate)
 
     # global debtor account on settings object
     debtor_account = Settings.objects.first().debtor_account

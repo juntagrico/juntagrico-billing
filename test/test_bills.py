@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.conf import settings
 
 from juntagrico.entity.subs import SubscriptionPart
+from juntagrico.entity.extrasubs import ExtraSubscription
 
 from juntagrico_billing.util.billing import scale_subscription_price, scale_extrasubscription_price
 from juntagrico_billing.util.billing import get_billable_items, create_bill, create_bills_for_items
@@ -11,6 +12,12 @@ from test.test_base import SubscriptionTestBase
 
 
 class ScaleSubscriptionPriceTest(SubscriptionTestBase):
+    def setUp(self):
+        super().setUp()
+
+        self.subscription = self.create_subscription_and_member(self.subs_type, date(2018, 1, 1), date(2018, 1, 1), None,
+                                                                "Michael", "Test", "4321")
+
 
     def test_price_by_date_fullyear(self):
         start_date = date(2018, 1, 1)
@@ -47,6 +54,21 @@ class ScaleSubscriptionPriceTest(SubscriptionTestBase):
 
 
 class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
+
+    def setUp(self):
+        super().setUp()
+
+        self.subscription = self.create_subscription_and_member(self.subs_type, date(2018, 1, 1), date(2018, 1, 1), None,
+                                                                "Michael", "Test", "4321")
+
+        self.extrasubs = ExtraSubscription.objects.create(
+            main_subscription=self.subscription,
+            activation_date=date(2018, 1, 1),
+            type=self.extrasub_type
+        )
+
+
+
     expected_price = round(
         (100.0 * (31 + 30 + 31 + 30) / (31 + 28 + 31 + 30 + 31 + 30)) + (200.0 * (31 + 31 + 30 + 31) / (31 + 31 + 30 + 31 + 30 + 31)),
         2)
@@ -97,11 +119,19 @@ class BillSubscriptionsTests(SubscriptionTestBase):
     def setUp(self):
         super().setUp()
 
-        # create some more subscriptions
-        self.subs2 = self.create_subscription_and_member(self.subs_type,
+        # create some subscriptions
+        self.subscription = self.create_subscription_and_member(self.subs_type, date(2018, 1, 1), date(2018, 1, 1), None,
+                                                                "Michael", "Test", "4321")
+        self.subs2 = self.create_subscription_and_member(self.subs_type, date(2017, 1, 1), 
                                                          date(2017, 1, 1), None, "Early", "Lastyear", "17321")
-        self.subs3 = self.create_subscription_and_member(self.subs_type,
+        self.subs3 = self.create_subscription_and_member(self.subs_type, date(2018, 3, 1), 
                                                          date(2018, 3, 1), None, "Later", "Thisyear", "17321")
+
+        self.extrasubs = ExtraSubscription.objects.create(
+            main_subscription=self.subscription,
+            activation_date=date(2018, 1, 1),
+            type=self.extrasub_type
+        )
 
         self.year = BusinessYear.objects.create(start_date=date(2018, 1, 1),
                                                 end_date=date(2018, 12, 31),
@@ -157,4 +187,26 @@ class BillSubscriptionsTests(SubscriptionTestBase):
         # there should be no billable items left
         billable_items = get_billable_items(self.year)
         self.assertEqual(0, len(billable_items))
+
+class GetBillableItemsTests(SubscriptionTestBase):
+    def setUp(self):
+        super().setUp()
+
+        self.year = BusinessYear.objects.create(start_date=date(2018, 1, 1),
+                                                end_date=date(2018, 12, 31),
+                                                name="2018")
+
+    def test_inactive_subscription(self):
+
+        # create subscription without activation date, only start_date
+        subs = self.create_subscription_and_member(self.subs_type, date(2017, 1, 1), None, None,
+                                                                "Michael", "Test", "4321")
+        # we expect no billable items because subscription is not active in 2018
+        items = get_billable_items(self.year)
+        self.assertEqual(0, len(items), "expecting no items for inactive subscription")
+
+
+        
+    
+
 

@@ -47,9 +47,6 @@ class SubscriptionTestBase(django.test.TestCase):
             weekday=5,
         )
 
-        self.subscription = self.create_subscription_and_member(self.subs_type, date(2018, 1, 1), None,
-                                                                "Michael", "Test", "4321")
-
         # extra subscription category and account
         extrasub_category = ExtraSubscriptionCategory.objects.create(
             name="ExtraCat1"
@@ -60,7 +57,7 @@ class SubscriptionTestBase(django.test.TestCase):
             account = "3010"
         )
 
-        extrasub_type = ExtraSubscriptionType.objects.create(
+        self.extrasub_type = ExtraSubscriptionType.objects.create(
             name="Extra 1",
             size="Extragross",
             description="Extra Subscription",
@@ -68,7 +65,7 @@ class SubscriptionTestBase(django.test.TestCase):
         )
 
         extrasub_period1 = ExtraSubBillingPeriod.objects.create(
-            type=extrasub_type,
+            type=self.extrasub_type,
             price=100,
             start_day=1,
             start_month=1,
@@ -78,7 +75,7 @@ class SubscriptionTestBase(django.test.TestCase):
             cancel_month=5
         )
         extrasub_period2 = ExtraSubBillingPeriod.objects.create(
-            type=extrasub_type,
+            type=self.extrasub_type,
             price=200,
             start_day=1,
             start_month=7,
@@ -86,12 +83,6 @@ class SubscriptionTestBase(django.test.TestCase):
             end_month=12,
             cancel_day=30,
             cancel_month=11
-        )
-
-        self.extrasubs = ExtraSubscription.objects.create(
-            main_subscription=self.subscription,
-            activation_date=date(2018, 1, 1),
-            type=extrasub_type
         )
 
         Settings.objects.create(
@@ -111,10 +102,12 @@ class SubscriptionTestBase(django.test.TestCase):
         member.save()
         return member
 
-    def create_subscription_and_member(self, type, activation_date, deactivation_date, first_name, last_name, account):
+    def create_subscription_and_member(self, type, start_date, activation_date, deactivation_date, first_name, last_name, account):
         member = self.create_member(first_name, last_name)
         subscription = Subscription.objects.create(
             depot=self.depot,
+            start_date=start_date,
+            end_date=deactivation_date,
             activation_date=activation_date,
             deactivation_date=deactivation_date
         )

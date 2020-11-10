@@ -19,6 +19,9 @@ class BillBookingsTest(SubscriptionTestBase):
                             iban="CH4108390031346010006",
                             booking_account="1010")
                                         
+        self.subscription = self.create_subscription_and_member(self.subs_type, date(2018, 1, 1), date(2018, 1, 1), None,
+                                                                "Michael", "Test", "4321")
+
         self.bill = create_bill(self.subscription.parts.all(), self.year, self.year.start_date) 
         self.payment1 = Payment.objects.create(
             bill = self.bill,

@@ -6,6 +6,7 @@ from juntagrico.dao.subscriptiondao import SubscriptionDao
 from juntagrico.entity.subs import Subscription, SubscriptionPart
 from juntagrico.entity.extrasubs import ExtraSubscription
 from juntagrico_billing.entity.bill import Bill, BillItem
+from juntagrico_billing.dao.subscriptions import subscriptions_by_date, extrasubscriptions_by_date
 
 
 def scale_subscription_price(subscription, fromdate, tilldate):
@@ -73,10 +74,10 @@ def get_billable_items(business_year):
     already_billed = dict((((itm.bill.member, itm.billable_reference), None) for itm in bill_items))
 
     # get all active subscriptions and extra subscriptions that overlap our date range
-    subscriptions = SubscriptionDao.subscriptions_by_date(from_date, till_date)
+    subscriptions = subscriptions_by_date(from_date, till_date)
     # todo: change to get subscription parts directly
     subscription_parts = [part for sub in subscriptions for part in sub.parts.all()]
-    extra_subs = ExtraSubscriptionDao.extrasubscriptions_by_date(from_date, till_date)
+    extra_subs = extrasubscriptions_by_date(from_date, till_date)
 
     # check if we have a member for every billable
     parts_without_member = [part for part in subscription_parts if not part.subscription.primary_member]
