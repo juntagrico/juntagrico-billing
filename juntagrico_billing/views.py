@@ -38,7 +38,7 @@ def bills(request):
         selected_year = [year for year in business_years if year.name == selected_year_name][0]
     else:
         if len(business_years):
-            selected_year = business_years.last()
+            selected_year = business_years[-1]
             request.session['billing_businessyear'] = selected_year.name
 
     if selected_year:
