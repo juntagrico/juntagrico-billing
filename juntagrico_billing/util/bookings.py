@@ -184,7 +184,7 @@ def get_bill_bookings(fromdate, tilldate):
             # todo: translate
             booking.text = "Rechnung %d: %s %s" % (bill.id, item.item_kind, bill.member)
             booking.debit_account = debtor_account
-            booking.price = bill.amount
+            booking.price = item.amount
             if hasattr(bill.member, "member_account"):
                 booking.member_account = bill.member.member_account.account
             else:

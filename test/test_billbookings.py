@@ -1,6 +1,7 @@
 from datetime import date
 from test.test_base import SubscriptionTestBase
 
+from juntagrico.entity.extrasubs import ExtraSubscription
 from juntagrico_billing.entity.bill import BusinessYear, Payment, PaymentType
 from juntagrico_billing.util.billing import create_bill
 from juntagrico_billing.util.bookings import get_bill_bookings, get_payment_bookings
@@ -21,8 +22,16 @@ class BillBookingsTest(SubscriptionTestBase):
                                         
         self.subscription = self.create_subscription_and_member(self.subs_type, date(2018, 1, 1), date(2018, 1, 1), None,
                                                                 "Michael", "Test", "4321")
+        
+        self.extrasubs = ExtraSubscription.objects.create(
+            main_subscription=self.subscription,
+            activation_date=date(2018, 1, 1),
+            type=self.extrasub_type)
 
-        self.bill = create_bill(self.subscription.parts.all(), self.year, self.year.start_date) 
+        items = list(self.subscription.parts.all()) + [self.extrasubs]
+
+        self.bill = create_bill(items, self.year, self.year.start_date) 
+
         self.payment1 = Payment.objects.create(
             bill = self.bill,
             paid_date = date(2018, 2, 1),
@@ -41,17 +50,27 @@ class BillBookingsTest(SubscriptionTestBase):
     def test_bill_bookings(self):
         bookings = get_bill_bookings(self.year.start_date, self.year.end_date)  
 
-        self.assertEquals(1, len(bookings)) 
+        self.assertEquals(2, len(bookings)) 
         booking = bookings[0]
 
         self.assertEquals(self.year.start_date, booking.date)
         self.assertEquals("500011", booking.docnumber)
         self.assertEquals("Rechnung 1: Abo Michael Test", booking.text)
         self.assertEquals("1100", booking.debit_account)
-        # todo add account nr to test
         self.assertEquals("3001", booking.credit_account)
         self.assertEquals("4321", booking.member_account)
         self.assertEquals(1200.0, booking.price)
+
+        booking = bookings[1]
+
+        self.assertEquals(self.year.start_date, booking.date)
+        self.assertEquals("500012", booking.docnumber)
+        self.assertEquals("Rechnung 1: Zusatzabo Michael Test", booking.text)
+        self.assertEquals("1100", booking.debit_account)
+        self.assertEquals("3010", booking.credit_account)
+        self.assertEquals("4321", booking.member_account)
+        self.assertEquals(300.0, booking.price)
+
 
     def test_payment_bookings(self):
         bookings = get_payment_bookings(self.year.start_date, self.year.end_date)
@@ -60,7 +79,7 @@ class BillBookingsTest(SubscriptionTestBase):
         booking = bookings[0]
         self.assertEquals(date(2018, 2, 1), booking.date)
         self.assertEquals('600001', booking.docnumber)
-        self.assertEquals("Zahlung Rechnung 1: Abo Michael Test", booking.text)
+        self.assertEquals("Zahlung Rechnung 1: Abo, Zusatzabo Michael Test", booking.text)
         self.assertEquals(500.0, booking.price)
         self.assertEquals('1100', booking.credit_account)
         self.assertEquals('1010', booking.debit_account)
