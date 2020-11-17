@@ -13,7 +13,8 @@ urlpatterns = [
     path('jb/bookings_export', views.bookings_export, name='bookings-export'),
 
     # bills (user)
-    path('jb/bills/user', views.bills_user, name='user-bills'),
+    path('jb/user_bills', views.user_bills, name='user-bills'),
+    path('jb/user_bill/<int:bill_id>', views.user_bill, name='user-bill'),
 
     # legacy
     path('jb/subscription_bookings', views_legacy.subscription_bookings)

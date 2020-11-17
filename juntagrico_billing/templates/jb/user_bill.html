@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load config %}
+{% block page_title %}
+    <h3>
+        {% trans "Bill" %} {{ bill.pk }}
+    </h3>
+{% endblock %}
+{% block content %}
+{% config "organisation_address" as addr %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm">
+            {{ addr.name }}<br/>
+            {{ addr.street }} {{ addr.number}}<br/>
+            {{ addr.zip }} {{ addr.city}}<br/>
+            {{ addr.extra}}
+        </div>
+        <div class="col-sm">
+            {{ member.first_name }} {{ member.last_name }}<br/>
+            {{ member.addr_street }}<br/>
+            {{ member.addr_zipcode }} {{ member.addr_location }}
+        </div>
+    </div>
+    <div class="row my-5"></div>
+    <div class="row">
+        <div class="col-sm">
+            <h4>{% trans "Bill" %} {{ bill.pk }}</h4>
+        </div>
+        <div class="col-sm align-middle text-right">
+            {{ bill.bill_date }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col my-3">
+        {% trans "Periode" %}: {{ bill.business_year.start_date }} - {{ bill.business_year.end_date }}
+        </div>
+    </div>
+    <div class="row my-2"></div>
+    {% for item in bill.items.all %}
+    <div class="row">
+        <div class="col-sm-2">{{ item.item_kind }}</div>
+        <div class="col-sm-8">{{ item.description }}</div>
+        <div class="col-sm-2 text-right">{{ item.amount }}</div>
+    </div>
+    {% endfor %}
+    <div class="row font-weight-bold">
+        <div class="col-sm-10">Total</div>
+        <div class="col-sm-2 text-right">{{ bill.amount }}</div>
+    </div>
+    <div class="row my-5"></div>
+    <h4>{% trans "Payments per" %} {{ today }}:</h4> 
+    {% for payment in payments %}
+    <div class="row">
+        <div class="col-sm-2">{{ payment.paid_date | date:"SHORT_DATE_FORMAT" }}</div>
+        <div class="col-sm-5">{{ payment.type }}</div>
+        <div class="col-sm-2 text-right">{{ payment.amount }}</div>
+    </div>    
+    {% endfor %}
+    {% if bill.paid %}
+    <p class="mt-3">{% trans "Bill paid completely" %}</p>
+    {% else %}
+    <p class="mt-3">{% trans "Amount open yet" %}: {{ open_amount }} </p>
+    {% endif %}
+    {% if not bill.paid %}
+    <p class="mt-5">
+        {% config "organisation_address" as addr %}
+        {% trans "Please pay specifying bill number to:" %}<br>
+        IBAN {{ paymenttype.iban }}<br>
+        {{ paymenttype.name }}<br>
+        {% trans "in favor of" %}<br> 
+        {{ addr.name }}, {{ addr.zip }} {{ addr.city }}
+    </p>
+    {% endif %}
+</div>
+
+{% endblock %}
+

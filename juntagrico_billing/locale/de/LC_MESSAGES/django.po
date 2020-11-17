@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-03 15:26+0100\n"
+"POT-Creation-Date: 2020-11-17 16:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -60,13 +60,13 @@ msgstr "Buchungsdatum"
 #: .\juntagrico_billing\entity\bill.py:110
 #: .\juntagrico_billing\entity\bill.py:143
 #: .\juntagrico_billing\templates\jb\bills.html:52
-#: .\juntagrico_billing\templates\jb\user_bills.html:32
+#: .\juntagrico_billing\templates\jb\user_bills.html:35
 msgid "Amount"
 msgstr "Betrag"
 
 #: .\juntagrico_billing\entity\bill.py:54
 #: .\juntagrico_billing\templates\jb\bills.html:55
-#: .\juntagrico_billing\templates\jb\user_bills.html:35
+#: .\juntagrico_billing\templates\jb\user_bills.html:38
 msgid "Paid"
 msgstr "Bezahlt"
 
@@ -86,7 +86,9 @@ msgstr "Betrag bezahlt"
 #: .\juntagrico_billing\entity\bill.py:84
 #: .\juntagrico_billing\entity\bill.py:98
 #: .\juntagrico_billing\entity\bill.py:138
-#: .\juntagrico_billing\util\bookings.py:213
+#: .\juntagrico_billing\templates\jb\user_bill.html:6
+#: .\juntagrico_billing\templates\jb\user_bill.html:28
+#: .\juntagrico_billing\util\bookings.py:214
 msgid "Bill"
 msgstr "Rechnung"
 
@@ -126,7 +128,7 @@ msgid "Payment date"
 msgstr "Zahlungsdatum"
 
 #: .\juntagrico_billing\entity\bill.py:150
-#: .\juntagrico_billing\util\bookings.py:213
+#: .\juntagrico_billing\util\bookings.py:214
 msgid "Payment"
 msgstr "Zahlung"
 
@@ -181,13 +183,38 @@ msgid "Number"
 msgstr "Nummer"
 
 #: .\juntagrico_billing\templates\jb\bills.html:46
-#: .\juntagrico_billing\templates\jb\user_bills.html:29
+#: .\juntagrico_billing\templates\jb\user_bills.html:32
 msgid "Kind"
 msgstr "Art"
 
 #: .\juntagrico_billing\templates\jb\bills.html:49
+#: .\juntagrico_billing\templates\jb\user_bills.html:29
 msgid "Date"
 msgstr "Datum"
+
+#: .\juntagrico_billing\templates\jb\user_bill.html:36
+msgid "Periode"
+msgstr ""
+
+#: .\juntagrico_billing\templates\jb\user_bill.html:52
+msgid "Payments per"
+msgstr "Zahlungen per"
+
+#: .\juntagrico_billing\templates\jb\user_bill.html:61
+msgid "Bill paid completely"
+msgstr "Rechnung komplett bezahlt"
+
+#: .\juntagrico_billing\templates\jb\user_bill.html:63
+msgid "Amount open yet"
+msgstr "Betrag noch offen"
+
+#: .\juntagrico_billing\templates\jb\user_bill.html:68
+msgid "Please pay specifying bill number to:"
+msgstr "Einzahlen mit Angabe von Rechnungsnummer auf:"
+
+#: .\juntagrico_billing\templates\jb\user_bill.html:71
+msgid "in favor of"
+msgstr "zugunsten von"
 
 #: .\juntagrico_billing\templates\jb\user_bills.html:11
 msgid "Payment details"
@@ -197,19 +224,15 @@ msgstr "Zahlungsverbindung"
 msgid "IBAN"
 msgstr "IBAN"
 
-#: .\juntagrico_billing\templates\jb\user_bills.html:38
-msgid "Amount Paid"
-msgstr "Bezahlter Betrag"
-
 #: .\juntagrico_billing\templates\jb\user_bills.html:42
 msgid "Reference Number"
 msgstr "Referenznummer"
 
-#: .\juntagrico_billing\templates\jb\user_bills.html:60
+#: .\juntagrico_billing\templates\jb\user_bills.html:63
 msgid "Yes"
 msgstr "Ja"
 
-#: .\juntagrico_billing\templates\jb\user_bills.html:60
+#: .\juntagrico_billing\templates\jb\user_bills.html:63
 msgid "No"
 msgstr "Nein"
 

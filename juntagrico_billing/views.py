@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import permission_required, login_required
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.template.loader import get_template
+from django.core.exceptions import PermissionDenied
 from django import forms
 
 from juntagrico.entity.extrasubs import ExtraSubscription
@@ -156,7 +157,7 @@ def export_bookings(bookings, filename):
 
 
 @login_required
-def bills_user(request):
+def user_bills(request):
     member = request.user.member
     settings = Settings.objects.first()
     renderdict = get_menu_dict(request)
@@ -166,3 +167,25 @@ def bills_user(request):
         'menu': {'bills': 'active'},
     })
     return render(request, "jb/user_bills.html", renderdict)
+
+@login_required
+def user_bill(request, bill_id):
+    member = request.user.member
+    bill = get_object_or_404(Bill, id=bill_id)
+
+    if bill.member != member:
+        raise PermissionDenied()
+    
+    settings = Settings.objects.first()
+
+    renderdict = get_menu_dict(request)
+    renderdict.update({
+        'member': member,
+        'bill': bill,
+        'today': date.today(),
+        'payments': bill.payments.all(),
+        'open_amount': bill.amount - bill.amount_paid,
+        'paymenttype': settings.default_paymenttype,
+    })
+    return render(request, "jb/user_bill.html", renderdict)
+
