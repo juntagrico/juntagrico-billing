@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-17 16:17+0100\n"
+"POT-Creation-Date: 2020-11-17 16:29+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -88,7 +88,6 @@ msgstr "Betrag bezahlt"
 #: .\juntagrico_billing\entity\bill.py:138
 #: .\juntagrico_billing\templates\jb\user_bill.html:6
 #: .\juntagrico_billing\templates\jb\user_bill.html:28
-#: .\juntagrico_billing\util\bookings.py:214
 msgid "Bill"
 msgstr "Rechnung"
 
@@ -128,7 +127,6 @@ msgid "Payment date"
 msgstr "Zahlungsdatum"
 
 #: .\juntagrico_billing\entity\bill.py:150
-#: .\juntagrico_billing\util\bookings.py:214
 msgid "Payment"
 msgstr "Zahlung"
 
@@ -325,3 +323,11 @@ msgstr "Es ist kein Geschäftsjahr für Rechnungen definiert"
 #: .\juntagrico_billing\templates\messages\no_businessyear.html:6
 msgid "Please create one in the data administration."
 msgstr "Bitte erstelle eines in der Datenadministration"
+
+#: .\juntagrico_billing\util\bookings.py:214
+msgid "Pmt"
+msgstr "Zlg"
+
+#: .\juntagrico_billing\util\bookings.py:214
+msgid "Bl"
+msgstr "Rg"

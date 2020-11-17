@@ -181,8 +181,8 @@ def get_bill_bookings(fromdate, tilldate):
             # docnumber is DOCNUMBER_OFFSET_BILL + id of bill*10 + sequencenumber of bill item
             booking.docnumber = str(DOCNUMBER_OFFSET_BILL + bill.id * 10 + idx+1)
 
-            # todo: translate
-            booking.text = "Rechnung %d: %s %s" % (bill.id, item.item_kind, bill.member)
+            # "Bl" is short form for "Bill"
+            booking.text = "%s %d: %s %s" % (_('Bl'),bill.id, item.item_kind, bill.member)
             booking.debit_account = debtor_account
             booking.price = item.amount
             if hasattr(bill.member, "member_account"):
@@ -211,7 +211,8 @@ def get_payment_bookings(fromdate, tilldate):
         booking.docnumber = str(DOCNUMBER_OFFSET_PAYMENT + payment.id) 
 
         bill = payment.bill
-        booking.text = "%s %s %d: %s %s" % (_('Payment'), _('Bill'), bill.id, bill.item_kinds, bill.member)
+        # 'Pmt' and 'Bl' are short forms for payment and bill
+        booking.text = "%s %s %d: %s %s" % (_('Pmt'), _('Bl'), bill.id, bill.item_kinds, bill.member)
         # todo where to get bank account from?
         booking.debit_account = payment.type.booking_account
         booking.price = payment.amount

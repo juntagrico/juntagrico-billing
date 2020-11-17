@@ -55,7 +55,7 @@ class BillBookingsTest(SubscriptionTestBase):
 
         self.assertEquals(self.year.start_date, booking.date)
         self.assertEquals("500011", booking.docnumber)
-        self.assertEquals("Rechnung 1: Abo Michael Test", booking.text)
+        self.assertEquals("Rg 1: Abo Michael Test", booking.text)
         self.assertEquals("1100", booking.debit_account)
         self.assertEquals("3001", booking.credit_account)
         self.assertEquals("4321", booking.member_account)
@@ -65,7 +65,7 @@ class BillBookingsTest(SubscriptionTestBase):
 
         self.assertEquals(self.year.start_date, booking.date)
         self.assertEquals("500012", booking.docnumber)
-        self.assertEquals("Rechnung 1: Zusatzabo Michael Test", booking.text)
+        self.assertEquals("Rg 1: Zusatzabo Michael Test", booking.text)
         self.assertEquals("1100", booking.debit_account)
         self.assertEquals("3010", booking.credit_account)
         self.assertEquals("4321", booking.member_account)
@@ -79,7 +79,7 @@ class BillBookingsTest(SubscriptionTestBase):
         booking = bookings[0]
         self.assertEquals(date(2018, 2, 1), booking.date)
         self.assertEquals('600001', booking.docnumber)
-        self.assertEquals("Zahlung Rechnung 1: Abo, Zusatzabo Michael Test", booking.text)
+        self.assertEquals("Zlg Rg 1: Abo, Zusatzabo Michael Test", booking.text)
         self.assertEquals(500.0, booking.price)
         self.assertEquals('1100', booking.credit_account)
         self.assertEquals('1010', booking.debit_account)
