@@ -101,11 +101,11 @@ class BillItem(JuntagricoBaseModel):
     # a bill item has either a subscription type or a extrasubscription type assigned
     subscription_type = models.ForeignKey(SubscriptionType, related_name='bill_items',
                                           null=True, blank=True,
-                                          on_delete=models.PROTECT, 
+                                          on_delete=models.PROTECT,
                                           verbose_name=_('Subscription'))
     extrasubscription_type = models.ForeignKey(ExtraSubscriptionType, related_name='bill_items',
                                                null=True, blank=True,
-                                               on_delete=models.PROTECT, 
+                                               on_delete=models.PROTECT,
                                                verbose_name=_('Extrasubscription'))
 
     description = models.CharField(_('Description'), null=True, blank=True, max_length=100)

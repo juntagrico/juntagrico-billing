@@ -34,7 +34,7 @@ class BillBookingsTest(SubscriptionTestBase):
         self.bill = create_bill(items, self.year, self.year.start_date)
 
         self.payment1 = Payment.objects.create(
-            bill = self.bill,
+            bill=self.bill,
             paid_date=date(2018, 2, 1),
             amount=500.0,
             type=self.paymenttype

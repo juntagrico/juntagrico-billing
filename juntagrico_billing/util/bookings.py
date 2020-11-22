@@ -166,6 +166,7 @@ def get_bill_bookings(fromdate, tilldate):
 
     return bookings
 
+
 def create_item_booking(idx, item, debtor_account):
     booking = Booking()
     bill = item.bill
@@ -216,7 +217,7 @@ def get_payment_bookings(fromdate, tilldate):
         booking.credit_account = debtor_account
 
         # docnumber is DOCNUMBER_OFFSET_PAYMENT + of bill*10 + sequence number of bill item
-        booking.docnumber = str(DOCNUMBER_OFFSET_PAYMENT + payment.id) 
+        booking.docnumber = str(DOCNUMBER_OFFSET_PAYMENT + payment.id)
 
         bill = payment.bill
         # 'Pmt' and 'Bl' are short forms for payment and bill

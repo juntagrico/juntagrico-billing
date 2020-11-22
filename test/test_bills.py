@@ -174,7 +174,6 @@ class BillSubscriptionsTests(SubscriptionTestBase):
         self.assertEquals('Abo, Zusatzabo', bill.item_kinds)
 
     def test_create_bill_for_all(self):
-        
         billable_items = get_billable_items(self.year)
         bills = create_bills_for_items(billable_items, self.year, self.year.start_date)
 
@@ -201,4 +200,3 @@ class GetBillableItemsTests(SubscriptionTestBase):
         # we expect no billable items because subscription is not active in 2018
         items = get_billable_items(self.year)
         self.assertEqual(0, len(items), "expecting no items for inactive subscription")
-

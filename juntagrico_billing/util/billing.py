@@ -182,5 +182,3 @@ def get_open_bills(businessyear, expected_percentage_paid):
 
     return [bill for bill in unpaid_bills
             if bill.amount_paid / bill.amount * 100.0 < expected_percentage_paid]
-
-

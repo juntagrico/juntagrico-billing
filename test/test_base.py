@@ -53,7 +53,7 @@ class SubscriptionTestBase(django.test.TestCase):
         )
 
         ExtraSubscriptionCategoryAccount.objects.create(
-            extrasubcategory = extrasub_category,
+            extrasubcategory=extrasub_category,
             account="3010"
         )
 

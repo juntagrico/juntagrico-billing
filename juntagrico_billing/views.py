@@ -209,5 +209,3 @@ def user_bill(request, bill_id):
         'paymenttype': settings.default_paymenttype,
     })
     return render(request, "jb/user_bill.html", renderdict)
-
-
