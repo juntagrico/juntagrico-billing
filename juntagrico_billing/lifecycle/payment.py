@@ -9,4 +9,3 @@ def payment_saved(instance, **kwargs):
     if total_paid >= bill.amount:
         bill.paid = True
         bill.save()
-

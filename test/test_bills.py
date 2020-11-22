@@ -16,8 +16,7 @@ class ScaleSubscriptionPriceTest(SubscriptionTestBase):
         super().setUp()
 
         self.subscription = self.create_subscription_and_member(self.subs_type, date(2018, 1, 1), date(2018, 1, 1), None,
-                                                                "Michael", "Test", "4321")
-
+                                                                "Markus", "Test", "4321")
 
     def test_price_by_date_fullyear(self):
         start_date = date(2018, 1, 1)
@@ -68,8 +67,6 @@ class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
             activation_date=date(2018, 1, 1),
             type=self.extrasub_type
         )
-
-
 
     expected_price = round(
         (100.0 * (31 + 30 + 31 + 30) / (31 + 28 + 31 + 30 + 31 + 30)) + (200.0 * (31 + 31 + 30 + 31) / (31 + 31 + 30 + 31 + 30 + 31)),
@@ -124,9 +121,9 @@ class BillSubscriptionsTests(SubscriptionTestBase):
         # create some subscriptions
         self.subscription = self.create_subscription_and_member(self.subs_type, date(2018, 1, 1), date(2018, 1, 1), None,
                                                                 "Michael", "Test", "4321")
-        self.subs2 = self.create_subscription_and_member(self.subs_type, date(2017, 1, 1), 
+        self.subs2 = self.create_subscription_and_member(self.subs_type, date(2017, 1, 1),
                                                          date(2017, 1, 1), None, "Early", "Lastyear", "17321")
-        self.subs3 = self.create_subscription_and_member(self.subs_type, date(2018, 3, 1), 
+        self.subs3 = self.create_subscription_and_member(self.subs_type, date(2018, 3, 1),
                                                          date(2018, 3, 1), None, "Later", "Thisyear", "17321")
 
         self.extrasubs = ExtraSubscription.objects.create(
@@ -139,7 +136,6 @@ class BillSubscriptionsTests(SubscriptionTestBase):
                                                 end_date=date(2018, 12, 31),
                                                 name="2018")
 
-
     def test_get_billable_subscriptions_without_bills(self):
         billable_items = get_billable_items(self.year)
         self.assertTrue(billable_items)
@@ -148,7 +144,6 @@ class BillSubscriptionsTests(SubscriptionTestBase):
         self.assertEqual(3, len(billable_subscription_parts))
         subscription = billable_subscription_parts[0].subscription
         self.assertEqual('Test', subscription.primary_member.last_name)
-
 
     def test_get_billable_subscriptions(self):
         # create bill for subs2
@@ -165,7 +160,7 @@ class BillSubscriptionsTests(SubscriptionTestBase):
         self.assertEqual('Test', subscription.primary_member.last_name)
 
     def test_create_bill_multiple_members(self):
-        # creating a bill for billable items from different members 
+        # creating a bill for billable items from different members
         # should result in an error
         billable_items = get_billable_items(self.year)
         with self.assertRaisesMessage(Exception, 'billable items belong to different members'):
@@ -178,7 +173,6 @@ class BillSubscriptionsTests(SubscriptionTestBase):
         self.assertEquals(2, len(bill.items.all()))
         self.assertEquals('Abo, Zusatzabo', bill.item_kinds)
 
-
     def test_create_bill_for_all(self):
         
         billable_items = get_billable_items(self.year)
@@ -189,6 +183,7 @@ class BillSubscriptionsTests(SubscriptionTestBase):
         # there should be no billable items left
         billable_items = get_billable_items(self.year)
         self.assertEqual(0, len(billable_items))
+
 
 class GetBillableItemsTests(SubscriptionTestBase):
     def setUp(self):
@@ -202,13 +197,8 @@ class GetBillableItemsTests(SubscriptionTestBase):
 
         # create subscription without activation date, only start_date
         subs = self.create_subscription_and_member(self.subs_type, date(2017, 1, 1), None, None,
-                                                                "Michael", "Test", "4321")
+                                                   "Michael", "Test", "4321")
         # we expect no billable items because subscription is not active in 2018
         items = get_billable_items(self.year)
         self.assertEqual(0, len(items), "expecting no items for inactive subscription")
-
-
-        
-    
-
 

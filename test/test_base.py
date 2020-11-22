@@ -36,8 +36,8 @@ class SubscriptionTestBase(django.test.TestCase):
         )
 
         SubscriptionTypeAccount.objects.create(
-            subscriptiontype = self.subs_type,
-            account = "3001"
+            subscriptiontype=self.subs_type,
+            account="3001"
         )
 
         self.depot = Depot.objects.create(
@@ -54,7 +54,7 @@ class SubscriptionTestBase(django.test.TestCase):
 
         ExtraSubscriptionCategoryAccount.objects.create(
             extrasubcategory = extrasub_category,
-            account = "3010"
+            account="3010"
         )
 
         self.extrasub_type = ExtraSubscriptionType.objects.create(

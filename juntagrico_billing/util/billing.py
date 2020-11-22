@@ -113,8 +113,7 @@ def create_bill(billable_items, businessyear, bill_date):
         if isinstance(billable, SubscriptionPart):
             # subscription part
             part = billable
-            price = scale_subscriptionpart_price(part,
-                                            businessyear.start_date, businessyear.end_date)
+            price = scale_subscriptionpart_price(part, businessyear.start_date, businessyear.end_date)
             text = str(part.type)
             bill_item = BillItem.objects.create(bill=bill, subscription_type=part.type,
                                                 amount=price, description=text)
@@ -123,18 +122,19 @@ def create_bill(billable_items, businessyear, bill_date):
         elif isinstance(billable, ExtraSubscription):
             # extra subscription
             price = scale_extrasubscription_price(billable,
-                                                    businessyear.start_date, businessyear.end_date)
+                                                  businessyear.start_date, businessyear.end_date)
             text = str(billable.type)
             bill_item = BillItem.objects.create(bill=bill, extrasubscription_type=billable.type,
                                                 amount=price, description=text)
             bill_item.save()
             items.append(bill_item)
-            
+
         # set total amount on bill
         bill.amount = sum([itm.amount for itm in items])
 
     bill.save()
     return bill
+
 
 def group_billables_by_member(billable_items):
     """
@@ -148,7 +148,7 @@ def group_billables_by_member(billable_items):
         if isinstance(item, SubscriptionPart):
             items_per_member[item.subscription.primary_member].append(item)
         elif isinstance(item, ExtraSubscription):
-            items_per_member[item.main_subscription.primary_member].append(item)  
+            items_per_member[item.main_subscription.primary_member].append(item)
         else:
             raise Exception('unsupported item for bill: %s' % repr(item))
 
@@ -170,6 +170,7 @@ def create_bills_for_items(billable_items, businessyear, bill_date):
 
     return bills
 
+
 def get_open_bills(businessyear, expected_percentage_paid):
     """
     get unpaid bills from a businessyear, filtering on unpaid amount.
@@ -178,7 +179,8 @@ def get_open_bills(businessyear, expected_percentage_paid):
     """
     # fetch unpaid bills, SQL filtered
     unpaid_bills = businessyear.bills.filter(paid=False)
- 
-    return [bill for bill in unpaid_bills 
-            if bill.amount_paid / bill.amount * 100.0  < expected_percentage_paid]
+
+    return [bill for bill in unpaid_bills
+            if bill.amount_paid / bill.amount * 100.0 < expected_percentage_paid]
+
 

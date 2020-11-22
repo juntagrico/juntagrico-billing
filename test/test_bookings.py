@@ -12,6 +12,7 @@ class SubscriptionBookingsTest(SubscriptionTestBase):
 
         self.subscription = self.create_subscription_and_member(self.subs_type, date(2018, 1, 1), date(2018, 1, 1), None,
                                                                 "Michael", "Test", "4321")
+
     def test_subscription_booking_full_year(self):
         start_date = date(2018, 1, 1)
         end_date = date(2018, 12, 31)
@@ -86,7 +87,6 @@ class ExtraSubscriptionBookingsTest(SubscriptionTestBase):
             activation_date=date(2018, 1, 1),
             type=self.extrasub_type
         )
-
 
     def test_generate_document_number_for_extra_subscription(self):
         docnumber = gen_document_number(self.extrasubs, date(2018, 1, 1))

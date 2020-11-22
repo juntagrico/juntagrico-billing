@@ -17,6 +17,7 @@ from juntagrico_billing.dao.subscriptions import subscriptions_by_date, extrasub
 DOCNUMBER_OFFSET_BILL = 500000
 DOCNUMBER_OFFSET_PAYMENT = 600000
 
+
 class Booking(object):
     pass
 
@@ -148,6 +149,7 @@ def gen_document_number(entry, range_start):
     entry_part = str(entry.id).rjust(9, '0')
     return date_part + member_part + entry_part
 
+
 def get_bill_bookings(fromdate, tilldate):
     # get all bills by business-year start, end
 
@@ -160,38 +162,44 @@ def get_bill_bookings(fromdate, tilldate):
 
     for bill in bills:
         for idx, item in enumerate(bill.items.all()):
-            booking = Booking()
-            bookings.append(booking)
-
-            booking.date = bill.booking_date
-            booking.credit_account= ""
-            if item.subscription_type: 
-                if hasattr(item.subscription_type, "subscriptiontype_account"):
-                    booking.credit_account = item.subscription_type.subscriptiontype_account.account
-                else:
-                    booking.credit_account = ""
-
-            elif item.extrasubscription_type:
-                category = item.extrasubscription_type.category
-                if hasattr(category, "extrasub_account"):
-                    booking.credit_account = category.extrasub_account.account
-                else: 
-                    booking.credit_account = ""
-
-            # docnumber is DOCNUMBER_OFFSET_BILL + id of bill*10 + sequencenumber of bill item
-            booking.docnumber = str(DOCNUMBER_OFFSET_BILL + bill.id * 10 + idx+1)
-
-            # "Bl" is short form for "Bill"
-            booking.text = "%s %d: %s %s" % (_('Bl'),bill.id, item.item_kind, bill.member)
-            booking.debit_account = debtor_account
-            booking.price = item.amount
-            if hasattr(bill.member, "member_account"):
-                booking.member_account = bill.member.member_account.account
-            else:
-                booking.member_account = ""
+            bookings.append(create_item_booking(idx, item, debtor_account))
 
     return bookings
-        
+
+def create_item_booking(idx, item, debtor_account):
+    booking = Booking()
+    bill = item.bill
+
+    booking.date = bill.booking_date
+    booking.credit_account = ""
+    if item.subscription_type:
+        if hasattr(item.subscription_type, "subscriptiontype_account"):
+            booking.credit_account = item.subscription_type.subscriptiontype_account.account
+        else:
+            booking.credit_account = ""
+
+    elif item.extrasubscription_type:
+        category = item.extrasubscription_type.category
+        if hasattr(category, "extrasub_account"):
+            booking.credit_account = category.extrasub_account.account
+        else:
+            booking.credit_account = ""
+
+    # docnumber is DOCNUMBER_OFFSET_BILL + id of bill*10 + sequencenumber of bill item
+    booking.docnumber = str(DOCNUMBER_OFFSET_BILL + bill.id * 10 + idx+1)
+
+    # "Bl" is short form for "Bill"
+    booking.text = "%s %d: %s %s" % (_('Bl'), bill.id, item.item_kind, bill.member)
+    booking.debit_account = debtor_account
+    booking.price = item.amount
+    if hasattr(bill.member, "member_account"):
+        booking.member_account = bill.member.member_account.account
+    else:
+        booking.member_account = ""
+
+    return booking
+
+
 def get_payment_bookings(fromdate, tilldate):
     payments = PaymentDao.payments_for_daterange(fromdate, tilldate)
 

@@ -22,6 +22,7 @@ from juntagrico_billing.entity.settings import Settings
 from juntagrico_billing.util.billing import get_billable_items, group_billables_by_member, create_bills_for_items, get_open_bills
 from juntagrico_billing.util.bookings import get_bill_bookings, get_payment_bookings
 
+
 @permission_required('juntagrico.is_book_keeper')
 def bills(request):
     """
@@ -49,16 +50,16 @@ def bills(request):
     # determine view state (all, open, open75, open50, open25, generate)
     states = ('all', 'open', 'open75', 'open50', 'open25', 'generate')
     state = request.GET.get('state', 'all')
-    
+
     # array to set active tab state in template
-    state_active = [(state==st and 'active') or '' for st in states]
+    state_active = [(state == st and 'active') or '' for st in states]
 
     if selected_year:
         bills_list = selected_year.bills.all()
-        if state=="generate":
+        if state == "generate":
             billable_items = get_billable_items(selected_year)
             pending_bills = len(group_billables_by_member(billable_items))
-        
+
         elif state.startswith("open"):
             percent_str = state[4:]
             if percent_str:
@@ -72,7 +73,7 @@ def bills(request):
     renderdict.update({
         'business_years': business_years,
         'selected_year': selected_year,
-        'bills_list': bills_list, 
+        'bills_list': bills_list,
         'bills_count': len(bills_list),
         'pending_bills': pending_bills,
         'percent_paid': percent_paid,
@@ -111,11 +112,11 @@ class DateRangeForm(forms.Form):
     fromdate = forms.DateField(
                 widget=forms.DateInput(
                     attrs={'class': 'col-md-2 form-control',
-                            'id': 'id_fromdate'}))
+                           'id': 'id_fromdate'}))
     tilldate = forms.DateField(
                 widget=forms.DateInput(
                     attrs={'class': 'col-md-2 form-control',
-                            'id': 'id_tilldate'}))
+                           'id': 'id_tilldate'}))
 
 
 @permission_required('juntagrico.is_book_keeper')
@@ -148,18 +149,18 @@ def bookings_export(request):
     if ('export' in request.GET) and daterange_form.is_valid():
         # sort bookings on date and docnumber
         bookings = sorted(bill_bookings + payment_bookings,
-                            key=lambda bk: (bk.date, bk.docnumber))
+                          key=lambda bk: (bk.date, bk.docnumber))
         return export_bookings(bookings, "bookings")
 
     # otherwise return page
-    renderdict.update({ 
+    renderdict.update({
         'daterange_form': daterange_form,
         'bill_bookings_count': len(bill_bookings),
         'payment_bookings_count': len(payment_bookings),
     })
 
     return render(request, 'jb/bookings_export.html', renderdict)
- 
+
 
 def export_bookings(bookings, filename):
     fields = {
@@ -175,7 +176,6 @@ def export_bookings(bookings, filename):
     return generate_excel(fields.items(), bookings, filename)
 
 
-
 @login_required
 def user_bills(request):
     member = request.user.member
@@ -188,6 +188,7 @@ def user_bills(request):
     })
     return render(request, "jb/user_bills.html", renderdict)
 
+
 @login_required
 def user_bill(request, bill_id):
     member = request.user.member
@@ -195,7 +196,7 @@ def user_bill(request, bill_id):
 
     if bill.member != member:
         raise PermissionDenied()
-    
+
     settings = Settings.objects.first()
 
     renderdict = get_menu_dict(request)
@@ -208,4 +209,5 @@ def user_bill(request, bill_id):
         'paymenttype': settings.default_paymenttype,
     })
     return render(request, "jb/user_bill.html", renderdict)
+
 
