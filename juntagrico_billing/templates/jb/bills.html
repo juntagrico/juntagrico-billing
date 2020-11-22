@@ -23,6 +23,28 @@
         </button>
     </div>
 </form>
+<ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+      <a class="nav-link {{ state_active.0 }}" href="{% url 'jb:bills-list' %}">{% trans "All" %}</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {{ state_active.1 }}" href="{% url 'jb:bills-list' %}?state=open">{% trans "Open" %}</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ state_active.2 }}" href="{% url 'jb:bills-list' %}?state=open75">{% trans "Open" %} 75%</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ state_active.3 }}" href="{% url 'jb:bills-list' %}?state=open50">{% trans "Open" %} 50%</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ state_active.4 }}" href="{% url 'jb:bills-list' %}?state=open25">{% trans "Open" %} 25%</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {{ state_active.5 }}" href="{% url 'jb:bills-list' %}?state=generate">{% trans "Generate bills" %}</a>
+    </li>
+</ul>
+  
+{% if state == "generate" %}
 <form class="row mb-3" action="{% url 'jb:bills-generate' %}" method="POST">
     {% csrf_token %}
     <p class="col-md-4">{{ pending_bills }} {% trans "pending bills for" %} {{ selected_year.name }}.</p>
@@ -30,9 +52,19 @@
         <button type="submit" class="btn btn-success">{% trans "Generate" %}</button>
     </div>
 </form>
+{% elif state == "all" %}
+<p class="mb-3">
+    {{ bills_count }} {% trans "bills for" %} {{ selected_year.name }}
+</p>
+{% else %}
+<p class="mb-3">
+    {{ bills_count}} {% trans "open bills with paid amount less than" %} {{ percent_paid }}%
+</p>
+{% endif %}
 
 {% endblock %}
 {% block list %}
+{% if state != "generate" %}
     <table id="filter-table" class="table">
         <thead>
             <tr>
@@ -50,6 +82,9 @@
                 </th>
                 <th scope="col" class="filter">
                     {% trans "Amount" %}
+                </th>
+                <th scope="col" class="filter">
+                    {% trans "Paid Amount" %}
                 </th>
                 <th scope="col" class="filter">
                     {% trans "Paid" %}
@@ -77,10 +112,14 @@
                         {{ bill.amount }}
                     </td>
                     <td>
+                        {{ bill.amount_paid }}
+                    </td>
+                    <td>
                         {{ bill.paid }}
                     </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+{% endif %}
 {% endblock %}

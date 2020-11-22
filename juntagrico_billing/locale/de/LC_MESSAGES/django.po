@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-17 16:29+0100\n"
+"POT-Creation-Date: 2020-11-22 13:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -44,7 +44,7 @@ msgid "Businessyear end_date must be after start_date."
 msgstr "Geschäftsjahr Enddatum muss nach dem Startdatum sein."
 
 #: .\juntagrico_billing\entity\bill.py:46
-#: .\juntagrico_billing\templates\jb\bills.html:43
+#: .\juntagrico_billing\templates\jb\bills.html:75
 msgid "Member"
 msgstr "Mitglied"
 
@@ -59,13 +59,13 @@ msgstr "Buchungsdatum"
 #: .\juntagrico_billing\entity\bill.py:53
 #: .\juntagrico_billing\entity\bill.py:110
 #: .\juntagrico_billing\entity\bill.py:143
-#: .\juntagrico_billing\templates\jb\bills.html:52
+#: .\juntagrico_billing\templates\jb\bills.html:84
 #: .\juntagrico_billing\templates\jb\user_bills.html:35
 msgid "Amount"
 msgstr "Betrag"
 
 #: .\juntagrico_billing\entity\bill.py:54
-#: .\juntagrico_billing\templates\jb\bills.html:55
+#: .\juntagrico_billing\templates\jb\bills.html:90
 #: .\juntagrico_billing\templates\jb\user_bills.html:38
 msgid "Paid"
 msgstr "Bezahlt"
@@ -80,8 +80,10 @@ msgid "Notes not visible to {}"
 msgstr "Notizen nicht sichtbar für {}"
 
 #: .\juntagrico_billing\entity\bill.py:63
+#, fuzzy
+#| msgid "Amount"
 msgid "Amount paid"
-msgstr "Betrag bezahlt"
+msgstr "Betrag"
 
 #: .\juntagrico_billing\entity\bill.py:84
 #: .\juntagrico_billing\entity\bill.py:98
@@ -153,7 +155,7 @@ msgstr "Rechnung {0}"
 
 #: .\juntagrico_billing\mailer.py:57
 msgid "Bill Extra-Subscription"
-msgstr ""
+msgstr "Rechnung Zusatzabo"
 
 #: .\juntagrico_billing\templates\jb\billing_admin_menu.html:4
 msgid "Bills and Bookkeeping"
@@ -168,31 +170,58 @@ msgid "Change"
 msgstr "Ändern"
 
 #: .\juntagrico_billing\templates\jb\bills.html:28
+msgid "All"
+msgstr ""
+
+#: .\juntagrico_billing\templates\jb\bills.html:31
+#: .\juntagrico_billing\templates\jb\bills.html:34
+#: .\juntagrico_billing\templates\jb\bills.html:37
+#: .\juntagrico_billing\templates\jb\bills.html:40
+msgid "Open"
+msgstr "Offen"
+
+#: .\juntagrico_billing\templates\jb\bills.html:43
+msgid "Generate bills"
+msgstr "Rechnungen generieren"
+
+#: .\juntagrico_billing\templates\jb\bills.html:50
 msgid "pending bills for"
 msgstr "anstehende Rechnungen für"
 
-#: .\juntagrico_billing\templates\jb\bills.html:30
+#: .\juntagrico_billing\templates\jb\bills.html:52
 msgid "Generate"
 msgstr "Generieren"
 
-#: .\juntagrico_billing\templates\jb\bills.html:40
+#: .\juntagrico_billing\templates\jb\bills.html:57
+msgid "bills for"
+msgstr "Rechnungen für"
+
+#: .\juntagrico_billing\templates\jb\bills.html:61
+msgid "open bills with paid amount less than"
+msgstr "Offene Rechnungen mit bezahltem Betrag weniger als"
+
+#: .\juntagrico_billing\templates\jb\bills.html:72
 #: .\juntagrico_billing\templates\jb\user_bills.html:26
 msgid "Number"
 msgstr "Nummer"
 
-#: .\juntagrico_billing\templates\jb\bills.html:46
+#: .\juntagrico_billing\templates\jb\bills.html:78
 #: .\juntagrico_billing\templates\jb\user_bills.html:32
 msgid "Kind"
 msgstr "Art"
 
-#: .\juntagrico_billing\templates\jb\bills.html:49
+#: .\juntagrico_billing\templates\jb\bills.html:81
 #: .\juntagrico_billing\templates\jb\user_bills.html:29
 msgid "Date"
 msgstr "Datum"
 
+#: .\juntagrico_billing\templates\jb\bills.html:87
+msgid "Paid Amount"
+msgstr "Betrag bezahlt"
+
 #: .\juntagrico_billing\templates\jb\user_bill.html:36
-msgid "Periode"
-msgstr ""
+msgid "Period"
+msgstr "Periode"
 
 #: .\juntagrico_billing\templates\jb\user_bill.html:52
 msgid "Payments per"
@@ -324,10 +353,11 @@ msgstr "Es ist kein Geschäftsjahr für Rechnungen definiert"
 msgid "Please create one in the data administration."
 msgstr "Bitte erstelle eines in der Datenadministration"
 
-#: .\juntagrico_billing\util\bookings.py:214
-msgid "Pmt"
-msgstr "Zlg"
-
-#: .\juntagrico_billing\util\bookings.py:214
+#: .\juntagrico_billing\util\bookings.py:185
+#: .\juntagrico_billing\util\bookings.py:215
 msgid "Bl"
 msgstr "Rg"
+
+#: .\juntagrico_billing\util\bookings.py:215
+msgid "Pmt"
+msgstr "Zlg"

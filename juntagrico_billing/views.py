@@ -1,11 +1,11 @@
 from datetime import date, timedelta
-
 from django.contrib.auth.decorators import permission_required, login_required
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.template.loader import get_template
 from django.core.exceptions import PermissionDenied
 from django import forms
+from django.urls import reverse
 
 from juntagrico.entity.extrasubs import ExtraSubscription
 from juntagrico.entity.subs import Subscription
@@ -19,7 +19,7 @@ from juntagrico.views import get_menu_dict
 from juntagrico_billing.dao.billdao import BillDao
 from juntagrico_billing.entity.bill import BusinessYear, Bill
 from juntagrico_billing.entity.settings import Settings
-from juntagrico_billing.util.billing import get_billable_items, group_billables_by_member, create_bills_for_items
+from juntagrico_billing.util.billing import get_billable_items, group_billables_by_member, create_bills_for_items, get_open_bills
 from juntagrico_billing.util.bookings import get_bill_bookings, get_payment_bookings
 
 @permission_required('juntagrico.is_book_keeper')
@@ -34,32 +34,52 @@ def bills(request):
 
     # if no year set, choose most recent year
     selected_year = None
-    selected_year_name = request.session.get('billing_businessyear', None)
+    selected_year_name = request.session.get('bills_businessyear', None)
     if selected_year_name:
         selected_year = [year for year in business_years if year.name == selected_year_name][0]
     else:
         if len(business_years):
             selected_year = business_years[-1]
-            request.session['billing_businessyear'] = selected_year.name
+            request.session['bills_businessyear'] = selected_year.name
+
+    bills_list = []
+    pending_bills = 0
+    percent_paid = 100
+
+    # determine view state (all, open, open75, open50, open25, generate)
+    states = ('all', 'open', 'open75', 'open50', 'open25', 'generate')
+    state = request.GET.get('state', 'all')
+    
+    # array to set active tab state in template
+    state_active = [(state==st and 'active') or '' for st in states]
 
     if selected_year:
         bills_list = selected_year.bills.all()
-        billable_items = get_billable_items(selected_year)
-        pending_bills = len(group_billables_by_member(billable_items))
+        if state=="generate":
+            billable_items = get_billable_items(selected_year)
+            pending_bills = len(group_billables_by_member(billable_items))
+        
+        elif state.startswith("open"):
+            percent_str = state[4:]
+            if percent_str:
+                percent_paid = int(percent_str)
+            bills_list = get_open_bills(selected_year, percent_paid)
+
     else:
-        bills_list = []
-        billable_items = []
-        pending_bills = 0
         message = get_template('messages/no_businessyear.html').render()
         renderdict['messages'].append(message)
 
     renderdict.update({
         'business_years': business_years,
         'selected_year': selected_year,
-        'bills_list': bills_list,
+        'bills_list': bills_list, 
+        'bills_count': len(bills_list),
         'pending_bills': pending_bills,
+        'percent_paid': percent_paid,
         'email_form_disabled': True,
-        'change_date_disabled': True
+        'change_date_disabled': True,
+        'state': state,
+        'state_active': state_active
     })
 
     return render(request, "jb/bills.html", renderdict)
@@ -84,7 +104,7 @@ def bills_generate(request):
 
     create_bills_for_items(billable_items, year, date.today())
 
-    return return_to_previous_location(request)
+    return redirect(reverse('jb:bills-list'))
 
 
 class DateRangeForm(forms.Form):
