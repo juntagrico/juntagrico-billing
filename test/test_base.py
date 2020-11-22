@@ -114,6 +114,11 @@ class SubscriptionTestBase(django.test.TestCase):
         member.subscription = subscription
         member.save()
         subscription.primary_member = member
+        member.join_subscription(subscription)
+        # hack: need to set join_date, otherwise consistency checks fail
+        sub_membership = member.subscriptionmembership_set.filter(subscription=subscription).first()
+        sub_membership.join_date = activation_date
+        sub_membership.save()
         subscription.save()
 
         part = SubscriptionPart.objects.create(

@@ -26,9 +26,23 @@ class SubscriptionBookingsTest(SubscriptionTestBase):
         start_date = date(2018, 1, 1)
         end_date = date(2018, 12, 31)
         # modify subscription to last from 1.7. - 30.09.
-        self.subscription.activation_date = date(2018, 7, 1)
-        self.subscription.deactivation_date = date(2018, 9, 30)
-        self.subscription.save()
+        sub = self.subscription
+        part = self.subscription.parts.first()
+        member = self.subscription.primary_member
+        sub.activation_date = date(2018, 7, 1)
+        sub.deactivation_date = date(2018, 9, 30)
+        sub.cancellation_date = sub.deactivation_date
+        # hack: need to adjust join_date, otherwise consistency checks fail
+        sub_membership = member.subscriptionmembership_set.filter(subscription=sub).first()
+        sub_membership.join_date = sub.activation_date
+        sub_membership.save()
+        part.activation_date = sub.activation_date
+        part.deactivation_date = sub.deactivation_date
+        part.cancellation_date = sub.cancellation_date
+        part.save()
+        sub.save()
+
+        # get bookings list
         bookings_list = subscription_bookings_by_date(start_date, end_date)
         self.assertEqual(1, len(bookings_list))
         booking = bookings_list[0]
@@ -50,11 +64,12 @@ class SubscriptionBookingsTest(SubscriptionTestBase):
 
     def test_inactive_subscription(self):
         # subscription was deactivated before our interval
-        self.subscription.deactivation_date = date(2017, 12, 31)
+        self.subscription.deactivation_date = date(2018, 12, 31)
+        self.subscription.cancellation_date = date(2018, 12, 31)
         self.subscription.save()
 
-        start_date = date(2018, 1, 1)
-        end_date = date(2018, 12, 31)
+        start_date = date(2019, 1, 1)
+        end_date = date(2019, 12, 31)
         bookings_list = subscription_bookings_by_date(start_date, end_date)
         self.assertEqual(0, len(bookings_list))
 

@@ -40,9 +40,11 @@ class ScaleSubscriptionPriceTest(SubscriptionTestBase):
     def test_price_by_date_partial_subscription(self):
         self.subscription.activation_date = date(2018, 7, 1)
         self.subscription.deactivation_date = date(2018, 9, 30)
+        self.subscription.cancellation_date = self.subscription.deactivation_date
         for part in self.subscription.parts.all():
             part.activation_date = date(2018, 7, 1)
             part.deactivation_date = date(2018, 9, 30)
+            part.cancellation_date = part.deactivation_date
             part.save()
         start_date = date(2018, 1, 1)
         end_date = date(2018, 12, 31)
