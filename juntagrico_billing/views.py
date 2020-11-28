@@ -92,14 +92,14 @@ def bills(request):
 def bills_setyear(request):
     # determine chosen billing year
     year = request.POST.get('year')
-    request.session['billing_businessyear'] = year
+    request.session['bills_businessyear'] = year
     return return_to_previous_location(request)
 
 
 @permission_required('juntagrico.is_book_keeper')
 def bills_generate(request):
     # generate bills for current business year
-    year_name = request.session['billing_businessyear']
+    year_name = request.session['bills_businessyear']
     year = BusinessYear.objects.filter(name=year_name).first()
 
     billable_items = get_billable_items(year)
