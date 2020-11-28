@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-28 14:46+0100\n"
+"POT-Creation-Date: 2020-11-28 18:04+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,14 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\juntagrico_billing\admin\bill.py:9
+msgid "Set flag for 'notification sent'"
+msgstr "Markierung 'Benachrichting gesandt' setzen"
+
+#: .\juntagrico_billing\admin\bill.py:13
+msgid "Reset flag for 'notification sent'"
+msgstr "Markierung 'Benachrichtigung gesandt' zurücksetzen"
 
 #: .\juntagrico_billing\entity\bill.py:17
 msgid "start date"
@@ -158,7 +166,8 @@ msgstr "Zahlungstypen"
 msgid "Bill {0}"
 msgstr "Rechnung {0}"
 
-#: .\juntagrico_billing\mailer.py:35
+#: .\juntagrico_billing\mailer.py:37
+#, python-brace-format
 msgid "{0} Bill"
 msgstr "{0} Rechnung"
 
@@ -245,24 +254,24 @@ msgstr "E-Mails senden"
 msgid "Period"
 msgstr "Periode"
 
-#: .\juntagrico_billing\templates\jb\user_bill.html:52
+#: .\juntagrico_billing\templates\jb\user_bill.html:54
 msgid "Payments per"
 msgstr "Zahlungen per"
 
-#: .\juntagrico_billing\templates\jb\user_bill.html:61
+#: .\juntagrico_billing\templates\jb\user_bill.html:63
 msgid "Bill paid completely"
 msgstr "Rechnung komplett bezahlt"
 
-#: .\juntagrico_billing\templates\jb\user_bill.html:63
+#: .\juntagrico_billing\templates\jb\user_bill.html:65
 msgid "Amount open yet"
 msgstr "Betrag noch offen"
 
-#: .\juntagrico_billing\templates\jb\user_bill.html:68
+#: .\juntagrico_billing\templates\jb\user_bill.html:70
 #: .\juntagrico_billing\templates\mails\bill_notification.txt:20
 msgid "Please pay specifying bill number to:"
 msgstr "Bitte einzahlen mit Angabe von Rechnungsnummer auf:"
 
-#: .\juntagrico_billing\templates\jb\user_bill.html:71
+#: .\juntagrico_billing\templates\jb\user_bill.html:73
 #: .\juntagrico_billing\templates\mails\bill_notification.txt:23
 msgid "in favor of"
 msgstr "zugunsten von"
@@ -342,6 +351,7 @@ msgid "Bis bald und liebe Grüsse die %(c_organisation_name)s-Betriebsgruppe"
 msgstr "Bis bald und liebe Grüsse die %(c_organisation_name)s-Betriebsgruppe"
 
 #: .\juntagrico_billing\templates\mails\bill_notification.txt:9
+#, python-format
 msgid "Dear %(fn)s"
 msgstr "Lieber %(fn)s"
 
@@ -379,8 +389,8 @@ msgid ""
 msgstr ""
 "Der Rechnungsbetrag ist zahlbar bis %(end_date)s und kann in Teilzahlungen "
 "geleistet werden.\n"
-"Bitte bei Zahlungen immer die Rechnungsnummer angegeben, damit eine Zuordnung "
-"möglich ist."
+"Bitte bei Zahlungen immer die Rechnungsnummer angegeben, damit eine "
+"Zuordnung möglich ist."
 
 #: .\juntagrico_billing\templates\mails\bill_notification.txt:29
 #, python-format
