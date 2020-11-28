@@ -8,6 +8,7 @@ urlpatterns = [
     path('jb/bills', views.bills, name='bills-list'),
     path('jb/bills_setyear', views.bills_setyear, name='bills-setyear'),
     path('jb/bills_generate', views.bills_generate, name='bills-generate'),
+    path('jb/bills_notify', views.bills_notify, name='bills-notify'),
 
     # bookings export
     path('jb/bookings_export', views.bookings_export, name='bookings-export'),

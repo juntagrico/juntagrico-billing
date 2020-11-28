@@ -21,6 +21,7 @@ from juntagrico_billing.entity.bill import BusinessYear, Bill
 from juntagrico_billing.entity.settings import Settings
 from juntagrico_billing.util.billing import get_billable_items, group_billables_by_member, create_bills_for_items, get_open_bills
 from juntagrico_billing.util.bookings import get_bill_bookings, get_payment_bookings
+from juntagrico_billing.mailer import send_bill_notification
 
 
 @permission_required('juntagrico.is_book_keeper')
@@ -209,3 +210,29 @@ def user_bill(request, bill_id):
         'paymenttype': settings.default_paymenttype,
     })
     return render(request, "jb/user_bill.html", renderdict)
+
+@permission_required('juntagrico.is_book_keeper')
+def bills_notify(request):
+    """
+    List of bills to send notification e-mails
+    """
+    renderdict = get_menu_dict(request)
+
+    bills_list = list(Bill.objects.filter(notification_sent=False))
+
+    if request.method == 'POST':
+        for bill in bills_list:
+            send_bill_notification(bill)
+            bill.notification_sent = True
+            bill.save()
+        
+        return return_to_previous_location(request)
+
+    renderdict.update({
+        'bills_list': bills_list,
+        'bills_count': len(bills_list),
+        'email_form_disabled': True,
+        'change_date_disabled': True,
+    })
+
+    return render(request, "jb/bills_notify.html", renderdict)

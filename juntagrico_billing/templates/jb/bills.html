@@ -80,10 +80,10 @@
                 <th scope="col" class="filter">
                     {% trans "Date" %}
                 </th>
-                <th scope="col" class="filter">
+                <th scope="col" class="filter text-right">
                     {% trans "Amount" %}
                 </th>
-                <th scope="col" class="filter">
+                <th scope="col" class="filter text-right">
                     {% trans "Paid Amount" %}
                 </th>
                 <th scope="col" class="filter">
@@ -106,13 +106,13 @@
                         {{ bill.item_kinds }}
                     </td>
                     <td>
-                        {{ bill.bill_date | date:"Y-m-d" }}
+                        {{ bill.bill_date }}
                     </td>
-                    <td>
-                        {{ bill.amount }}
+                    <td class="text-right">
+                        {{ bill.amount | floatformat:2 }}
                     </td>
-                    <td>
-                        {{ bill.amount_paid }}
+                    <td class="text-right">
+                        {{ bill.amount_paid | floatformat:2 }}
                     </td>
                     <td>
                         {{ bill.paid }}

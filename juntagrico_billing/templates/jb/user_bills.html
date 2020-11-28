@@ -10,7 +10,7 @@
     <div class="row">
         <h4 class="col-md-12">{% trans "Payment details" %}</h4>
     </div>
-    <div class="row">
+    <div class="row mb-3">
         <div class="col-md-12">
             {% config "organisation_address" as addr %}
             {{ paymenttype.name }}<br/>
@@ -51,18 +51,18 @@
                         <a href="{% url 'jb:user-bill' bill.pk  %}">{{ bill.pk }}</a>
                     </td>
                     <td>
-                        {{ bill.bill_date | date:"SHORT_DATE_FORMAT" }}
+                        {{ bill.bill_date | date }}
                     </td>
                     <td>
                         {{ bill.description | linebreaks }}
                     </td>
-                    <td>
-                        {{ bill.amount }}
+                    <td class="text-right">
+                        {{ bill.amount | floatformat:2 }}
                     </td>
                     <td>
                         {% if bill.paid %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}
                     </td>
-                    <td>
+                    <td class="text-right">
                         {% if not bill.paid %}
                         {{ amount.paid  }}
                         {% endif %}

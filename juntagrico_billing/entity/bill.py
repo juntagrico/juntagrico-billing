@@ -55,6 +55,7 @@ class Bill(JuntagricoBaseModel):
     paid = models.BooleanField(_('Paid'), null=False, blank=False, default=False)
     public_notes = models.TextField(_('Notes visible to {}').format(Config.vocabulary('member_pl')), null=True, blank=True)
     private_notes = models.TextField(_('Notes not visible to {}').format(Config.vocabulary('member_pl')), null=True, blank=True)
+    notification_sent = models.BooleanField(_('Notification sent'), null=False, blank=False, default=False)
 
     # derived properties
     @property
