@@ -15,8 +15,7 @@ class ScaleSubscriptionPriceTest(SubscriptionTestBase):
     def setUp(self):
         super().setUp()
 
-        self.subscription = self.create_subscription_and_member(self.subs_type, date(2018, 1, 1), date(2018, 1, 1), None,
-                                                                "Markus", "Test", "4321")
+        self.subscription = self.create_subscription_and_member(self.subs_type, date(2018, 1, 1), date(2018, 1, 1), None, "Test", "4321")
 
     def test_price_by_date_fullyear(self):
         start_date = date(2018, 1, 1)
@@ -59,8 +58,7 @@ class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
     def setUp(self):
         super().setUp()
 
-        self.subscription = self.create_subscription_and_member(self.subs_type, date(2018, 1, 1), date(2018, 1, 1), None,
-                                                                "Michael", "Test", "4321")
+        self.subscription = self.create_subscription_and_member(self.subs_type, date(2018, 1, 1), date(2018, 1, 1), None, "Tester", "4321")
 
         self.extrasubs = ExtraSubscription.objects.create(
             main_subscription=self.subscription,
@@ -119,12 +117,9 @@ class BillSubscriptionsTests(SubscriptionTestBase):
         super().setUp()
 
         # create some subscriptions
-        self.subscription = self.create_subscription_and_member(self.subs_type, date(2018, 1, 1), date(2018, 1, 1), None,
-                                                                "Michael", "Test", "4321")
-        self.subs2 = self.create_subscription_and_member(self.subs_type, date(2017, 1, 1),
-                                                         date(2017, 1, 1), None, "Early", "Lastyear", "17321")
-        self.subs3 = self.create_subscription_and_member(self.subs_type, date(2018, 3, 1),
-                                                         date(2018, 3, 1), None, "Later", "Thisyear", "17321")
+        self.subscription = self.create_subscription_and_member(self.subs_type, date(2018, 1, 1), date(2018, 1, 1), None, "Test", "4321")
+        self.subs2 = self.create_subscription_and_member(self.subs_type, date(2017, 1, 1), date(2017, 1, 1), None, "Test2", "17321")
+        self.subs3 = self.create_subscription_and_member(self.subs_type, date(2018, 3, 1), date(2018, 3, 1), None, "Test3", "17321")
 
         self.extrasubs = ExtraSubscription.objects.create(
             main_subscription=self.subscription,
@@ -195,8 +190,7 @@ class GetBillableItemsTests(SubscriptionTestBase):
     def test_inactive_subscription(self):
 
         # create subscription without activation date, only start_date
-        subs = self.create_subscription_and_member(self.subs_type, date(2017, 1, 1), None, None,
-                                                   "Michael", "Test", "4321")
+        subs = self.create_subscription_and_member(self.subs_type, date(2017, 1, 1), None, None, "Test", "4321")
         # we expect no billable items because subscription is not active in 2018
         items = get_billable_items(self.year)
         self.assertEqual(0, len(items), "expecting no items for inactive subscription")

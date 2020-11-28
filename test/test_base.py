@@ -102,8 +102,8 @@ class SubscriptionTestBase(django.test.TestCase):
         member.save()
         return member
 
-    def create_subscription_and_member(self, type, start_date, activation_date, deactivation_date, first_name, last_name, account):
-        member = self.create_member(first_name, last_name)
+    def create_subscription_and_member(self, type, start_date, activation_date, deactivation_date, name, account):
+        member = self.create_member("Michael", name)    # need to set different names because e-mail must be unique
         subscription = Subscription.objects.create(
             depot=self.depot,
             start_date=start_date,

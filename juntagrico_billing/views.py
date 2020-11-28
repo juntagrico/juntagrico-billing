@@ -211,6 +211,7 @@ def user_bill(request, bill_id):
     })
     return render(request, "jb/user_bill.html", renderdict)
 
+
 @permission_required('juntagrico.is_book_keeper')
 def bills_notify(request):
     """
@@ -225,7 +226,7 @@ def bills_notify(request):
             send_bill_notification(bill)
             bill.notification_sent = True
             bill.save()
-        
+
         return return_to_previous_location(request)
 
     renderdict.update({

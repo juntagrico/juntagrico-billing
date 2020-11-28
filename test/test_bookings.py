@@ -10,8 +10,7 @@ class SubscriptionBookingsTest(SubscriptionTestBase):
     def setUp(self):
         super().setUp()
 
-        self.subscription = self.create_subscription_and_member(self.subs_type, date(2018, 1, 1), date(2018, 1, 1), None,
-                                                                "Michael", "Test", "4321")
+        self.subscription = self.create_subscription_and_member(self.subs_type, date(2018, 1, 1), date(2018, 1, 1), None, "Test", "4321")
 
     def test_subscription_booking_full_year(self):
         start_date = date(2018, 1, 1)
@@ -42,7 +41,6 @@ class SubscriptionBookingsTest(SubscriptionTestBase):
         part.cancellation_date = sub.cancellation_date
         part.save()
         sub.save()
-
         # get bookings list
         bookings_list = subscription_bookings_by_date(start_date, end_date)
         self.assertEqual(1, len(bookings_list))
@@ -54,9 +52,7 @@ class SubscriptionBookingsTest(SubscriptionTestBase):
         self.assertEqual("1100", booking.debit_account)
         self.assertEqual("3001", booking.credit_account)
         self.assertEqual("4321", booking.member_account)
-        self.assertEqual(
-            "Abo: Normal - Grösse: Normal - Produkt: Test-Product, Michael Test, Teilperiode 01.07.18 - 30.09.18",
-            booking.text)
+        self.assertEqual("Abo: Normal - Grösse: Normal - Produkt: Test-Product, Michael Test, Teilperiode 01.07.18 - 30.09.18", booking.text)
 
     def test_generate_document_number_for_subscription(self):
         docnumber = gen_document_number(self.subscription, date(2018, 1, 1))
@@ -79,8 +75,7 @@ class ExtraSubscriptionBookingsTest(SubscriptionTestBase):
     def setUp(self):
         super().setUp()
 
-        self.subscription = self.create_subscription_and_member(self.subs_type, date(2018, 1, 1), date(2018, 1, 1), None,
-                                                                "Michael", "Test", "4321")
+        self.subscription = self.create_subscription_and_member(self.subs_type, date(2018, 1, 1), date(2018, 1, 1), None, "Test", "4321")
 
         self.extrasubs = ExtraSubscription.objects.create(
             main_subscription=self.subscription,
