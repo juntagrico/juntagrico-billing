@@ -1,15 +1,15 @@
-import django.test
 from datetime import date
 
+import django.test
 from juntagrico.entity.billing import ExtraSubBillingPeriod
 from juntagrico.entity.depot import Depot
-from juntagrico.entity.extrasubs import ExtraSubscriptionCategory, ExtraSubscriptionType, ExtraSubscription
+from juntagrico.entity.extrasubs import ExtraSubscriptionCategory, ExtraSubscriptionType
 from juntagrico.entity.member import Member
 from juntagrico.entity.subs import Subscription, SubscriptionPart
 from juntagrico.entity.subtypes import SubscriptionProduct, SubscriptionSize, SubscriptionType
 
-from juntagrico_billing.entity.settings import Settings
 from juntagrico_billing.entity.account import MemberAccount, SubscriptionTypeAccount, ExtraSubscriptionCategoryAccount
+from juntagrico_billing.entity.settings import Settings
 
 
 class SubscriptionTestBase(django.test.TestCase):
@@ -47,6 +47,13 @@ class SubscriptionTestBase(django.test.TestCase):
             weekday=5,
         )
 
+        self.subscription = self.create_subscription_and_member(self.subs_type,
+                                                                date(2018, 1, 1),
+                                                                date(2018, 1, 1),
+                                                                None,
+                                                                "Test",
+                                                                "4321")
+
         # extra subscription category and account
         extrasub_category = ExtraSubscriptionCategory.objects.create(
             name="ExtraCat1"
@@ -64,7 +71,7 @@ class SubscriptionTestBase(django.test.TestCase):
             category=extrasub_category
         )
 
-        extrasub_period1 = ExtraSubBillingPeriod.objects.create(
+        self.extrasub_period1 = ExtraSubBillingPeriod.objects.create(
             type=self.extrasub_type,
             price=100,
             start_day=1,
@@ -74,7 +81,7 @@ class SubscriptionTestBase(django.test.TestCase):
             cancel_day=31,
             cancel_month=5
         )
-        extrasub_period2 = ExtraSubBillingPeriod.objects.create(
+        self.extrasub_period2 = ExtraSubBillingPeriod.objects.create(
             type=self.extrasub_type,
             price=200,
             start_day=1,

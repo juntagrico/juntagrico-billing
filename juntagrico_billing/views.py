@@ -1,27 +1,24 @@
 from datetime import date, timedelta
-from django.contrib.auth.decorators import permission_required, login_required
-from django.shortcuts import render, get_object_or_404, redirect
-from django.views.decorators.http import require_POST
-from django.template.loader import get_template
-from django.core.exceptions import PermissionDenied
+
 from django import forms
+from django.contrib.auth.decorators import permission_required, login_required
+from django.core.exceptions import PermissionDenied
+from django.shortcuts import render, get_object_or_404, redirect
+from django.template.loader import get_template
 from django.urls import reverse
-
-from juntagrico.entity.extrasubs import ExtraSubscription
-from juntagrico.entity.subs import Subscription
-from juntagrico.util.temporal import start_of_business_year, start_of_next_business_year
-
-from juntagrico_billing.config import Config as BConfig
+from django.views.decorators.http import require_POST
 from juntagrico.util import return_to_previous_location
+from juntagrico.util.temporal import start_of_business_year, start_of_next_business_year
 from juntagrico.util.xls import generate_excel
 from juntagrico.views import get_menu_dict
 
 from juntagrico_billing.dao.billdao import BillDao
 from juntagrico_billing.entity.bill import BusinessYear, Bill
 from juntagrico_billing.entity.settings import Settings
-from juntagrico_billing.util.billing import get_billable_items, group_billables_by_member, create_bills_for_items, get_open_bills
-from juntagrico_billing.util.bookings import get_bill_bookings, get_payment_bookings
 from juntagrico_billing.mailer import send_bill_notification
+from juntagrico_billing.util.billing import get_billable_items, group_billables_by_member, create_bills_for_items, \
+    get_open_bills
+from juntagrico_billing.util.bookings import get_bill_bookings, get_payment_bookings
 
 
 @permission_required('juntagrico.is_book_keeper')
@@ -111,13 +108,13 @@ def bills_generate(request):
 
 class DateRangeForm(forms.Form):
     fromdate = forms.DateField(
-                widget=forms.DateInput(
-                    attrs={'class': 'col-md-2 form-control',
-                           'id': 'id_fromdate'}))
+        widget=forms.DateInput(
+            attrs={'class': 'col-md-2 form-control',
+                   'id': 'id_fromdate'}))
     tilldate = forms.DateField(
-                widget=forms.DateInput(
-                    attrs={'class': 'col-md-2 form-control',
-                           'id': 'id_tilldate'}))
+        widget=forms.DateInput(
+            attrs={'class': 'col-md-2 form-control',
+                   'id': 'id_tilldate'}))
 
 
 @permission_required('juntagrico.is_book_keeper')

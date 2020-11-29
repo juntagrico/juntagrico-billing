@@ -1,5 +1,5 @@
-from juntagrico.entity.subs import Subscription
 from juntagrico.entity.extrasubs import ExtraSubscription
+from juntagrico.entity.subs import Subscription
 
 
 def subscriptions_by_date(fromdate, tilldate):

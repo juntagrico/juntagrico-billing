@@ -1,18 +1,20 @@
-from juntagrico.admins import BaseAdmin
-from juntagrico_billing.admin.payment_inline import PaymentInline
-from juntagrico_billing.admin.billitem_inline import BillItemInline
-from juntagrico_billing.entity.bill import Bill
 from django.utils.translation import gettext as _
+from juntagrico.admins import BaseAdmin
+
+from juntagrico_billing.admin.billitem_inline import BillItemInline
+from juntagrico_billing.admin.payment_inline import PaymentInline
 
 
 def set_notification_sent(modeladmin, request, queryset):
     queryset.update(notification_sent=True)
+
 
 set_notification_sent.short_description = _("Set flag for 'notification sent'")
 
 
 def reset_notification_sent(modeladmin, request, queryset):
     queryset.update(notification_sent=False)
+
 
 reset_notification_sent.short_description = _("Reset flag for 'notification sent'")
 

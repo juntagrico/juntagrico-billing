@@ -1,4 +1,5 @@
 from django.urls import path
+
 from juntagrico_billing import views
 from juntagrico_billing import views_legacy
 

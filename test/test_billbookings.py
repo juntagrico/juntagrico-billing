@@ -1,10 +1,11 @@
 from datetime import date
-from test.test_base import SubscriptionTestBase
 
 from juntagrico.entity.extrasubs import ExtraSubscription
+
 from juntagrico_billing.entity.bill import BusinessYear, Payment, PaymentType
 from juntagrico_billing.util.billing import create_bill
 from juntagrico_billing.util.bookings import get_bill_bookings, get_payment_bookings
+from test.test_base import SubscriptionTestBase
 
 
 class BillBookingsTest(SubscriptionTestBase):
@@ -17,9 +18,9 @@ class BillBookingsTest(SubscriptionTestBase):
                                                 name="2018")
 
         self.paymenttype = PaymentType.objects.create(
-                            name="ABS",
-                            iban="CH4108390031346010006",
-                            booking_account="1010")
+            name="ABS",
+            iban="CH4108390031346010006",
+            booking_account="1010")
 
         self.subscription = self.create_subscription_and_member(self.subs_type, date(2018, 1, 1), date(2018, 1, 1), None, "Test", "4321")
 

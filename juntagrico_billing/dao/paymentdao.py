@@ -6,5 +6,5 @@ class PaymentDao:
     @staticmethod
     def payments_for_daterange(fromdate, tilldate):
         return Payment.objects.filter(
-                paid_date__gte=fromdate,
-                paid_date__lte=tilldate)
+            paid_date__gte=fromdate,
+            paid_date__lte=tilldate)

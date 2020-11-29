@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from juntagrico_billing.entity.bill import BillItem
 
 

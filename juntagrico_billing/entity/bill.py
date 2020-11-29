@@ -4,10 +4,8 @@ from django.utils.translation import gettext as _
 from juntagrico.config import Config
 from juntagrico.entity import JuntagricoBaseModel
 from juntagrico.entity.extrasubs import ExtraSubscriptionType
-from juntagrico.entity.subtypes import SubscriptionType
 from juntagrico.entity.member import Member
-
-from juntagrico_billing.util.esr import generate_ref_number
+from juntagrico.entity.subtypes import SubscriptionType
 
 
 class BusinessYear(JuntagricoBaseModel):

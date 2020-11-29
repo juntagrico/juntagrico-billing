@@ -1,9 +1,9 @@
 from django.template.loader import get_template
 from django.utils.translation import gettext as _
-
 from juntagrico.config import Config
 from juntagrico.mailer import EmailSender, organisation_subject, base_dict
 from juntagrico.management.commands.mailtexts import get_server
+
 from juntagrico_billing.entity.settings import Settings
 
 

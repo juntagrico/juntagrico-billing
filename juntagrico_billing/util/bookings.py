@@ -1,17 +1,12 @@
 from datetime import date
 
 from django.utils.translation import gettext as _
-from juntagrico.config import Config
-from juntagrico.entity.subs import Subscription
-from juntagrico.entity.extrasubs import ExtraSubscription
-from juntagrico.dao.extrasubscriptiondao import ExtraSubscriptionDao
-from juntagrico.dao.subscriptiondao import SubscriptionDao
 
 from juntagrico_billing.dao.billdao import BillDao
 from juntagrico_billing.dao.paymentdao import PaymentDao
+from juntagrico_billing.dao.subscriptions import subscriptions_by_date, extrasubscriptions_by_date
 from juntagrico_billing.entity.settings import Settings
 from juntagrico_billing.util.billing import scale_subscription_price
-from juntagrico_billing.dao.subscriptions import subscriptions_by_date, extrasubscriptions_by_date
 
 # Offset for generating Document numbers for bookings
 DOCNUMBER_OFFSET_BILL = 500000
@@ -187,7 +182,7 @@ def create_item_booking(idx, item, debtor_account):
             booking.credit_account = ""
 
     # docnumber is DOCNUMBER_OFFSET_BILL + id of bill*10 + sequencenumber of bill item
-    booking.docnumber = str(DOCNUMBER_OFFSET_BILL + bill.id * 10 + idx+1)
+    booking.docnumber = str(DOCNUMBER_OFFSET_BILL + bill.id * 10 + idx + 1)
 
     # "Bl" is short form for "Bill"
     booking.text = "%s %d: %s %s" % (_('Bl'), bill.id, item.item_kind, bill.member)

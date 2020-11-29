@@ -1,6 +1,7 @@
 from datetime import date
 
 from juntagrico.entity.extrasubs import ExtraSubscription
+
 from juntagrico_billing.util.bookings import subscription_bookings_by_date, gen_document_number, \
     extrasub_bookings_by_date
 from test.test_base import SubscriptionTestBase
@@ -9,8 +10,6 @@ from test.test_base import SubscriptionTestBase
 class SubscriptionBookingsTest(SubscriptionTestBase):
     def setUp(self):
         super().setUp()
-
-        self.subscription = self.create_subscription_and_member(self.subs_type, date(2018, 1, 1), date(2018, 1, 1), None, "Test", "4321")
 
     def test_subscription_booking_full_year(self):
         start_date = date(2018, 1, 1)

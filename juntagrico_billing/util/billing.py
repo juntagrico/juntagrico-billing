@@ -1,12 +1,11 @@
-from datetime import date
 from collections import defaultdict
+from datetime import date
 
-from juntagrico.dao.extrasubscriptiondao import ExtraSubscriptionDao
-from juntagrico.dao.subscriptiondao import SubscriptionDao
-from juntagrico.entity.subs import Subscription, SubscriptionPart
 from juntagrico.entity.extrasubs import ExtraSubscription
-from juntagrico_billing.entity.bill import Bill, BillItem
+from juntagrico.entity.subs import SubscriptionPart
+
 from juntagrico_billing.dao.subscriptions import subscriptions_by_date, extrasubscriptions_by_date
+from juntagrico_billing.entity.bill import Bill, BillItem
 
 
 def scale_subscription_price(subscription, fromdate, tilldate):

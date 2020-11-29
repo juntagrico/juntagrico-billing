@@ -1,21 +1,18 @@
 from datetime import date
-from decimal import Decimal
+
 from django.conf import settings
-
-from juntagrico.entity.subs import SubscriptionPart
 from juntagrico.entity.extrasubs import ExtraSubscription
+from juntagrico.entity.subs import SubscriptionPart
 
-from juntagrico_billing.util.billing import scale_subscription_price, scale_extrasubscription_price
+from juntagrico_billing.entity.bill import BusinessYear
 from juntagrico_billing.util.billing import get_billable_items, create_bill, create_bills_for_items
-from juntagrico_billing.entity.bill import Bill, BusinessYear
+from juntagrico_billing.util.billing import scale_subscription_price, scale_extrasubscription_price
 from test.test_base import SubscriptionTestBase
 
 
 class ScaleSubscriptionPriceTest(SubscriptionTestBase):
     def setUp(self):
         super().setUp()
-
-        self.subscription = self.create_subscription_and_member(self.subs_type, date(2018, 1, 1), date(2018, 1, 1), None, "Test", "4321")
 
     def test_price_by_date_fullyear(self):
         start_date = date(2018, 1, 1)
@@ -142,7 +139,7 @@ class BillSubscriptionsTests(SubscriptionTestBase):
 
     def test_get_billable_subscriptions(self):
         # create bill for subs2
-        bill = create_bill(self.subs2.parts.all(), self.year, self.year.start_date)
+        create_bill(self.subs2.parts.all(), self.year, self.year.start_date)
 
         billable_items = get_billable_items(self.year)
         self.assertTrue(billable_items)
@@ -159,7 +156,7 @@ class BillSubscriptionsTests(SubscriptionTestBase):
         # should result in an error
         billable_items = get_billable_items(self.year)
         with self.assertRaisesMessage(Exception, 'billable items belong to different members'):
-            bill = create_bill(billable_items, self.year, self.year.start_date)
+            create_bill(billable_items, self.year, self.year.start_date)
 
     def test_create_bill(self):
         billable_items = [self.subscription.parts.all()[0], self.extrasubs]
@@ -190,7 +187,7 @@ class GetBillableItemsTests(SubscriptionTestBase):
     def test_inactive_subscription(self):
 
         # create subscription without activation date, only start_date
-        subs = self.create_subscription_and_member(self.subs_type, date(2017, 1, 1), None, None, "Test", "4321")
+        self.create_subscription_and_member(self.subs_type, date(2017, 1, 1), None, None, "Test", "4321")
         # we expect no billable items because subscription is not active in 2018
         items = get_billable_items(self.year)
         self.assertEqual(0, len(items), "expecting no items for inactive subscription")
