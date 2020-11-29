@@ -22,7 +22,6 @@ class BillBookingsTest(SubscriptionTestBase):
             iban="CH4108390031346010006",
             booking_account="1010")
 
-        self.subscription = self.create_subscription_and_member(self.subs_type, date(2018, 1, 1), date(2018, 1, 1), None, "Test", "4321")
 
         self.extrasubs = ExtraSubscription.objects.create(
             main_subscription=self.subscription,
