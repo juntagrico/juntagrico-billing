@@ -112,7 +112,6 @@ class BillSubscriptionsTests(SubscriptionTestBase):
         super().setUp()
 
         # create some subscriptions
-        self.subscription = self.create_subscription_and_member(self.subs_type, date(2018, 1, 1), date(2018, 1, 1), None, "Test", "4321")
         self.subs2 = self.create_subscription_and_member(self.subs_type, date(2017, 1, 1), date(2017, 1, 1), None, "Test2", "17321")
         self.subs3 = self.create_subscription_and_member(self.subs_type, date(2018, 3, 1), date(2018, 3, 1), None, "Test3", "17321")
 
@@ -185,7 +184,6 @@ class GetBillableItemsTests(SubscriptionTestBase):
     def test_inactive_subscription(self):
 
         # create subscription without activation date, only start_date
-        self.create_subscription_and_member(self.subs_type, date(2017, 1, 1), None, None, "Test", "4321")
         # we expect no billable items because subscription is not active in 2018
         items = get_billable_items(self.year)
         self.assertEqual(0, len(items), "expecting no items for inactive subscription")
