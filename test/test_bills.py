@@ -55,8 +55,6 @@ class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
     def setUp(self):
         super().setUp()
 
-        self.subscription = self.create_subscription_and_member(self.subs_type, date(2018, 1, 1), date(2018, 1, 1), None, "Tester", "4321")
-
         self.extrasubs = ExtraSubscription.objects.create(
             main_subscription=self.subscription,
             activation_date=date(2018, 1, 1),
