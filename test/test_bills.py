@@ -182,8 +182,9 @@ class GetBillableItemsTests(SubscriptionTestBase):
                                                 name="2018")
 
     def test_inactive_subscription(self):
-
+        items_before = get_billable_items(self.year)
         # create subscription without activation date, only start_date
+        self.create_subscription_and_member(self.subs_type, date(2017, 1, 1), None, None, "Test2", "4322")
         # we expect no billable items because subscription is not active in 2018
         items = get_billable_items(self.year)
-        self.assertEqual(0, len(items), "expecting no items for inactive subscription")
+        self.assertEqual(len(items_before), len(items), "expecting no items for additional inactive subscription")
