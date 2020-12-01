@@ -1,7 +1,6 @@
 from django.urls import path
 
 from juntagrico_billing import views
-from juntagrico_billing import views_legacy
 
 app_name = 'jb'
 urlpatterns = [
@@ -17,7 +16,4 @@ urlpatterns = [
     # bills (user)
     path('jb/user_bills', views.user_bills, name='user-bills'),
     path('jb/user_bill/<int:bill_id>', views.user_bill, name='user-bill'),
-
-    # legacy
-    path('jb/subscription_bookings', views_legacy.subscription_bookings)
 ]
