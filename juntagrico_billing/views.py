@@ -193,7 +193,7 @@ def user_bill(request, bill_id):
     bill = get_object_or_404(Bill, id=bill_id)
 
     # only allow for bookkepper or the bills member
-    if not (request.user.has_perms(('juntagrico.is_book_keeper',)) 
+    if not (request.user.has_perms(('juntagrico.is_book_keeper',))
             or bill.member == member):
         raise PermissionDenied()
 
