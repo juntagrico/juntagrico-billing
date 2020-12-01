@@ -1,11 +1,12 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load config %}
 {% block page_title %}
-    <h3>Buchungen exportieren</h3>
+    <h3>{% trans "Export bookings" %}</h3>
 {% endblock %}
 
 {% block content %}
-    <h4>Buchungs Zeitraum</h4>
+    <h4>{% trans "Bookings Period" %}</h4>
     <form class="form" method="GET">
         <div class="form-row align-items-center">
             <label class="col-md-1 col-form-label" for="id_fromdate">Von</label>
@@ -18,14 +19,14 @@
         <div class="alert alert-danger">{{ daterange_form.errors }}</div>
         {% endif %}
 
-        <h4>Vorschau</h4>
+        <h4>{% trans "Preview" %}</h4>
         <div class="row">
             <div class="col-md-1">{{ bill_bookings_count }}</div>
-            <div class="col-md-10">Rechnungen</div>  
+            <div class="col-md-10">{% trans "Bill bookings" %}</div>  
         </div>
         <div class="row">
             <div class="col-md-1">{{ payment_bookings_count }}</div>
-            <div class="col-md-10">Zahlungen</div>  
+            <div class="col-md-10">{% trans "Payment bookings" %}</div>  
         </div>
             <div class="form-group">
             <button type="submit" name="export" class="col-md-2 mt-3 btn btn-success">Download Excel</button>

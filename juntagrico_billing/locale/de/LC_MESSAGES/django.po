@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-01 13:30+0100\n"
+"POT-Creation-Date: 2020-12-01 13:37+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -253,6 +253,26 @@ msgstr "Benachrichtigungen zu senden"
 #: .\juntagrico_billing\templates\jb\bills_notify.html:16
 msgid "Send E-Mails"
 msgstr "E-Mails senden"
+
+#: .\juntagrico_billing\templates\jb\bookings_export.html:4
+msgid "Export bookings"
+msgstr "Buchungen exportieren"
+
+#: .\juntagrico_billing\templates\jb\bookings_export.html:8
+msgid "Bookings Period"
+msgstr "Buchungs Zeitraum"
+
+#: .\juntagrico_billing\templates\jb\bookings_export.html:21
+msgid "Preview"
+msgstr "Vorschau"
+
+#: .\juntagrico_billing\templates\jb\bookings_export.html:24
+msgid "Bill bookings"
+msgstr "Rechnungsbuchungen"
+
+#: .\juntagrico_billing\templates\jb\bookings_export.html:28
+msgid "Payment bookings"
+msgstr "Zahlungsbuchungen"
 
 #: .\juntagrico_billing\templates\jb\user_bill.html:36
 msgid "Period"
