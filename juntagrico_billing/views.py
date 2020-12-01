@@ -192,14 +192,16 @@ def user_bill(request, bill_id):
     member = request.user.member
     bill = get_object_or_404(Bill, id=bill_id)
 
-    if bill.member != member:
+    # only allow for bookkepper or the bills member
+    if not (request.user.has_perms(('juntagrico.is_book_keeper',)) 
+            or bill.member == member):
         raise PermissionDenied()
 
     settings = Settings.objects.first()
 
     renderdict = get_menu_dict(request)
     renderdict.update({
-        'member': member,
+        'member': bill.member,
         'bill': bill,
         'today': date.today(),
         'payments': bill.payments.all(),

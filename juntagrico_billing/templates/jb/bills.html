@@ -89,6 +89,9 @@
                 <th scope="col" class="filter">
                     {% trans "Paid" %}
                 </th>
+                <th>
+                    {% trans "User view" %}
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -116,6 +119,9 @@
                     </td>
                     <td>
                         {{ bill.paid }}
+                    </td>
+                    <td>
+                        <a href="{% url 'jb:user-bill' bill.id %}">{{ bill.id }}</a>
                     </td>
                 </tr>
             {% endfor %}
