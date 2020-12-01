@@ -49,21 +49,25 @@
         <div class="col-sm-2 text-right">{{ bill.amount | floatformat:2 }}</div>
     </div>
 
-    <div class="row mb-4"><p class="col">{{ bill.public_notes }}</p></div>
+    <div class="row mb-4"><p class="col">{{ bill.public_notes | default_if_none:"" }}</p></div>
     
     <h4>{% trans "Payments per" %} {{ today }}:</h4> 
     {% for payment in payments %}
     <div class="row">
         <div class="col-sm-2">{{ payment.paid_date }}</div>
-        <div class="col-sm-5">{{ payment.type }}</div>
+        <div class="col-sm-8">{{ payment.type }}</div>
         <div class="col-sm-2 text-right">{{ payment.amount | floatformat:2 }}</div>
     </div>    
     {% endfor %}
-    {% if bill.paid %}
-    <p class="mt-3">{% trans "Bill paid completely" %}</p>
-    {% else %}
-    <p class="mt-3">{% trans "Amount open yet" %}: {{ open_amount | floatformat:2 }} </p>
-    {% endif %}
+    <div class="row font-weight-bold mt-3">
+        {% if bill.paid %}
+        <div class="col">{% trans "Bill paid completely" %}</div>
+        {% else %}
+        <div class="col-sm-5">{% trans "Amount open yet" %}:</div>
+        <div class="col-sm-5"></div>
+        <div class="col-sm-2 text-right">{{ open_amount | floatformat:2 }}</div>
+        {% endif %}
+    </div>
     {% if not bill.paid %}
     <p class="mt-5">
         {% config "organisation_address" as addr %}
