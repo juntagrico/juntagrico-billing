@@ -1,0 +1,78 @@
+{% extends "management_lists/man_list_base.html" %}
+{% load i18n %}
+{% load l10n %}
+{% load config %}
+{% block page_title %}
+    <h3>
+        {% trans "Send billing notifications" %}
+    </h3>
+{% endblock %}
+{% block management_cmd %}
+<form class="row mb-3" method="POST">
+    {% csrf_token %} 
+    <p class="col-md-4">{{ bills_count }} {% trans "billing notifications to be sent" %}</p>
+    <div class="col-md-4">
+        <button type="submit" class="btn btn-success">
+            {% trans "Send E-Mails" %}
+        </button>
+    </div>
+</form>
+{% endblock %}
+{% block list %}
+    <table id="filter-table" class="table">
+        <thead>
+            <tr>
+                <th scope="col" class="filter">
+                    {% trans "Number" %}
+                </th>
+                <th scope="col" class="filter">
+                    {% trans "Member" %}
+                </th>
+                <th scope="col" class="filter">
+                    {% trans "Kind" %}
+                </th>
+                <th scope="col" class="filter">
+                    {% trans "Date" %}
+                </th>
+                <th scope="col" class="filter">
+                    {% trans "Amount" %}
+                </th>
+                <th scope="col" class="filter">
+                    {% trans "Paid Amount" %}
+                </th>
+                <th scope="col" class="filter">
+                    {% trans "Paid" %}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bill in bills_list %}
+                <tr>
+                    <td>
+                        <a href="{% url 'admin:juntagrico_billing_bill_change' bill.id %}">
+                        {{ bill.id }}
+                        </a>
+                    </td>
+                    <td>
+                        {{ bill.member }}
+                    </td>
+                    <td>
+                        {{ bill.item_kinds }}
+                    </td>
+                    <td>
+                        {{ bill.bill_date }}
+                    </td>
+                    <td>
+                        {{ bill.amount | floatformat:2 }}
+                    </td>
+                    <td>
+                        {{ bill.amount_paid | floatformat:2 }}
+                    </td>
+                    <td>
+                        {{ bill.paid }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

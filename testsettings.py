@@ -7,6 +7,10 @@ SECRET_KEY = 'fake-key'
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+IMPERSONATE = {
+    'REDIRECT_URL': '/my/profile',
+}
+
 INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -15,6 +19,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
+    'impersonate',
     'juntagrico',
     'juntagrico_billing',
     'crispy_forms'
@@ -22,6 +27,7 @@ INSTALLED_APPS = [
 
 DATABASES = {
     'default': {
+        #  Sqlite
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'juntagrico.db',
     }
@@ -34,13 +40,14 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend'
 )
 
-MIDDLEWARE = (
+MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-)
+    'impersonate.middleware.ImpersonateMiddleware',
+]
 
 EMAIL_HOST = os.environ.get('JUNTAGRICO_EMAIL_HOST')
 EMAIL_HOST_USER = os.environ.get('JUNTAGRICO_EMAIL_USER')
@@ -66,9 +73,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 
 LANGUAGE_CODE = 'de'
-LOCALE_PATHS = (
-    os.path.join(BASE_DIR, 'juntagrico_billing/locale'),
-)
+
 SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
@@ -95,6 +100,7 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.i18n',
                 'django.template.context_processors.media',
+                'django.template.context_processors.request',
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
@@ -112,14 +118,13 @@ LOGIN_REDIRECT_URL = "/my/home"
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
-GOOGLE_API_KEY = 'AIzaSyCcii4Z71qyky54kEQtRhFbB_z-2zbSU28'
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, 'juntagrico/locale'),
+    os.path.join(BASE_DIR, 'juntagrico_billing/locale'),
+)
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_FAIL_SILENTLY = not DEBUG
+
 
 BILLS_USERMENU = True
-
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'juntagrico_app_cache_table',
-        'TIMEOUT': None,
-    }
-}

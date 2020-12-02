@@ -1,18 +1,27 @@
+from django.utils.translation import gettext as _
 from juntagrico.admins import BaseAdmin
+
+from juntagrico_billing.admin.billitem_inline import BillItemInline
 from juntagrico_billing.admin.payment_inline import PaymentInline
-from juntagrico_billing.entity.bill import Bill
+
+
+def set_notification_sent(modeladmin, request, queryset):
+    queryset.update(notification_sent=True)
+
+
+set_notification_sent.short_description = _("Set flag for 'notification sent'")
+
+
+def reset_notification_sent(modeladmin, request, queryset):
+    queryset.update(notification_sent=False)
+
+
+reset_notification_sent.short_description = _("Reset flag for 'notification sent'")
 
 
 class BillAdmin(BaseAdmin):
-    raw_id_fields = ['business_year']
-    list_display = ['business_year', 'billable_inst', 'bill_date', 'amount']
-    inlines = [PaymentInline, ]
-
-    def billable_inst(self, bill):
-        """
-        Get the concrete polymorphic instance.
-        Otherwise the admin list display only shows the abstract base class (Billable).
-        """
-        return bill.billable.get_real_instance()
-
-    billable_inst.short_description = Bill._meta.get_field('billable').verbose_name
+    readonly_fields = ['business_year']
+    search_fields = ['id', 'member__first_name', 'member__last_name']
+    list_display = ['id', 'business_year', 'member', 'bill_date', 'item_kinds', 'amount', 'paid']
+    inlines = [BillItemInline, PaymentInline, ]
+    actions = [set_notification_sent, reset_notification_sent]

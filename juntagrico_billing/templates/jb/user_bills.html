@@ -1,4 +1,4 @@
-{% extends "management_lists/man_list_base.html" %}
+{% extends "base.html" %}
 {% load i18n %}
 {% load config %}
 {% block page_title %}
@@ -7,57 +7,35 @@
     </h3>
 {% endblock %}
 {% block content %}
-    <div class="row mb-3">
-        <b class="col-md-12">{% trans "Bank Connection" %}</b>
-    </div>
     <div class="row">
+        <h4 class="col-md-12">{% trans "Payment details" %}</h4>
+    </div>
+    <div class="row mb-3">
         <div class="col-md-12">
             {% config "organisation_address" as addr %}
-    {{ addr.name }}
-    <br/>
-    {% if addr.extra %}
-        {{ addr.extra }}
-        <br/>
-    {% endif %}
-    {{ addr.street }} {{ addr.number }}
-    <br/>
-    {{ addr.zip }} {{ addr.city }}
-    <br/>
-    {% config "organisation_bank_connection" as bank %}
-    {{ bank.NAME }}
-    <br/>
-    {% if esr %}
-        {% trans "Account-Number" %}: {{ esr }}
-    {% else %}
-        {% trans "PC-Number" %}: {{ bank.PC }}
-        <br/>
-        {% trans "IBAN" %}: {{ bank.IBAN }}
-        <br/>
-        {% trans "BIC" %}: {{ bank.BIC }}
-    {% endif %}
+            {{ paymenttype.name }}<br/>
+            {% trans "IBAN" %} {{ paymenttype.iban }}<br/>
+            {{ addr.name }}, {{ addr.zip }} {{ addr.city }}
         </div>
     </div>
-    <div class="row mb-3 mt-3">
-        <b class="col-md-12">{% trans "Overview" %}</b>
-    </div>
     <div>
-        <table id="filter-table" class="list table" style="display: table;">
+        <table id="filter-table" class="list table" searching="false" style="display: table;">
             <thead>
                 <tr>
                     <th>
                         {% trans "Number" %}
                     </th>
                     <th>
-                        {% trans "Billable" %}
+                        {% trans "Date" %}
                     </th>
                     <th>
-                        {% trans "Price" %}
+                        {% trans "Kind" %}
                     </th>
                     <th>
-                        {% trans "State" %}
+                        {% trans "Amount" %}
                     </th>
                     <th>
-                        {% trans "Amount Paid" %}
+                        {% trans "Paid" %}
                     </th>
                     {% if esr %}
                     <th>
@@ -70,19 +48,24 @@
                 {% for bill in bills %}
                     <tr>
                     <td>
-                        {{ bill.pk }}
+                        <a href="{% url 'jb:user-bill' bill.pk  %}">{{ bill.pk }}</a>
                     </td>
                     <td>
-                        {{ bill.billable }}
+                        {{ bill.bill_date | date }}
                     </td>
                     <td>
-                        {{ bill.amount }}
+                        {{ bill.description | linebreaks }}
+                    </td>
+                    <td class="text-right">
+                        {{ bill.amount | floatformat:2 }}
                     </td>
                     <td>
-                        {{ bill.state }}
+                        {% if bill.paid %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}
                     </td>
-                    <td>
+                    <td class="text-right">
+                        {% if not bill.paid %}
                         {{ amount.paid  }}
+                        {% endif %}
                     </td>
                     {% if esr %}
                     <td>
@@ -94,6 +77,19 @@
             </tbody>
         </table>
     </div>
-
-
+{% endblock %}
+{% block scripts %}
+    <script type="text/javascript" src="/static/external/datatables.min.js">
+    </script>
+    <script type="text/javascript">
+$(document).ready(function() {
+    $('#filter-table').DataTable( {
+        searching: false,
+        paging: false,
+        info: false
+    } );
+} );    
+    </script>
+    {% block extrascripts %}
+    {% endblock %}
 {% endblock %}

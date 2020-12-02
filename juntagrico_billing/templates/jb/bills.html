@@ -11,9 +11,9 @@
     {% csrf_token %} 
     <p class="col-md-2">{% trans "Year:" %} {{ selected_year.name }}</p>
     <div class="col-md-2">
-        <select class="form-control" name="year" id="year" value="{{ year }}">
+        <select class="form-control" name="year" id="year">
             {% for year in business_years %}
-            <option>{{ year.name }}</option>
+            <option {% if year == selected_year %}selected="selected"{% endif %}>{{ year.name }}</option>
             {% endfor %}
         </select>
     </div>
@@ -23,17 +23,49 @@
         </button>
     </div>
 </form>
+<ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+      <a class="nav-link {{ state_active.0 }}" href="{% url 'jb:bills-list' %}">{% trans "All" %}</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {{ state_active.1 }}" href="{% url 'jb:bills-list' %}?state=open">{% trans "Open" %}</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ state_active.2 }}" href="{% url 'jb:bills-list' %}?state=open75">{% trans "Open" %} 75%</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ state_active.3 }}" href="{% url 'jb:bills-list' %}?state=open50">{% trans "Open" %} 50%</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ state_active.4 }}" href="{% url 'jb:bills-list' %}?state=open25">{% trans "Open" %} 25%</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {{ state_active.5 }}" href="{% url 'jb:bills-list' %}?state=generate">{% trans "Generate bills" %}</a>
+    </li>
+</ul>
+  
+{% if state == "generate" %}
 <form class="row mb-3" action="{% url 'jb:bills-generate' %}" method="POST">
     {% csrf_token %}
-    <p class="col-md-4">{{ billable_subscriptions | length }} {% trans "pending bills for" %} {{ selected_year.name }}.</p>
+    <p class="col-md-4">{{ pending_bills }} {% trans "pending bills for" %} {{ selected_year.name }}.</p>
     <div class="col-md-2">
         <button type="submit" class="btn btn-success">{% trans "Generate" %}</button>
     </div>
 </form>
+{% elif state == "all" %}
+<p class="mb-3">
+    {{ bills_count }} {% trans "bills for" %} {{ selected_year.name }}
+</p>
+{% else %}
+<p class="mb-3">
+    {{ bills_count}} {% trans "open bills with paid amount less than" %} {{ percent_paid }}%
+</p>
+{% endif %}
 
 {% endblock %}
 {% block list %}
-    <table xid="filter-table" class="table">
+{% if state != "generate" %}
+    <table id="filter-table" class="table">
         <thead>
             <tr>
                 <th scope="col" class="filter">
@@ -48,11 +80,17 @@
                 <th scope="col" class="filter">
                     {% trans "Date" %}
                 </th>
-                <th scope="col" class="filter">
+                <th scope="col" class="filter text-right">
                     {% trans "Amount" %}
+                </th>
+                <th scope="col" class="filter text-right">
+                    {% trans "Paid Amount" %}
                 </th>
                 <th scope="col" class="filter">
                     {% trans "Paid" %}
+                </th>
+                <th>
+                    {% trans "User view" %}
                 </th>
             </tr>
         </thead>
@@ -65,22 +103,29 @@
                         </a>
                     </td>
                     <td>
-                        {{ bill.member_name }}
+                        {{ bill.member }}
                     </td>
                     <td>
-                        {{ bill.billable }}
+                        {{ bill.item_kinds }}
                     </td>
                     <td>
-                        {{ bill.bill_date | date:"Y-m-d" }}
+                        {{ bill.bill_date }}
                     </td>
-                    <td>
-                        {{ bill.amount }}
+                    <td class="text-right">
+                        {{ bill.amount | floatformat:2 }}
+                    </td>
+                    <td class="text-right">
+                        {{ bill.amount_paid | floatformat:2 }}
                     </td>
                     <td>
                         {{ bill.paid }}
+                    </td>
+                    <td>
+                        <a href="{% url 'jb:user-bill' bill.id %}">{{ bill.id }}</a>
                     </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+{% endif %}
 {% endblock %}

@@ -1,5 +1,3 @@
-from django.conf import settings
-
 from juntagrico.config import _get_setting, _get_setting_with_key
 
 
