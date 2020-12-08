@@ -36,4 +36,4 @@ def send_bill_notification(bill):
     content = plaintext.render(base_dict(locals()))
     subject = organisation_subject(_('{0} Bill').format(Config.vocabulary('subscription')))
 
-    EmailSender.get_sender(content, subject).send_to(member.email)
+    EmailSender.get_sender(subject, content).send_to(member.email)
