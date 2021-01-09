@@ -28,12 +28,12 @@
             <h4>{% trans "Bill" %} {{ bill.pk }}</h4>
         </div>
         <div class="col-sm align-middle text-right">
-            {{ bill.bill_date }}
+            {{ bill.bill_date|date:"SHORT_DATE_FORMAT" }}
         </div>
     </div>
     <div class="row">
         <div class="col my-3">
-        {% trans "Period" %}: {{ bill.business_year.start_date }} - {{ bill.business_year.end_date }}
+        {% trans "Period" %}: {{ bill.business_year.start_date|date:"SHORT_DATE_FORMAT" }} - {{ bill.business_year.end_date|date:"SHORT_DATE_FORMAT" }}
         </div>
     </div>
     <div class="row my-2"></div>
@@ -54,7 +54,7 @@
     <h4>{% trans "Payments per" %} {{ today }}:</h4> 
     {% for payment in payments %}
     <div class="row">
-        <div class="col-sm-2">{{ payment.paid_date }}</div>
+        <div class="col-sm-2">{{ payment.paid_date|date:"SHORT_DATE_FORMAT" }}</div>
         <div class="col-sm-8">{{ payment.type }}</div>
         <div class="col-sm-2 text-right">{{ payment.amount | floatformat:2 }}</div>
     </div>    

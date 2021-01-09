@@ -51,7 +51,7 @@
                         <a href="{% url 'jb:user-bill' bill.pk  %}">{{ bill.pk }}</a>
                     </td>
                     <td>
-                        {{ bill.bill_date | date }}
+                        {{ bill.bill_date|date:"SHORT_DATE_FORMAT" }}
                     </td>
                     <td>
                         {{ bill.description | linebreaks }}
