@@ -51,7 +51,7 @@
 
     <div class="row mb-4"><p class="col">{{ bill.public_notes | default_if_none:"" }}</p></div>
     
-    <h4>{% trans "Payments per" %} {{ today }}:</h4> 
+    <h4>{% trans "Payments per" %} {{ today|date:"SHORT_DATE_FORMAT" }}:</h4>
     {% for payment in payments %}
     <div class="row">
         <div class="col-sm-2">{{ payment.paid_date|date:"SHORT_DATE_FORMAT" }}</div>
