@@ -13,7 +13,7 @@
 Bill-Number:         {{ number }}
 Period:              {{ period }}
 Concerning:          {{ concerning }}
-Amount:              {{ amount }} {{ currency }}{% endblocktrans %} 
+Amount:              {{ currency }} {{ amount }}{% endblocktrans %} 
 
 {% trans "Find details on the website at" %} {{ serverurl }}{% url 'jb:user-bill' bill.id %}
 
@@ -23,8 +23,11 @@ IBAN {{ payment_type.iban }}
 {% trans "in favor of" %}
 {{ addr.name }}, {{ addr.zip }} {{ addr.city }}
 
-{% blocktrans %}The billed amount is due for payment at {{ end_date }} and may be paid in parts.
-Please always specify the bill number with your payments to allow correct attribution.{% endblocktrans %}
+{% with notice_url="https://ortoloco.ch/dokumente/F%C3%A4Hi_2021.pdf" %}
+{% trans "The billed amount is due for payment according to the due date notice found here:" %}
+{{ notice_url }}.
+{% endwith %}
+{% trans "Please always specify the bill number with your payments to allow correct attribution." %}
 
 {% blocktrans trimmed %}
 Best regards, your {{ organisation_name }}-Operations-Group.

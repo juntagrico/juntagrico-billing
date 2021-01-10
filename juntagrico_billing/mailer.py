@@ -32,8 +32,12 @@ def send_bill_notification(bill):
     start_date = business_year.start_date
     end_date = business_year.end_date
 
-    plaintext = get_template('mails/bill_notification.txt')
-    content = plaintext.render(base_dict(locals()))
+    template = get_template('mails/bill_notification.txt')
+    render_dict = base_dict(locals())
+
+    # render template
+    content = template.render(render_dict)
+
     subject = organisation_subject(_('{0} Bill').format(Config.vocabulary('subscription')))
 
     EmailSender.get_sender(subject, content).send_to(member.email)
