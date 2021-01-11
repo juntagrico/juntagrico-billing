@@ -9,8 +9,8 @@
 {% trans "Hier die aktuelle Rechnung für dein Zusatzabo" %}:
 
 {% trans "Typ" %}:            {{ extrasub.type.name }}
-{% trans "Start" %}:          {{ start |date:"d.m.Y" }}
-{% trans "Ende" %}:           {{ end |date:"d.m.Y" }}
+{% trans "Start" %}:          {{ start|date:"SHORT_DATE_FORMAT" }}
+{% trans "Ende" %}:           {{ end|date:"SHORT_DATE_FORMAT" }}
 {% trans "Betrag" %}:         {{ bill.amount}} {% config "currency" %}
 {% trans "Referenznummer" %}: {{ bill.ref_number }}
 {% trans "Kontonummer" %}:    {{ c_bank.ESR }}

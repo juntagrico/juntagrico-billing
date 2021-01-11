@@ -39,9 +39,9 @@
     	<tbody> 
 	        {% for b in bookings %}
 	        <tr>
-                <td>{{ b.date | date:'d.m.Y'}}</td>
-	        	<td>{{ b.activation_date | date:'d.m.Y' }}</td>
-	        	<td>{{ b.deactivation_date | date:'d.m.Y' }}</td>
+                <td>{{ b.date|date:"SHORT_DATE_FORMAT" }}</td>
+	        	<td>{{ b.activation_date|date:"SHORT_DATE_FORMAT" }}</td>
+	        	<td>{{ b.deactivation_date|date:"SHORT_DATE_FORMAT" }}</td>
 	        	<td>{{ b.member }}</td>
 	        	<td>{{ b.text }}</td>
 	        	<td class="text-right">{{ b.price | stringformat:'6.2f' }}</td>

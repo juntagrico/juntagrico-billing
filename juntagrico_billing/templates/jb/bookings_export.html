@@ -10,9 +10,9 @@
     <form class="form" method="GET">
         <div class="form-row align-items-center">
             <label class="col-md-1 col-form-label" for="id_fromdate">Von</label>
-            {{ daterange_form.fromdate }}
+            {{ daterange_form.fromdate|date:"SHORT_DATE_FORMAT" }}
             <label class="col-md-1 col-form-label" for="id_tilldate">bis</label>
-            {{ daterange_form.tilldate }}
+            {{ daterange_form.tilldate|date:"SHORT_DATE_FORMAT" }}
             <button type="submit" class="col-md-2 form-control ml-2 btn btn-success">OK</button>
         </div>
         {% if daterange_form.errors %}
