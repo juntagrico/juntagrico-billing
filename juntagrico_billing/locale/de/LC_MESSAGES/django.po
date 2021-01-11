@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-01 13:37+0100\n"
+"POT-Creation-Date: 2021-01-10 22:01+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -166,7 +166,7 @@ msgstr "Zahlungstypen"
 msgid "Bill {0}"
 msgstr "Rechnung {0}"
 
-#: .\juntagrico_billing\mailer.py:37
+#: .\juntagrico_billing\mailer.py:42
 #, python-brace-format
 msgid "{0} Bill"
 msgstr "{0} Rechnung"
@@ -254,23 +254,23 @@ msgstr "Benachrichtigungen zu senden"
 msgid "Send E-Mails"
 msgstr "E-Mails senden"
 
-#: .\juntagrico_billing\templates\jb\bookings_export.html:4
+#: .\juntagrico_billing\templates\jb\bookings_export.html:5
 msgid "Export bookings"
 msgstr "Buchungen exportieren"
 
-#: .\juntagrico_billing\templates\jb\bookings_export.html:8
+#: .\juntagrico_billing\templates\jb\bookings_export.html:9
 msgid "Bookings Period"
 msgstr "Buchungs Zeitraum"
 
-#: .\juntagrico_billing\templates\jb\bookings_export.html:21
+#: .\juntagrico_billing\templates\jb\bookings_export.html:22
 msgid "Preview"
 msgstr "Vorschau"
 
-#: .\juntagrico_billing\templates\jb\bookings_export.html:24
+#: .\juntagrico_billing\templates\jb\bookings_export.html:25
 msgid "Bill bookings"
 msgstr "Rechnungsbuchungen"
 
-#: .\juntagrico_billing\templates\jb\bookings_export.html:28
+#: .\juntagrico_billing\templates\jb\bookings_export.html:29
 msgid "Payment bookings"
 msgstr "Zahlungsbuchungen"
 
@@ -391,32 +391,35 @@ msgid ""
 "Bill-Number:         %(number)s\n"
 "Period:              %(period)s\n"
 "Concerning:          %(concerning)s\n"
-"Amount:              %(amount)s %(currency)s"
+"Amount:              %(currency)s %(amount)s"
 msgstr ""
 "\n"
 "Rechnungsnummer:     %(number)s\n"
 "Periode:             %(period)s\n"
 "Betreffend:          %(concerning)s\n"
-"Betrag:              %(amount)s %(currency)s"
+"Betrag:              %(currency)s %(amount)s "
 
 #: .\juntagrico_billing\templates\mails\bill_notification.txt:18
 msgid "Find details on the website at"
 msgstr "Details dazu findest Du auf der Webseite unter"
 
-#: .\juntagrico_billing\templates\mails\bill_notification.txt:26
-#, python-format
+#: .\juntagrico_billing\templates\mails\bill_notification.txt:25
 msgid ""
-"The billed amount is due for payment at %(end_date)s and may be paid in "
-"parts.\n"
+"The billed amount is due for payment according to the due date notice found "
+"here:"
+msgstr ""
+"Die Fälligkeiten richten sich nach den Angaben im Fälligkeitshinweis, den du "
+"hier findest:"
+
+#: .\juntagrico_billing\templates\mails\bill_notification.txt:28
+msgid ""
 "Please always specify the bill number with your payments to allow correct "
 "attribution."
 msgstr ""
-"Der Rechnungsbetrag ist zahlbar bis %(end_date)s und kann in Teilzahlungen "
-"geleistet werden.\n"
 "Bitte bei Zahlungen immer die Rechnungsnummer angegeben, damit eine "
 "Zuordnung möglich ist."
 
-#: .\juntagrico_billing\templates\mails\bill_notification.txt:29
+#: .\juntagrico_billing\templates\mails\bill_notification.txt:30
 #, python-format
 msgid "Best regards, your %(organisation_name)s-Operations-Group."
 msgstr "Bis bald und liebe Grüsse, die %(organisation_name)s-Betriebsgruppe."
