@@ -87,7 +87,7 @@ class Bill(JuntagricoBaseModel):
 
 class BillItemType(JuntagricoBaseModel):
     """
-    type definition for custom bill items (other than 
+    type definition for custom bill items (other than
     subscriptions or extra-subscriptions).
     """
     name = models.CharField(_('Name'), max_length=50)
@@ -99,6 +99,7 @@ class BillItemType(JuntagricoBaseModel):
     class Meta:
         verbose_name = _('Custom Bill-Item Type')
         verbose_name_plural = _('Custom Bill-Item Types')
+
 
 class BillItem(JuntagricoBaseModel):
     """
@@ -123,8 +124,8 @@ class BillItem(JuntagricoBaseModel):
                                                on_delete=models.PROTECT,
                                                verbose_name=_('Extrasubscription'))
     custom_item_type = models.ForeignKey(BillItemType, related_name='bill_items',
-                                    null=True, blank=True, on_delete=models.PROTECT,
-                                    verbose_name=_('Custom item type'))                                               
+                                            null=True, blank=True, on_delete=models.PROTECT,
+                                            verbose_name=_('Custom item type'))
 
     description = models.CharField(_('Description'), null=False, blank=True, max_length=100)
 
@@ -158,5 +159,3 @@ class BillItem(JuntagricoBaseModel):
     class Meta:
         verbose_name = _('Bill item')
         verbose_name_plural = _('Bill items')
-
-

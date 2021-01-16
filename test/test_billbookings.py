@@ -87,8 +87,8 @@ class BillBookingsTest(SubscriptionTestBase):
 class BillWithCustomItemBookingsTest(SubscriptionTestBase):
     def test_get_bill_bookings(self):
         year = BusinessYear.objects.create(start_date=date(2018, 1, 1),
-                                                end_date=date(2018, 12, 31),
-                                                name="2018")
+                                            end_date=date(2018, 12, 31),
+                                            name="2018")
         year.save()
 
         item_type1 = BillItemType(name='Custom Item 1', booking_account='2211')
@@ -125,6 +125,3 @@ class BillWithCustomItemBookingsTest(SubscriptionTestBase):
         self.assertEquals("2212", booking.credit_account)
         self.assertEquals("4321", booking.member_account)
         self.assertEquals(200.0, booking.price)
-
-
-

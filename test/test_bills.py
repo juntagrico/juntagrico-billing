@@ -211,11 +211,11 @@ class BillCustomItemsTest(SubscriptionTestBase):
         self.assertEquals(1200.0, bill.amount)
 
         # add 2 custom items
-        item = BillItem(bill=bill, custom_item_type=self.item_type1, 
-                    description='some custom item 1', amount=110.0)
+        item = BillItem(bill=bill, custom_item_type=self.item_type1,
+                        description='some custom item 1', amount=110.0)
         item.save()
-        item = BillItem(bill=bill, custom_item_type=self.item_type2, 
-                    amount=120.0)
+        item = BillItem(bill=bill, custom_item_type=self.item_type2,
+                        amount=120.0)
         item.save()
         bill.save()
 
@@ -235,7 +235,3 @@ class BillCustomItemsTest(SubscriptionTestBase):
         description_lines = bill.description.split('\n')
         self.assertEquals('some custom item 1', description_lines[1])
         self.assertEquals('Custom Item 2', description_lines[2])
-
-
-
-
