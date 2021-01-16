@@ -4,7 +4,8 @@ from juntagrico_billing.admin.bill import BillAdmin
 from juntagrico_billing.admin.businessyear import BusinessYearAdmin
 from juntagrico_billing.admin.payment import PaymentAdmin, PaymentTypeAdmin
 from juntagrico_billing.entity.account import MemberAccount, SubscriptionTypeAccount, ExtraSubscriptionCategoryAccount
-from juntagrico_billing.entity.bill import Bill, Payment, PaymentType, BusinessYear
+from juntagrico_billing.entity.bill import Bill, BusinessYear
+from juntagrico_billing.entity.payment import Payment, PaymentType
 from juntagrico_billing.entity.settings import Settings
 
 '''
