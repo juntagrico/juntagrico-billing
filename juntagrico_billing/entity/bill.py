@@ -124,8 +124,8 @@ class BillItem(JuntagricoBaseModel):
                                                on_delete=models.PROTECT,
                                                verbose_name=_('Extrasubscription'))
     custom_item_type = models.ForeignKey(BillItemType, related_name='bill_items',
-                                            null=True, blank=True, on_delete=models.PROTECT,
-                                            verbose_name=_('Custom item type'))
+                                         null=True, blank=True, on_delete=models.PROTECT,
+                                         verbose_name=_('Custom item type'))
 
     description = models.CharField(_('Description'), null=False, blank=True, max_length=100)
 
