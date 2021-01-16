@@ -4,7 +4,7 @@ from django.conf import settings
 from juntagrico.entity.extrasubs import ExtraSubscription
 from juntagrico.entity.subs import SubscriptionPart
 
-from juntagrico_billing.entity.bill import BusinessYear
+from juntagrico_billing.entity.bill import BusinessYear, BillItem, BillItemType
 from juntagrico_billing.util.billing import get_billable_items, create_bill, create_bills_for_items
 from juntagrico_billing.util.billing import scale_subscription_price, scale_extrasubscription_price
 from test.test_base import SubscriptionTestBase
@@ -188,3 +188,54 @@ class GetBillableItemsTests(SubscriptionTestBase):
         # we expect no billable items because subscription is not active in 2018
         items = get_billable_items(self.year)
         self.assertEqual(len(items_before), len(items), "expecting no items for additional inactive subscription")
+
+
+class BillCustomItemsTest(SubscriptionTestBase):
+    def setUp(self):
+        super().setUp()
+
+        self.year = BusinessYear.objects.create(start_date=date(2018, 1, 1),
+                                                end_date=date(2018, 12, 31),
+                                                name="2018")
+
+        self.item_type1 = BillItemType(name='Custom Item 1', booking_account='2211')
+        self.item_type1.save()
+        self.item_type2 = BillItemType(name='Custom Item 2', booking_account='2212')
+        self.item_type2.save()
+
+    def test_subscription_with_custom_item(self):
+        # create a subscription bill
+        bill = create_bill(self.subscription.parts.all(), self.year, self.year.start_date)
+
+        self.assertEquals(1, len(bill.items.all()))
+        self.assertEquals(1200.0, bill.amount)
+
+        # add 2 custom items
+        item = BillItem(bill=bill, custom_item_type=self.item_type1, 
+                    description='some custom item 1', amount=110.0)
+        item.save()
+        item = BillItem(bill=bill, custom_item_type=self.item_type2, 
+                    amount=120.0)
+        item.save()
+        bill.save()
+
+        # test items
+        self.assertEquals(3, len(bill.items.all()))
+        self.assertEquals(1430.0, bill.amount)
+        item = bill.items.all()[1]
+        self.assertEquals('Custom Item 1', item.item_kind)
+        self.assertEquals('some custom item 1', item.description)
+        self.assertEquals('Custom Item 1 some custom item 1', str(item))
+        item = bill.items.all()[2]
+        self.assertEquals('Custom Item 2', item.item_kind)
+        self.assertEquals('', item.description)
+        self.assertEquals('Custom Item 2', str(item))
+
+        # test description
+        description_lines = bill.description.split('\n')
+        self.assertEquals('some custom item 1', description_lines[1])
+        self.assertEquals('Custom Item 2', description_lines[2])
+
+
+
+
