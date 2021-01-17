@@ -75,7 +75,7 @@ class Bill(JuntagricoBaseModel):
         """
         Concatenation of the BillItem descriptions, joined by line breaks.
         """
-        return "\n".join([itm.description for itm in self.items.all()])
+        return "\n".join([itm.description or itm.item_kind for itm in self.items.all()])
 
     def __str__(self):
         return '{}'.format(self.id)
@@ -83,6 +83,22 @@ class Bill(JuntagricoBaseModel):
     class Meta:
         verbose_name = _('Bill')
         verbose_name_plural = _('Bills')
+
+
+class BillItemType(JuntagricoBaseModel):
+    """
+    type definition for custom bill items (other than
+    subscriptions or extra-subscriptions).
+    """
+    name = models.CharField(_('Name'), max_length=50)
+    booking_account = models.CharField(_('Booking account'), max_length=10)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _('Custom Bill-Item Type')
+        verbose_name_plural = _('Custom Bill-Item Types')
 
 
 class BillItem(JuntagricoBaseModel):
@@ -97,7 +113,8 @@ class BillItem(JuntagricoBaseModel):
                              null=False, blank=False,
                              on_delete=models.CASCADE, verbose_name=_('Bill'))
 
-    # a bill item has either a subscription type or a extrasubscription type assigned
+    # a bill item has either a subscription type, an extrasubscription type
+    # or a custom item_type assigned
     subscription_type = models.ForeignKey(SubscriptionType, related_name='bill_items',
                                           null=True, blank=True,
                                           on_delete=models.PROTECT,
@@ -106,10 +123,16 @@ class BillItem(JuntagricoBaseModel):
                                                null=True, blank=True,
                                                on_delete=models.PROTECT,
                                                verbose_name=_('Extrasubscription'))
+    custom_item_type = models.ForeignKey(BillItemType, related_name='bill_items',
+                                         null=True, blank=True, on_delete=models.PROTECT,
+                                         verbose_name=_('Custom item type'))
 
-    description = models.CharField(_('Description'), null=True, blank=True, max_length=100)
+    description = models.CharField(_('Description'), null=False, blank=True, max_length=100)
 
     amount = models.FloatField(_('Amount'), null=False, blank=False, default=0.0)
+
+    def __str__(self):
+        return ('%s %s' % (self.item_kind, self.description)).strip()
 
     # derived property
     @property
@@ -126,46 +149,13 @@ class BillItem(JuntagricoBaseModel):
             return _('Subscription')
         elif self.extrasubscription_type:
             return _('Extrasubscription')
+        elif self.custom_item_type:
+            return self.custom_item_type.name
         else:
             return ''
 
     item_kind.fget.short_description = _('Item kind')
 
-
-class Payment(JuntagricoBaseModel):
-    """
-    Payment for bill
-    """
-    bill = models.ForeignKey('Bill', related_name='payments',
-                             null=False, blank=False,
-                             on_delete=models.PROTECT, verbose_name=_('Bill'))
-    type = models.ForeignKey('PaymentType', related_name='payments',
-                             null=False, blank=False,
-                             on_delete=models.PROTECT, verbose_name=_('Payment type'))
-    paid_date = models.DateField(_('Payment date'), null=True, blank=True)
-    amount = models.FloatField(_('Amount'), null=False, blank=False, default=0.0)
-    private_notes = models.TextField(_('Notes not visible to {}').format(Config.vocabulary('member_pl')), null=True, blank=True)
-
-    def __str__(self):
-        return '{}'.format(self.bill.id)
-
     class Meta:
-        verbose_name = _('Payment')
-        verbose_name_plural = _('Payments')
-
-
-class PaymentType(JuntagricoBaseModel):
-    """
-    Payment type,
-    defining bank and booking account
-    """
-    name = models.CharField(_('Name'), null=True, blank=True, max_length=50)
-    iban = models.CharField('IBAN', null=True, blank=True, max_length=30)
-    booking_account = models.CharField(_('Booking account'), max_length=10)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = _('Payment type')
-        verbose_name_plural = _('Payment types')
+        verbose_name = _('Bill item')
+        verbose_name_plural = _('Bill items')

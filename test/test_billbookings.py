@@ -2,7 +2,8 @@ from datetime import date
 
 from juntagrico.entity.extrasubs import ExtraSubscription
 
-from juntagrico_billing.entity.bill import BusinessYear, Payment, PaymentType
+from juntagrico_billing.entity.bill import BusinessYear, BillItem, BillItemType
+from juntagrico_billing.entity.payment import Payment, PaymentType
 from juntagrico_billing.util.billing import create_bill
 from juntagrico_billing.util.bookings import get_bill_bookings, get_payment_bookings
 from test.test_base import SubscriptionTestBase
@@ -81,3 +82,46 @@ class BillBookingsTest(SubscriptionTestBase):
         self.assertEquals('1100', booking.credit_account)
         self.assertEquals('1010', booking.debit_account)
         self.assertEquals('4321', booking.member_account)
+
+
+class BillWithCustomItemBookingsTest(SubscriptionTestBase):
+    def test_get_bill_bookings(self):
+        year = BusinessYear.objects.create(start_date=date(2018, 1, 1),
+                                           end_date=date(2018, 12, 31),
+                                           name="2018")
+        year.save()
+
+        item_type1 = BillItemType(name='Custom Item 1', booking_account='2211')
+        item_type1.save()
+        item_type2 = BillItemType(name='Custom Item 2', booking_account='2212')
+        item_type2.save()
+
+        bill = create_bill(self.subscription.parts.all(), year, year.start_date)
+        item = BillItem(bill=bill, custom_item_type=item_type1, amount=100.0)
+        item.save()
+        item = BillItem(bill=bill, custom_item_type=item_type2, amount=200.0)
+        item.save()
+        bill.save()
+
+        # get bookigs
+        bookings = get_bill_bookings(year.start_date, year.end_date)
+
+        self.assertEquals(3, len(bookings))
+
+        booking = bookings[1]
+        self.assertEquals(year.start_date, booking.date)
+        self.assertEquals("500012", booking.docnumber)
+        self.assertEquals("Rg 1: Custom Item 1 Michael Test", booking.text)
+        self.assertEquals("1100", booking.debit_account)
+        self.assertEquals("2211", booking.credit_account)
+        self.assertEquals("4321", booking.member_account)
+        self.assertEquals(100.0, booking.price)
+
+        booking = bookings[2]
+        self.assertEquals(year.start_date, booking.date)
+        self.assertEquals("500013", booking.docnumber)
+        self.assertEquals("Rg 1: Custom Item 2 Michael Test", booking.text)
+        self.assertEquals("1100", booking.debit_account)
+        self.assertEquals("2212", booking.credit_account)
+        self.assertEquals("4321", booking.member_account)
+        self.assertEquals(200.0, booking.price)

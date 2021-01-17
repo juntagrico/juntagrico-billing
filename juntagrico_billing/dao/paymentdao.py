@@ -1,4 +1,4 @@
-from juntagrico_billing.entity.bill import Payment
+from juntagrico_billing.entity.payment import Payment
 
 
 class PaymentDao:
