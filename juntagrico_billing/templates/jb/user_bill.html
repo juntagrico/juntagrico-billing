@@ -51,6 +51,7 @@
 
     <div class="row mb-4"><p class="col">{{ bill.public_notes | default_if_none:"" }}</p></div>
     
+    {% if payments %}
     <h4>{% trans "Payments per" %} {{ today|date:"SHORT_DATE_FORMAT" }}:</h4>
     {% for payment in payments %}
     <div class="row">
@@ -68,7 +69,13 @@
         <div class="col-sm-2 text-right">{{ open_amount | floatformat:2 }}</div>
         {% endif %}
     </div>
-    {% if not bill.paid %}
+    {% endif %}
+    
+    <div class="row my-3"></div>
+
+    {% if qr_svg %}
+{{ qr_svg | safe }}
+    {% else %}
     <p class="mt-5">
         {% config "organisation_address" as addr %}
         {% trans "Please pay specifying bill number to:" %}<br>

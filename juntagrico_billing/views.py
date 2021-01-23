@@ -18,6 +18,7 @@ from juntagrico_billing.entity.settings import Settings
 from juntagrico_billing.mailer import send_bill_notification
 from juntagrico_billing.util.billing import get_billable_items, group_billables_by_member, create_bills_for_items, \
     get_open_bills
+from juntagrico_billing.util.qrbill import is_qr_iban, get_qrbill_svg
 from juntagrico_billing.util.bookings import get_bill_bookings, get_payment_bookings
 
 
@@ -199,6 +200,12 @@ def user_bill(request, bill_id):
 
     settings = Settings.objects.first()
 
+    # add QR-Bill part if QR-IBAN
+    if is_qr_iban(settings.default_paymenttype.iban):
+        qr_svg = get_qrbill_svg(bill, settings.default_paymenttype)
+    else:
+        qr_svg = None
+
     renderdict = get_menu_dict(request)
     renderdict.update({
         'member': bill.member,
@@ -207,6 +214,7 @@ def user_bill(request, bill_id):
         'payments': bill.payments.all(),
         'open_amount': bill.amount - bill.amount_paid,
         'paymenttype': settings.default_paymenttype,
+        'qr_svg' : qr_svg
     })
     return render(request, "jb/user_bill.html", renderdict)
 
