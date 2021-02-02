@@ -7,17 +7,6 @@
     </h3>
 {% endblock %}
 {% block content %}
-    <div class="row">
-        <h4 class="col-md-12">{% trans "Payment details" %}</h4>
-    </div>
-    <div class="row mb-3">
-        <div class="col-md-12">
-            {% config "organisation_address" as addr %}
-            {{ paymenttype.name }}<br/>
-            {% trans "IBAN" %} {{ paymenttype.iban }}<br/>
-            {{ addr.name }}, {{ addr.zip }} {{ addr.city }}
-        </div>
-    </div>
     <div>
         <table id="filter-table" class="list table" searching="false" style="display: table;">
             <thead>
@@ -51,7 +40,7 @@
                         {{ bill.bill_date|date:"SHORT_DATE_FORMAT" }}
                     </td>
                     <td>
-                        {{ bill.description | linebreaks }}
+                        {{ bill.item_kinds | linebreaks }}
                     </td>
                     <td class="text-right">
                         {{ bill.amount | floatformat:2 }}

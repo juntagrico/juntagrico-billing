@@ -97,7 +97,7 @@ def render_pdf_bill(bill, outfile):
     #
     lines=[]
     for item in bill.items.all():
-        lines.append((Paragraph(item.description, normal),
+        lines.append((Paragraph(str(item), normal),
                       Paragraph('%10.2f' % item.amount, normalright)))
     lines.append((Paragraph('<b>Total</b>', normal), Paragraph('<b>%10.2f</b>' % bill.amount, normalright)))
 
