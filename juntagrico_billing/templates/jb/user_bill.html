@@ -71,7 +71,9 @@
     </div>
     {% endif %}
     
-    <div class="row my-3"></div>
+    <div class="row my-3">
+        <div class="col"><a href="{% url 'jb:user-bill-pdf' bill.pk  %}">{% trans "Download as PDF" %}</a></div>
+    </div>
 
     {% if qr_svg %}
 {{ qr_svg | safe }}
@@ -84,7 +86,7 @@
         {% trans "in favor of" %}<br> 
         {{ addr.name }}, {{ addr.zip }} {{ addr.city }}
     </p>
-    {% endif %}
+    {% endif %}   
 </div>
 
 {% endblock %}

@@ -6,6 +6,7 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import get_template
 from django.urls import reverse
+from django.http import HttpResponse
 from django.views.decorators.http import require_POST
 from juntagrico.util import return_to_previous_location
 from juntagrico.util.temporal import start_of_business_year, start_of_next_business_year
@@ -19,6 +20,7 @@ from juntagrico_billing.mailer import send_bill_notification
 from juntagrico_billing.util.billing import get_billable_items, group_billables_by_member, create_bills_for_items, \
     get_open_bills
 from juntagrico_billing.util.qrbill import is_qr_iban, get_qrbill_svg
+from juntagrico_billing.util.pdfbill import render_pdf_bill
 from juntagrico_billing.util.bookings import get_bill_bookings, get_payment_bookings
 
 
@@ -217,6 +219,24 @@ def user_bill(request, bill_id):
         'qr_svg' : qr_svg
     })
     return render(request, "jb/user_bill.html", renderdict)
+
+
+@login_required
+def user_bill_pdf(request, bill_id):
+    member = request.user.member
+    bill = get_object_or_404(Bill, id=bill_id)
+
+    # only allow for bookkepper or the bills member
+    if not (request.user.has_perms(('juntagrico.is_book_keeper',))
+            or bill.member == member):
+        raise PermissionDenied()
+
+    filename = "Rechnung %d.pdf" % bill.id
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = "attachment; filename=\"" + filename + "\""
+
+    render_pdf_bill(bill, response)
+    return response
 
 
 @permission_required('juntagrico.is_book_keeper')

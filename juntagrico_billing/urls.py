@@ -16,4 +16,5 @@ urlpatterns = [
     # bills (user)
     path('jb/user_bills', views.user_bills, name='user-bills'),
     path('jb/user_bill/<int:bill_id>', views.user_bill, name='user-bill'),
+    path('jb/user_bill_pdf/<int:bill_id>', views.user_bill_pdf, name='user-bill-pdf'),
 ]

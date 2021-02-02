@@ -37,11 +37,8 @@
                     <th>
                         {% trans "Paid" %}
                     </th>
-                    {% if esr %}
                     <th>
-                        {% trans "Reference Number" %}
                     </th>
-                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -67,11 +64,9 @@
                         {{ amount.paid  }}
                         {% endif %}
                     </td>
-                    {% if esr %}
                     <td>
-                        {{ bill.ref_number }}
+                        <a href="{% url 'jb:user-bill-pdf' bill.pk  %}">PDF</a>
                     </td>
-                    {% endif %}
                     </tr>
                 {% endfor %}
             </tbody>

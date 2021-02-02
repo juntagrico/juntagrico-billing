@@ -3,6 +3,8 @@ from stdnum.ch.esr import calc_check_digit
 import stdnum.iban
 from lxml import etree
 from io import StringIO
+from juntagrico.config import Config
+
 
 def is_qr_iban(iban):
     """
@@ -36,7 +38,7 @@ def calc_refnumber(bill):
 
 def modify_svg_fill(svg_string, fill_value):
     """
-    modify the fill value of the outermost rect the qrbill svg.
+    modify the fill value of the outermost rect in the qrbill svg.
     is used to modify the default svg output of qrbill from white to none.
     """
     svg = etree.fromstring(svg_string)
@@ -55,20 +57,21 @@ def get_qrbill_svg(bill, paymenttype):
     if not is_qr_iban(paymenttype.iban):
         raise Exception('iban is no qr iban: %s' % paymenttype.iban)
 
+    addr = Config.organisation_address()
     qr = QRBill(
                 language='de',
                 account=stdnum.iban.compact(paymenttype.iban),
                 ref_number=calc_refnumber(bill),
                 creditor={
-                    'name': 'Genossenschaft ortoloco', 
-                    'pcode': '8953', 
-                    'city': 'Dietikon', 
+                    'name': addr['name'], 
+                    'line1': '%s %s' % (addr['street'], addr['number']),
+                    'line2': '%s %s' % (addr['zip'], addr['city']),
                     'country': 'CH',
                 },
                 debtor={
                     'name': '%s %s' % (bill.member.first_name, bill.member.last_name),
-                    'pcode': bill.member.addr_zipcode,
-                    'city': bill.member.addr_location,
+                    'line1': bill.member.addr_street,
+                    'line2': '%s %s' % (bill.member.addr_zipcode, bill.member.addr_location),
                     'country': 'CH',
                 }
     )
