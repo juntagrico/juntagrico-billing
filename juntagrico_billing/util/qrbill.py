@@ -1,5 +1,5 @@
 from qrbill.bill import QRBill
-from stdnum.ch.esr import calc_check_digit
+from stdnum.ch.esr import calc_check_digit, validate, compact
 import stdnum.iban
 from lxml import etree
 from io import StringIO
@@ -36,6 +36,22 @@ def calc_refnumber(bill):
     return ref_num + calc_check_digit(ref_num)
 
 
+def bill_id_from_refnumber(refnumber):
+    validate(refnumber)
+    refnumber = compact(refnumber)[:-1]
+
+    bill_part = refnumber[-10:]
+    return int(bill_part)
+
+
+def member_id_from_refnumber(refnumber):
+    validate(refnumber)
+    refnumber = compact(refnumber)[:-1]
+
+    member_part = refnumber[-20:-10]
+    return int(member_part)
+
+    
 def modify_svg_fill(svg_string, fill_value):
     """
     modify the fill value of the outermost rect in the qrbill svg.

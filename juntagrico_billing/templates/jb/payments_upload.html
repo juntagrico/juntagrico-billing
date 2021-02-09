@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load config %}
+{% block page_title %}
+    <h3>{% trans "Upload payments" %}</h3>
+{% endblock %}
+
+{% block content %}
+
+{% for message in django_messages %}
+    {%if message.tags == "error" %}
+    <div class="alert alert-danger alert-dismissible fade show">
+    {% else %}
+    <div class="alert alert-success alert-dismissible fade show">
+    {% endif %}
+        {{ message | linebreaks }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+{% endfor %}
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Upload"/>
+</form>
+{% endblock %}
