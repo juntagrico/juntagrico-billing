@@ -1,20 +1,22 @@
+from django.utils.translation import gettext
 from juntagrico.entity.member import Member
 from juntagrico_billing.entity.payment import Payment, PaymentType
+from juntagrico_billing.dao.paymentdao import PaymentDao
 from juntagrico_billing.entity.bill import Bill
 from juntagrico_billing.util.qrbill import bill_id_from_refnumber, member_id_from_refnumber
 
 class PaymentInfo(object):
-    def __init__(self, date, credit_iban, amount, ref_type, reference, id):
+    def __init__(self, date, credit_iban, amount, ref_type, reference, unique_id):
         self.date = date
         self.credit_iban = credit_iban
         self.amount = amount
         self.ref_type = ref_type
         self.reference = reference
-        self.id = id
+        self.unique_id = unique_id
 
     def __repr__(self):
         return 'PaymentInfo %s %.2f %s %s' % (
-                self.date, self.amount, self.reference, self.id)
+                self.date, self.amount, self.reference, self.unique_id)
 
 
 class PaymentProcessorError(Exception):
@@ -22,12 +24,21 @@ class PaymentProcessorError(Exception):
 
 
 class PaymentProcessor(object):
-    def __init__(self):
+    def __init__(self, testing=False):
+        self.testing = testing
         # initialize a dictionary of iban numbers and
         # corresponding payment types
         self.payment_types = dict(
             [(pt.iban, pt) for pt in PaymentType.objects.all()])
 
+    def _(self, text):
+        """
+        internal translation method.
+        skip translation of error messages in unit tests.
+        """
+        if not self.testing:
+            return gettext(text)
+        return text
 
     def check_payment(self, paymentinfo):
         """
@@ -41,17 +52,22 @@ class PaymentProcessor(object):
                         was found found
 
         exceptions are raised in the following cases
+          - the payment has already been imported
           - invalid billing reference and no open bill for same member
           - invalid bill and member reference
-          - the credit account was not found              
+          - the credit account was not found
         """
+        if paymentinfo.unique_id and PaymentDao.exists_payment_with_unique_id(paymentinfo.unique_id):
+            raise PaymentProcessorError(self._('Payment with unique id %s has already been imported.') % \
+                        paymentinfo.unique_id)
+
         if not self.find_paymenttype(paymentinfo):
-            raise PaymentProcessorError('Payment for account iban %s can not be imported, because there is no paymenttype for this account.' % \
+            raise PaymentProcessorError(self._('Payment for account iban %s can not be imported, because there is no paymenttype for this account.') % \
                         paymentinfo.credit_iban)
 
         member = self.find_member(paymentinfo)
         if not member:
-            raise PaymentProcessorError('Payment from member %d can not be imported, because there is no member with this id.' % \
+            raise PaymentProcessorError(self._('Payment from member %d can not be imported, because there is no member with this id.') % \
                         member_id_from_refnumber(paymentinfo.reference))
 
         bill = self.find_bill(paymentinfo)
@@ -63,7 +79,7 @@ class PaymentProcessor(object):
         if len(bills):
             return ('OTHER_BILL', bills[0])
         
-        raise PaymentProcessorError('Payment from member %d can not be imported, because there is no open bill for the member.' % \
+        raise PaymentProcessorError(self._('Payment from member %d can not be imported, because there is no open bill for the member.') % \
                         member.id)
 
 
@@ -116,6 +132,7 @@ class PaymentProcessor(object):
                         bill=bill,
                         type=self.find_paymenttype(pinfo),
                         paid_date=pinfo.date,
-                        amount=pinfo.amount)
+                        amount=pinfo.amount,
+                        unique_id=pinfo.unique_id)
             payment.save()
 

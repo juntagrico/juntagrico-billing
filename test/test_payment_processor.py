@@ -1,7 +1,7 @@
 import unittest
 from datetime import date
 from juntagrico_billing.entity.bill import Bill, BusinessYear
-from juntagrico_billing.entity.payment import PaymentType
+from juntagrico_billing.entity.payment import Payment, PaymentType
 from juntagrico_billing.util.qrbill import bill_id_from_refnumber, member_id_from_refnumber
 from juntagrico_billing.util.payment_processor import PaymentProcessor, PaymentInfo, PaymentProcessorError
 from test.test_base import SubscriptionTestBase
@@ -44,7 +44,7 @@ class PaymentProcessorTest(SubscriptionTestBase):
                                bill_date=bill_date2, booking_date=bill_date2)
         self.bill2.save()
 
-        self.processor = PaymentProcessor()
+        self.processor = PaymentProcessor(testing=True)
 
 
     def test_check_payment_ok(self):
@@ -142,6 +142,32 @@ class PaymentProcessorTest(SubscriptionTestBase):
 
         with self.assertRaisesMessage(PaymentProcessorError, 
                     'Payment for account iban CH7730000001230094239 can not be imported, because there is no paymenttype for this account.'):  
+            self.processor.check_payment(pinfo)
+
+    def test_check_payment_exists(self):
+        """
+        test payment that already exists
+        """
+        # create an existing payment
+        payment = Payment.objects.create(
+                        bill=self.bill1,
+                        type=self.paymenttype1,
+                        paid_date=date(2018, 3, 1),
+                        amount=10.0,
+                        unique_id='5x81cd67')
+        payment.save()
+
+        pinfo = PaymentInfo(
+                    date(2018, 3, 15),
+                    'CH7730000001250094239',
+                    250.0,
+                    'QRR',
+                    '000000000000000100000000010',
+                    '5x81cd67'
+        )
+
+        with self.assertRaisesMessage(PaymentProcessorError, 
+                    'Payment with unique id 5x81cd67 has already been imported.'):  
             self.processor.check_payment(pinfo)
 
 

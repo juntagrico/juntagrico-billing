@@ -23,7 +23,7 @@ class Camt054ReaderTest(TestCase):
         self.assertEqual(778.29, payment.amount)
         self.assertEqual('QRR', payment.ref_type)
         self.assertEqual('539115429773825311971477453', payment.reference)
-        self.assertEqual('1006265-25bbb3b1a', payment.id)
+        self.assertEqual('1006265-25bbb3b1a', payment.unique_id)
 
         payment = payments[1]
         self.assertEqual(datetime.date(2020, 6, 18), payment.date)
@@ -31,7 +31,7 @@ class Camt054ReaderTest(TestCase):
         self.assertEqual(913.93, payment.amount)
         self.assertEqual('QRR', payment.ref_type)
         self.assertEqual('662437765447746478179744715', payment.reference)
-        self.assertEqual('1005970-70a75515', payment.id)
+        self.assertEqual('1005970-70a75515', payment.unique_id)
 
 
     def test_read_qrpayments2(self):
@@ -54,4 +54,4 @@ class Camt054ReaderTest(TestCase):
         self.assertEqual(1.0, payment.amount)
         self.assertEqual('QRR', payment.ref_type)
         self.assertEqual('000000000000014200000000566', payment.reference)
-        self.assertEqual('INSTRID-01-01', payment.id)
+        self.assertEqual('INSTRID-01-01', payment.unique_id)
