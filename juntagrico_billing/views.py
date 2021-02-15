@@ -10,7 +10,6 @@ from django.views.decorators.http import require_POST
 from juntagrico.util import return_to_previous_location
 from juntagrico.util.temporal import start_of_business_year, start_of_next_business_year
 from juntagrico.util.xls import generate_excel
-from juntagrico.views import get_menu_dict
 
 from juntagrico_billing.dao.billdao import BillDao
 from juntagrico_billing.entity.bill import BusinessYear, Bill
@@ -26,7 +25,7 @@ def bills(request):
     """
     List of bills per year
     """
-    renderdict = get_menu_dict(request)
+    renderdict = {}
 
     # get all business years
     business_years = list(BusinessYear.objects.all().order_by('start_date'))
@@ -125,8 +124,6 @@ def bookings_export(request):
         'tilldate': start_of_next_business_year() - timedelta(1)
     }
 
-    renderdict = get_menu_dict(request)
-
     # daterange for bookings export
     if 'fromdate' in request.GET and 'tilldate' in request.GET:
         # request with query parameter
@@ -151,11 +148,11 @@ def bookings_export(request):
         return export_bookings(bookings, "bookings")
 
     # otherwise return page
-    renderdict.update({
+    renderdict = {
         'daterange_form': daterange_form,
         'bill_bookings_count': len(bill_bookings),
         'payment_bookings_count': len(payment_bookings),
-    })
+    }
 
     return render(request, 'jb/bookings_export.html', renderdict)
 
@@ -178,12 +175,11 @@ def export_bookings(bookings, filename):
 def user_bills(request):
     member = request.user.member
     settings = Settings.objects.first()
-    renderdict = get_menu_dict(request)
-    renderdict.update({
+    renderdict = {
         'bills': BillDao.bills_for_member(member),
         'paymenttype': settings.default_paymenttype,
         'menu': {'bills': 'active'},
-    })
+    }
     return render(request, "jb/user_bills.html", renderdict)
 
 
@@ -199,15 +195,14 @@ def user_bill(request, bill_id):
 
     settings = Settings.objects.first()
 
-    renderdict = get_menu_dict(request)
-    renderdict.update({
+    renderdict = {
         'member': bill.member,
         'bill': bill,
         'today': date.today(),
         'payments': bill.payments.all(),
         'open_amount': bill.amount - bill.amount_paid,
         'paymenttype': settings.default_paymenttype,
-    })
+    }
     return render(request, "jb/user_bill.html", renderdict)
 
 
@@ -216,8 +211,6 @@ def bills_notify(request):
     """
     List of bills to send notification e-mails
     """
-    renderdict = get_menu_dict(request)
-
     bills_list = list(Bill.objects.filter(notification_sent=False))
 
     if request.method == 'POST':
@@ -228,11 +221,11 @@ def bills_notify(request):
 
         return return_to_previous_location(request)
 
-    renderdict.update({
+    renderdict = {
         'bills_list': bills_list,
         'bills_count': len(bills_list),
         'email_form_disabled': True,
         'change_date_disabled': True,
-    })
+    }
 
     return render(request, "jb/bills_notify.html", renderdict)
