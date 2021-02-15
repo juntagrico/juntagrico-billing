@@ -233,5 +233,5 @@ class BillCustomItemsTest(SubscriptionTestBase):
 
         # test description
         description_lines = bill.description.split('\n')
-        self.assertEquals('some custom item 1', description_lines[1])
+        self.assertEquals('Custom Item 1 some custom item 1', description_lines[1])
         self.assertEquals('Custom Item 2', description_lines[2])
