@@ -1,8 +1,8 @@
 from django import forms
-from django.contrib.auth.decorators import permission_required, login_required
+from django.utils.translation import gettext as _
+from django.contrib.auth.decorators import permission_required
 from django.contrib.messages import success, error, get_messages
 from django.shortcuts import render, redirect
-from django.urls import reverse
 from juntagrico.views import get_menu_dict
 
 from juntagrico_billing.util.payment_processor import PaymentProcessor, PaymentProcessorError
@@ -10,6 +10,7 @@ from juntagrico_billing.util.payment_reader import Camt045Reader, PaymentReaderE
 
 class UploadFileForm(forms.Form):
     file = forms.FileField()
+    file.widget.attrs.update({'class': 'form-control-file'})
 
 
 @permission_required('juntagrico.is_book_keeper')
@@ -49,12 +50,12 @@ def handle_payments_upload(f):
         payments = reader.parse_payments(f.read())
         processor.process_payments(payments)
     except PaymentReaderError as e:
-        message = "Failed to read payments file:\n%s" % e
+        message = _("Failed to read payments file:\n%s") % e
         return (False, message)
     except PaymentProcessorError as e:
-        message = "Failed to process payments:\n%s" % e
+        message = _("Failed to process payments:\n%s") % e
         return (False, message)
 
     return (True, 
-            "Payments file successfully imported.\n%d payments have been processed." % len(payments))
+            _("Payments file successfully imported.\n%d payments have been processed.") % len(payments))
 

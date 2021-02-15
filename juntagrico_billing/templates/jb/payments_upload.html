@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load config %}
 {% block page_title %}
-    <h3>{% trans "Upload payments" %}</h3>
+    <h3>{% trans "Import payments" %}</h3>
 {% endblock %}
 
 {% block content %}
@@ -18,9 +18,11 @@
     </div>
 {% endfor %}
 
-<form method="post" enctype="multipart/form-data">
+<form method="post" class="form" enctype="multipart/form-data">
     {% csrf_token %}
+    <div class="form-group">
     {{ form }}
-    <input type="submit" value="Upload"/>
+    </div>
+    <input type="submit" class="btn btn-success" value="Upload"/>
 </form>
 {% endblock %}

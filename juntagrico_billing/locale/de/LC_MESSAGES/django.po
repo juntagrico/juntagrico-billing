@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-15 20:45+0100\n"
+"POT-Creation-Date: 2021-02-15 22:04+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -207,6 +207,16 @@ msgstr "Rechnungen und Buchhaltung"
 msgid "Send billing notifications"
 msgstr "E-Mails für Rechnungen senden"
 
+#: .\juntagrico_billing\templates\jb\billing_admin_menu.html:14
+#: .\juntagrico_billing\templates\jb\payments_upload.html:5
+msgid "Import payments"
+msgstr "Zahlungen importieren"
+
+#: .\juntagrico_billing\templates\jb\billing_admin_menu.html:17
+#: .\juntagrico_billing\templates\jb\bookings_export.html:5
+msgid "Export bookings"
+msgstr "Buchungen exportieren"
+
 #: .\juntagrico_billing\templates\jb\bills.html:12
 msgid "Year:"
 msgstr "Jahr"
@@ -281,10 +291,6 @@ msgstr "Benachrichtigungen zu senden"
 msgid "Send E-Mails"
 msgstr "E-Mails senden"
 
-#: .\juntagrico_billing\templates\jb\bookings_export.html:5
-msgid "Export bookings"
-msgstr "Buchungen exportieren"
-
 #: .\juntagrico_billing\templates\jb\bookings_export.html:9
 msgid "Bookings Period"
 msgstr "Buchungs Zeitraum"
@@ -300,10 +306,6 @@ msgstr "Rechnungsbuchungen"
 #: .\juntagrico_billing\templates\jb\bookings_export.html:29
 msgid "Payment bookings"
 msgstr "Zahlungsbuchungen"
-
-#: .\juntagrico_billing\templates\jb\payments_upload.html:5
-msgid "Upload payments"
-msgstr "Zahlungen hochloaden"
 
 #: .\juntagrico_billing\templates\jb\user_bill.html:36
 #: .\juntagrico_billing\util\pdfbill.py:87
@@ -521,3 +523,30 @@ msgstr ""
 #: .\juntagrico_billing\util\pdfbill.py:125
 msgid "Total payments"
 msgstr "Total Zahlungen"
+
+#: .\juntagrico_billing\views_payment.py:53
+#, python-format
+msgid ""
+"Failed to read payments file:\n"
+"%s"
+msgstr ""
+"Zahlungsfile konnte nicht gelesen werden:\n"
+"%s"
+
+#: .\juntagrico_billing\views_payment.py:56
+#, python-format
+msgid ""
+"Failed to process payments:\n"
+"%s"
+msgstr ""
+"Fehler bei der Verarbeitung der Zahlungen:\n"
+"%s"
+
+#: .\juntagrico_billing\views_payment.py:60
+#, python-format
+msgid ""
+"Payments file successfully imported.\n"
+"%d payments have been processed."
+msgstr ""
+"Zahlungen erfolgreich importiert.\n"
+"%d Zahlungen wurden verarbeitet."
