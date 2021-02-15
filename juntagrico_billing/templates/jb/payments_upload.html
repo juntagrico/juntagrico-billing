@@ -7,7 +7,7 @@
 
 {% block content %}
 
-{% for message in django_messages %}
+{% for message in messages %}
     {%if message.tags == "error" %}
     <div class="alert alert-danger alert-dismissible fade show">
     {% else %}
