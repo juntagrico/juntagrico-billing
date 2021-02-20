@@ -9,13 +9,20 @@ from test.test_base import SubscriptionTestBase
 
 class ReferenceNumberTest(unittest.TestCase):
     def test_bill_id_from_refnumber(self):
-        self.assertEqual(1234, bill_id_from_refnumber('000001000000567800000012344'))
-        self.assertEqual(1234567890, bill_id_from_refnumber('000001000000567812345678909'))
-
+        self.assertEqual(
+            1234,
+            bill_id_from_refnumber('000001000000567800000012344'))
+        self.assertEqual(
+            1234567890,
+            bill_id_from_refnumber('000001000000567812345678909'))
 
     def test_member_id_from_refnumber(self):
-        self.assertEqual(5678, member_id_from_refnumber('000001000000567800000012344'))
-        self.assertEqual(2345678901, member_id_from_refnumber('000001234567890112345678902'))
+        self.assertEqual(
+            5678,
+            member_id_from_refnumber('000001000000567800000012344'))
+        self.assertEqual(
+            2345678901,
+            member_id_from_refnumber('000001234567890112345678902'))
 
 
 class PaymentProcessorTest(SubscriptionTestBase):
@@ -23,29 +30,37 @@ class PaymentProcessorTest(SubscriptionTestBase):
         # create member and businessyear
         self.member = self.create_member('Peter', 'Tester')
 
-        self.businessyear = BusinessYear.objects.create(start_date=date(2018, 1, 1),
-                                                end_date=date(2018, 12, 31),
-                                                name="2018")
+        self.businessyear = BusinessYear.objects.create(
+            start_date=date(2018, 1, 1),
+            end_date=date(2018, 12, 31),
+            name="2018")
         self.businessyear.save()
 
         # create 2 paymenttypes
-        self.paymenttype1 = PaymentType.objects.create(name="QR Account", iban="CH7730000001250094239")
+        self.paymenttype1 = PaymentType.objects.create(
+            name="QR Account",
+            iban="CH7730000001250094239")
         self.paymenttype1.save()
-        self.paymenttype2 = PaymentType.objects.create(name="Other Account", iban="CH2909000000250094239")
+        self.paymenttype2 = PaymentType.objects.create(
+            name="Other Account",
+            iban="CH2909000000250094239")
         self.paymenttype2.save()
 
         # create 2 bills for member
         bill_date1 = self.businessyear.start_date
-        self.bill1 = Bill.objects.create(business_year=self.businessyear, amount=0.0, member=self.member,
-                               bill_date=bill_date1, booking_date=bill_date1)
+        self.bill1 = Bill.objects.create(
+            business_year=self.businessyear, amount=0.0,
+            member=self.member,
+            bill_date=bill_date1, booking_date=bill_date1)
         self.bill1.save()
         bill_date2 = date(2018, 4, 25)
-        self.bill2 = Bill.objects.create(business_year=self.businessyear, amount=0.0, member=self.member,
-                               bill_date=bill_date2, booking_date=bill_date2)
+        self.bill2 = Bill.objects.create(
+            business_year=self.businessyear,
+            amount=0.0, member=self.member,
+            bill_date=bill_date2, booking_date=bill_date2)
         self.bill2.save()
 
         self.processor = PaymentProcessor(testing=True)
-
 
     def test_check_payment_ok(self):
         """
@@ -64,7 +79,6 @@ class PaymentProcessorTest(SubscriptionTestBase):
         self.assertEqual('OK', code)
         self.assertEqual(self.bill1, bill)
 
-
     def test_check_payment_other_bill(self):
         """
         test payment with invalid bill reference where
@@ -82,7 +96,6 @@ class PaymentProcessorTest(SubscriptionTestBase):
         code, bill = self.processor.check_payment(pinfo)
         self.assertEqual('OTHER_BILL', code)
         self.assertEqual(self.bill2, bill)
-
 
     def test_check_payment_no_bill(self):
         """
@@ -104,10 +117,10 @@ class PaymentProcessorTest(SubscriptionTestBase):
                     'xa56-klkw345'
                      )
 
-        with self.assertRaisesMessage(PaymentProcessorError, 
-                    'Payment from member 1 can not be imported, because there is no open bill for the member.'):
+        with self.assertRaisesMessage(
+                PaymentProcessorError,
+                'Payment from member 1 can not be imported, because there is no open bill for the member.'):
             self.processor.check_payment(pinfo)
-
 
     def test_check_payment_no_member(self):
         """
@@ -122,10 +135,10 @@ class PaymentProcessorTest(SubscriptionTestBase):
                     'xa56-klkw345'
                      )
 
-        with self.assertRaisesMessage(PaymentProcessorError, 
-                    'Payment from member 3 can not be imported, because there is no member with this id.'):
+        with self.assertRaisesMessage(
+                PaymentProcessorError,
+                'Payment from member 3 can not be imported, because there is no member with this id.'):
             self.processor.check_payment(pinfo)
-
 
     def test_check_payment_no_account(self):
         """
@@ -140,8 +153,9 @@ class PaymentProcessorTest(SubscriptionTestBase):
                     'xa56-klkw345'
                      )
 
-        with self.assertRaisesMessage(PaymentProcessorError, 
-                    'Payment for account iban CH7730000001230094239 can not be imported, because there is no paymenttype for this account.'):  
+        with self.assertRaisesMessage(
+                PaymentProcessorError,
+                'Payment for account iban CH7730000001230094239 can not be imported, because there is no paymenttype for this account.'):
             self.processor.check_payment(pinfo)
 
     def test_check_payment_exists(self):
@@ -166,10 +180,10 @@ class PaymentProcessorTest(SubscriptionTestBase):
                     '5x81cd67'
         )
 
-        with self.assertRaisesMessage(PaymentProcessorError, 
-                    'Payment with unique id 5x81cd67 has already been imported.'):  
+        with self.assertRaisesMessage(
+                PaymentProcessorError,
+                'Payment with unique id 5x81cd67 has already been imported.'):
             self.processor.check_payment(pinfo)
-
 
     def test_process_payments_ok(self):
         """
@@ -201,13 +215,16 @@ class PaymentProcessorTest(SubscriptionTestBase):
 
         # check if payments assigned
         self.assertEquals(1, len(self.bill1.payments.all()))
-        self.assertEquals(date(2018, 3, 15), self.bill1.payments.all()[0].paid_date)
+        self.assertEquals(
+            date(2018, 3, 15),
+            self.bill1.payments.all()[0].paid_date)
         self.assertEquals(250.0, self.bill1.payments.all()[0].amount)
 
         self.assertEquals(1, len(self.bill2.payments.all()))
-        self.assertEquals(date(2018, 3, 16), self.bill2.payments.all()[0].paid_date)
+        self.assertEquals(
+            date(2018, 3, 16),
+            self.bill2.payments.all()[0].paid_date)
         self.assertEquals(210.0, self.bill2.payments.all()[0].amount)
-
 
     def test_process_payments_failed(self):
         """
@@ -236,9 +253,9 @@ class PaymentProcessorTest(SubscriptionTestBase):
                      )
         payment_infos.append(pinfo)
 
-
-        with self.assertRaisesMessage(PaymentProcessorError, 
-                    'Payment from member 3 can not be imported, because there is no member with this id.'):  
+        with self.assertRaisesMessage(
+                PaymentProcessorError,
+                'Payment from member 3 can not be imported, because there is no member with this id.'):
             self.processor.process_payments(payment_infos)
 
         # check that no payments are assigned

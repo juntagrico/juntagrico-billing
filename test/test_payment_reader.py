@@ -10,11 +10,11 @@ class Camt054ReaderTest(TestCase):
         with open(join(testdir, filename)) as f:
             return f.read()
 
-
     def test_read_qrpayments(self):
         reader = Camt045Reader()
 
-        payments = reader.parse_payments(self.read_file('camt054_testfile.xml'))
+        payments = reader.parse_payments(
+            self.read_file('camt054_testfile.xml'))
 
         self.assertEqual(2, len(payments))
         payment = payments[0]
@@ -33,7 +33,6 @@ class Camt054ReaderTest(TestCase):
         self.assertEqual('662437765447746478179744715', payment.reference)
         self.assertEqual('1005970-70a75515', payment.unique_id)
 
-
     def test_read_qrpayments2(self):
         """
         another variant of camt054 file from postfinance.
@@ -45,7 +44,8 @@ class Camt054ReaderTest(TestCase):
         """
         reader = Camt045Reader()
 
-        payments = reader.parse_payments(self.read_file('camt054_testfile2.xml'))
+        payments = reader.parse_payments(
+            self.read_file('camt054_testfile2.xml'))
 
         self.assertEqual(1, len(payments))
         payment = payments[0]
