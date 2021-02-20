@@ -1,2 +1,4 @@
 git+http://github.com/juntagrico/juntagrico.git
 qrbill==0.6.0
+svglib==1.0.1
+lxml==4.6.2
