@@ -1,1 +1,2 @@
 git+http://github.com/juntagrico/juntagrico.git
+qrbill==0.6.0
