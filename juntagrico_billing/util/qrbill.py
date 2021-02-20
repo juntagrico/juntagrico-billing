@@ -51,7 +51,7 @@ def member_id_from_refnumber(refnumber):
     member_part = refnumber[-20:-10]
     return int(member_part)
 
-    
+
 def modify_svg_fill(svg_string, fill_value):
     """
     modify the fill value of the outermost rect in the qrbill svg.
@@ -60,7 +60,7 @@ def modify_svg_fill(svg_string, fill_value):
     svg = etree.fromstring(svg_string)
 
     rect = svg.find('.//rect', svg.nsmap)
-    if rect != None:
+    if rect is None:
         rect.set('fill', fill_value)
 
     return etree.tostring(svg)
@@ -79,15 +79,19 @@ def get_qrbill_svg(bill, paymenttype):
                 account=stdnum.iban.compact(paymenttype.iban),
                 ref_number=calc_refnumber(bill),
                 creditor={
-                    'name': addr['name'], 
+                    'name': addr['name'],
                     'line1': '%s %s' % (addr['street'], addr['number']),
                     'line2': '%s %s' % (addr['zip'], addr['city']),
                     'country': 'CH',
                 },
                 debtor={
-                    'name': '%s %s' % (bill.member.first_name, bill.member.last_name),
+                    'name': '%s %s' % (
+                        bill.member.first_name,
+                        bill.member.last_name),
                     'line1': bill.member.addr_street,
-                    'line2': '%s %s' % (bill.member.addr_zipcode, bill.member.addr_location),
+                    'line2': '%s %s' % (
+                        bill.member.addr_zipcode,
+                        bill.member.addr_location),
                     'country': 'CH',
                 }
     )

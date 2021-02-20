@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect
 from juntagrico_billing.util.payment_processor import PaymentProcessor, PaymentProcessorError
 from juntagrico_billing.util.payment_reader import Camt045Reader, PaymentReaderError
 
+
 class UploadFileForm(forms.Form):
     file = forms.FileField()
     file.widget.attrs.update({'class': 'form-control-file'})
@@ -46,6 +47,6 @@ def handle_payments_upload(f):
         message = _("Failed to process payments:\n%s") % e
         return (False, message)
 
-    return (True, 
-            _("Payments file successfully imported.\n%d payments have been processed.") % len(payments))
-
+    return (
+        True,
+        _("Payments file successfully imported.\n%d payments have been processed.") % len(payments))

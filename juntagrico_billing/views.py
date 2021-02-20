@@ -19,7 +19,7 @@ from juntagrico_billing.mailer import send_bill_notification
 from juntagrico_billing.util.billing import get_billable_items, group_billables_by_member, create_bills_for_items, \
     get_open_bills
 from juntagrico_billing.util.qrbill import is_qr_iban, get_qrbill_svg
-from juntagrico_billing.util.pdfbill import render_pdf_bill
+from juntagrico_billing.util.pdfbill import PdfBillRenderer
 from juntagrico_billing.util.bookings import get_bill_bookings, get_payment_bookings
 
 
@@ -211,7 +211,7 @@ def user_bill(request, bill_id):
         'payments': bill.payments.all(),
         'open_amount': bill.amount - bill.amount_paid,
         'paymenttype': settings.default_paymenttype,
-        'qr_svg' : qr_svg
+        'qr_svg': qr_svg
     }
     return render(request, "jb/user_bill.html", renderdict)
 
@@ -230,7 +230,7 @@ def user_bill_pdf(request, bill_id):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = "attachment; filename=\"" + filename + "\""
 
-    render_pdf_bill(bill, response)
+    PdfBillRenderer().render(bill, response)
     return response
 
 

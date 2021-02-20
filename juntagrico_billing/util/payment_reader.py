@@ -2,40 +2,40 @@ import datetime
 from xml.etree import ElementTree as et
 from juntagrico_billing.util.payment_processor import PaymentInfo
 
+
 class Camt045Reader(object):
     ns = 'urn:iso:std:iso:20022:tech:xsd:camt.054.001.04'
-
 
     def __init__(self):
         self.nsdict = {'ns': self.ns}
 
-
     def find(self, element, path):
-        if element == None:
+        if element is None:
             raise PaymentReaderError("element is null")
 
         result = element.find(path, self.nsdict)
-        if result == None:
-            raise PaymentReaderError("element %s not found" % path.replace('ns:', ''))
-        
+        if result is None:
+            raise PaymentReaderError(
+                "element %s not found" % path.replace('ns:', ''))
+
         return result
 
-
     def findall(self, element, path):
-        if element == None:
+        if element is None:
             raise PaymentReaderError("element is null")
 
         result = element.findall(path, self.nsdict)
         if not result:
-            raise PaymentReaderError("elements %s not found" % path.replace('ns:', ''))
+            raise PaymentReaderError(
+                "elements %s not found" % path.replace('ns:', ''))
 
         return result
-
 
     def parse_payments(self, xml):
         doc = et.fromstring(xml)
 
-        transaction = self.find(doc, "./ns:BkToCstmrDbtCdtNtfctn/ns:Ntfctn/ns:Ntry")
+        transaction = self.find(
+            doc, "./ns:BkToCstmrDbtCdtNtfctn/ns:Ntfctn/ns:Ntry")
 
         # get valuta date
         vdate_elem = self.find(transaction, "ns:ValDt/ns:Dt")
@@ -59,15 +59,19 @@ class Camt045Reader(object):
             if global_credit_iban:
                 credit_iban = global_credit_iban
             else:
-                credit_iban = self.find(detail, 'ns:RltdPties/ns:CdtrAcct/ns:Id/ns:IBAN').text
+                credit_iban = self.find(
+                    detail, 'ns:RltdPties/ns:CdtrAcct/ns:Id/ns:IBAN').text
 
             refinf = self.find(detail, 'ns:RmtInf/ns:Strd/ns:CdtrRefInf')
-            reftype = self.find(refinf, 'ns:Tp/ns:CdOrPrtry/ns:Prtry')    
+            reftype = self.find(refinf, 'ns:Tp/ns:CdOrPrtry/ns:Prtry')
 
             ref = self.find(refinf, 'ns:Ref')
 
             id = self.find(detail, 'ns:Refs/ns:InstrId')
-            results.append(PaymentInfo(valuta_date, credit_iban, amount, reftype.text, ref.text, id.text))
+            results.append(
+                PaymentInfo(
+                    valuta_date, credit_iban,
+                    amount, reftype.text, ref.text, id.text))
 
         return results
 

@@ -19,6 +19,5 @@ urlpatterns = [
     path('jb/user_bill_pdf/<int:bill_id>', views.user_bill_pdf, name='user-bill-pdf'),
 
     # payments
-    path('jb/payments_upload', views_payment.payments_upload, name='payments-upload'),
-    
+    path('jb/payments_upload', views_payment.payments_upload, name='payments-upload')
 ]

@@ -3,10 +3,13 @@ from juntagrico.entity.member import Member
 from juntagrico_billing.entity.payment import Payment, PaymentType
 from juntagrico_billing.dao.paymentdao import PaymentDao
 from juntagrico_billing.entity.bill import Bill
-from juntagrico_billing.util.qrbill import bill_id_from_refnumber, member_id_from_refnumber
+from juntagrico_billing.util.qrbill import bill_id_from_refnumber
+from juntagrico_billing.util.qrbill import member_id_from_refnumber
+
 
 class PaymentInfo(object):
-    def __init__(self, date, credit_iban, amount, ref_type, reference, unique_id):
+    def __init__(self, date, credit_iban, amount, ref_type,
+                 reference, unique_id):
         self.date = date
         self.credit_iban = credit_iban
         self.amount = amount
@@ -48,7 +51,7 @@ class PaymentProcessor(object):
         possible result-codes:
           OK:           account and billing reference ok
           OTHER_BILL:   invalid bill reference, but
-                        another open bill of the same member 
+                        another open bill of the same member
                         was found found
 
         exceptions are raised in the following cases
@@ -57,18 +60,22 @@ class PaymentProcessor(object):
           - invalid bill and member reference
           - the credit account was not found
         """
-        if paymentinfo.unique_id and PaymentDao.exists_payment_with_unique_id(paymentinfo.unique_id):
-            raise PaymentProcessorError(self._('Payment with unique id %s has already been imported.') % \
-                        paymentinfo.unique_id)
+        if paymentinfo.unique_id and PaymentDao.exists_payment_with_unique_id(
+                                        paymentinfo.unique_id):
+            msg = 'Payment with unique id %s has already been imported.'
+            raise PaymentProcessorError(
+                self._(msg) % paymentinfo.unique_id)
 
         if not self.find_paymenttype(paymentinfo):
-            raise PaymentProcessorError(self._('Payment for account iban %s can not be imported, because there is no paymenttype for this account.') % \
-                        paymentinfo.credit_iban)
+            msg = 'Payment for account iban %s can not be imported, because there is no paymenttype for this account.'
+            raise PaymentProcessorError(
+                self._(msg) % paymentinfo.credit_iban)
 
         member = self.find_member(paymentinfo)
         if not member:
-            raise PaymentProcessorError(self._('Payment from member %d can not be imported, because there is no member with this id.') % \
-                        member_id_from_refnumber(paymentinfo.reference))
+            msg = 'Payment from member %d can not be imported, because there is no member with this id.'
+            raise PaymentProcessorError(
+                self._(msg) % member_id_from_refnumber(paymentinfo.reference))
 
         bill = self.find_bill(paymentinfo)
         if bill and (bill.member == member):
@@ -78,10 +85,10 @@ class PaymentProcessor(object):
         bills = member.bills.filter(paid=False).order_by('-bill_date')
         if len(bills):
             return ('OTHER_BILL', bills[0])
-        
-        raise PaymentProcessorError(self._('Payment from member %d can not be imported, because there is no open bill for the member.') % \
-                        member.id)
 
+        msg = 'Payment from member %d can not be imported, because there is no open bill for the member.'
+        raise PaymentProcessorError(
+            self._(msg) % member.id)
 
     def find_bill(self, paymentinfo):
         """
@@ -94,7 +101,6 @@ class PaymentProcessor(object):
         except:
             return None
 
-
     def find_member(self, paymentinfo):
         """
         find member by id from reference number
@@ -106,10 +112,8 @@ class PaymentProcessor(object):
         except:
             return None
 
-
     def find_paymenttype(self, paymentinfo):
         return self.payment_types.get(paymentinfo.credit_iban, None)
-
 
     def process_payments(self, payments):
         """
@@ -119,12 +123,13 @@ class PaymentProcessor(object):
         the payments are only imported if there are not fatal errors.
         """
         check_results = [self.check_payment(p) for p in payments]
-        self.import_payments([(bill, payments[idx]) for idx, (code, bill) in enumerate(check_results)])
-
+        self.import_payments([
+            (bill, payments[idx])
+            for idx, (code, bill) in enumerate(check_results)])
 
     def import_payments(self, bills_and_payments):
         """
-        when import_payments is called, all the payments 
+        when import_payments is called, all the payments
         should be importable and associateable to the given bill.
         """
         for bill, pinfo in bills_and_payments:
@@ -135,4 +140,3 @@ class PaymentProcessor(object):
                         amount=pinfo.amount,
                         unique_id=pinfo.unique_id)
             payment.save()
-
