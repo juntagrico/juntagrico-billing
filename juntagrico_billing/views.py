@@ -9,18 +9,20 @@ from django.urls import reverse
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
 from juntagrico.util import return_to_previous_location
-from juntagrico.util.temporal import start_of_business_year, start_of_next_business_year
+from juntagrico.util.temporal import start_of_business_year, \
+    start_of_next_business_year
 from juntagrico.util.xls import generate_excel
 
 from juntagrico_billing.dao.billdao import BillDao
 from juntagrico_billing.entity.bill import BusinessYear, Bill
 from juntagrico_billing.entity.settings import Settings
 from juntagrico_billing.mailer import send_bill_notification
-from juntagrico_billing.util.billing import get_billable_items, group_billables_by_member, create_bills_for_items, \
-    get_open_bills
+from juntagrico_billing.util.billing import get_billable_items, \
+    group_billables_by_member, create_bills_for_items, get_open_bills
 from juntagrico_billing.util.qrbill import is_qr_iban, get_qrbill_svg
 from juntagrico_billing.util.pdfbill import PdfBillRenderer
-from juntagrico_billing.util.bookings import get_bill_bookings, get_payment_bookings
+from juntagrico_billing.util.bookings import get_bill_bookings, \
+    get_payment_bookings
 
 
 @permission_required('juntagrico.is_book_keeper')
@@ -28,8 +30,6 @@ def bills(request):
     """
     List of bills per year
     """
-    renderdict = {}
-
     # get all business years
     business_years = list(BusinessYear.objects.all().order_by('start_date'))
 
@@ -37,7 +37,9 @@ def bills(request):
     selected_year = None
     selected_year_name = request.session.get('bills_businessyear', None)
     if selected_year_name:
-        selected_year = [year for year in business_years if year.name == selected_year_name][0]
+        selected_year = [
+            year for year in business_years
+            if year.name == selected_year_name][0]
     else:
         if len(business_years):
             selected_year = business_years[-1]
@@ -67,10 +69,12 @@ def bills(request):
             bills_list = get_open_bills(selected_year, percent_paid)
 
     else:
-        message = get_template('messages/no_businessyear.html').render()
-        renderdict['messages'].append(message)
+        # add message 'no businessyear'
+        messages = getattr(request, 'member_messages', []) or []
+        messages.extend(get_template('messages/no_businessyear.html').render())
+        request.member_messages = messages
 
-    renderdict.update({
+    renderdict = {
         'business_years': business_years,
         'selected_year': selected_year,
         'bills_list': bills_list,
@@ -81,7 +85,7 @@ def bills(request):
         'change_date_disabled': True,
         'state': state,
         'state_active': state_active
-    })
+    }
 
     return render(request, "jb/bills.html", renderdict)
 
@@ -228,7 +232,8 @@ def user_bill_pdf(request, bill_id):
 
     filename = "Rechnung %d.pdf" % bill.id
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = "attachment; filename=\"" + filename + "\""
+    response['Content-Disposition'] = \
+        "attachment; filename=\"" + filename + "\""
 
     PdfBillRenderer().render(bill, response)
     return response
