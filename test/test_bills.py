@@ -4,9 +4,10 @@ from django.conf import settings
 from juntagrico.entity.extrasubs import ExtraSubscription
 from juntagrico.entity.subs import SubscriptionPart
 
-from juntagrico_billing.entity.bill import BusinessYear, BillItem, BillItemType
+from juntagrico_billing.entity.bill import Bill, BusinessYear, BillItem, BillItemType
 from juntagrico_billing.util.billing import get_billable_items, create_bill, create_bills_for_items
 from juntagrico_billing.util.billing import scale_subscription_price, scale_extrasubscription_price
+from juntagrico_billing.util.billing import get_open_bills
 from test.test_base import SubscriptionTestBase
 
 
@@ -235,3 +236,44 @@ class BillCustomItemsTest(SubscriptionTestBase):
         description_lines = bill.description.split('\n')
         self.assertEquals('Custom Item 1 some custom item 1', description_lines[1])
         self.assertEquals('Custom Item 2', description_lines[2])
+
+
+class BillsListTest(SubscriptionTestBase):
+    def setUp(self):
+        super().setUp()
+
+        self.member = self.create_member("Test", "Bills List")
+
+        self.year = BusinessYear.objects.create(start_date=date(2018, 1, 1),
+                                                end_date=date(2018, 12, 31),
+                                                name="2018")
+
+        self.item_type1 = BillItemType(name='Test Item Type', booking_account='2211')
+        self.item_type1.save()
+
+        # create some bills
+        self.bill1 = Bill.objects.create(
+            business_year=self.year, member=self.member,
+            bill_date=date(2018, 2, 1), booking_date=date(2018, 2, 1),
+        )
+        item = BillItem.objects.create(
+            bill=self.bill1,
+            custom_item_type=self.item_type1,
+            amount=200.0
+        )
+        item.save()
+        self.bill1.save()
+
+        self.bill2 = Bill.objects.create(
+            business_year=self.year, member=self.member,
+            bill_date=date(2018, 3, 1), booking_date=date(2018, 3, 1),
+            )
+        self.bill2.save()
+
+    def test_get_open_bills(self):
+        """
+        query open bills
+        """
+        # get bills that are not fully paid
+        bills = get_open_bills(self.year, 100)
+        self.assertEqual(1, len(bills), '1 open bill, not counting zero bill')
