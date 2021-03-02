@@ -1,9 +1,9 @@
 from django import forms
 from django.utils.translation import gettext as _
 from django.contrib.auth.decorators import permission_required
-from django.contrib.messages import success, error
+from django.contrib.messages import success, error, get_messages
 from django.shortcuts import render, redirect
-
+from juntagrico.views import get_menu_dict
 from juntagrico_billing.util.payment_processor import PaymentProcessor, PaymentProcessorError
 from juntagrico_billing.util.payment_reader import Camt045Reader, PaymentReaderError
 
@@ -18,6 +18,12 @@ def payments_upload(request):
     """
     show upload form for importing payment-files.
     """
+    renderdict = get_menu_dict(request)
+
+    # need to define our own messages key for django.contrib.messages
+    # because messages is taken by juntagrico base-template
+    renderdict['django_messages'] = get_messages(request)
+
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
@@ -30,7 +36,10 @@ def payments_upload(request):
     else:
         form = UploadFileForm()
 
-    return render(request, 'jb/payments_upload.html', {'form': form})
+    renderdict.update({
+        'form': form,
+    })
+    return render(request, 'jb/payments_upload.html', renderdict)
 
 
 def handle_payments_upload(f):
