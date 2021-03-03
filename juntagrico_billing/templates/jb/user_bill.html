@@ -8,6 +8,7 @@
 {% endblock %}
 {% block content %}
 {% config "organisation_address" as addr %}
+{% config "duedate_notice_url" as notice_url %}
 <div class="container">
     <div class="row">
         <div class="col-sm">
@@ -47,6 +48,15 @@
         <div class="col-sm-10">Total</div>
         <div class="col-sm-2 text-right">{{ bill.amount | floatformat:2 }}</div>
     </div>
+
+    {% if notice_url %}
+    <div class="row mb-4">
+        <p class="col">
+            {% trans "The billed amount is due for payment according to the due date notice found here:" %}<br/>
+            <a href="{{ notice_url }}" target="_blank">{{ notice_url }}</a>
+         </p>
+    </div>
+    {% endif %}
 
     <div class="row mb-4"><p class="col">{{ bill.public_notes | default_if_none:"" }}</p></div>
     

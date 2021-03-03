@@ -6,6 +6,7 @@ from django.utils.formats import get_format
 from django.utils.dateformat import format
 from django.utils.translation import gettext as _
 from juntagrico.config import Config
+from juntagrico_billing.config import Config as BillingConfig
 from juntagrico_billing.entity.settings import Settings
 from juntagrico_billing.util.qrbill import get_qrbill_svg, is_qr_iban
 from svglib.svglib import SvgRenderer
@@ -67,11 +68,13 @@ class PdfBillRenderer(object):
         self.render_payments(bill, story)
 
         # payment notice
-        # todo: make setting for due date notice link
-        story.append(Paragraph('%s %s.' % (
-            _('The billed amount is due for payment according to ' +
-              'the due date notice found here:'),
-            'https://ortoloco.ch/dokumente/FäHi_2021.pdf'), self.text))
+        url = BillingConfig.duedate_notice_url()
+        if url:
+            text = _('The billed amount is due for payment according to ' +
+                     'the due date notice found here:')
+            story.append(Paragraph(
+                f'{text} <link href="{url}">{url}</link>.',
+                self.text))
 
         self.render_payslip(bill, story)
 
