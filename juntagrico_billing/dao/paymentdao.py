@@ -11,4 +11,4 @@ class PaymentDao:
 
     @staticmethod
     def exists_payment_with_unique_id(unique_id):
-        return len(Payment.objects.filter(unique_id=unique_id))
+        return Payment.objects.filter(unique_id=unique_id).count()
