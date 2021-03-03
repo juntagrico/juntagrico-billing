@@ -1,5 +1,4 @@
 from django.utils.translation import gettext
-from django.db.models import Model
 from juntagrico.entity.member import Member
 from juntagrico_billing.entity.payment import Payment, PaymentType
 from juntagrico_billing.dao.paymentdao import PaymentDao
@@ -99,7 +98,7 @@ class PaymentProcessor(object):
 
         try:
             return Bill.objects.get(id=bill_id)
-        except Model.DoesNotExist:
+        except Bill.DoesNotExist:
             return None
 
     def find_member(self, paymentinfo):
@@ -110,7 +109,7 @@ class PaymentProcessor(object):
 
         try:
             return Member.objects.get(id=member_id)
-        except Model.DoesNotExist:
+        except Member.DoesNotExist:
             return None
 
     def find_paymenttype(self, paymentinfo):
