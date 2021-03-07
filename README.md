@@ -69,8 +69,7 @@ Business years are managed in django admin UI.
 Billing is based on the activation and deactivation dates of subscriptions (and extrasubscriptions) in juntagrico.
 At any time you may create all needed invoices (bills) for a certain business-year.
 
-In juntagrico you should see the `Bills and Bookkeeping` Menu, if you are assigned bookkeeping rights:
-![grafik](https://user-images.githubusercontent.com/3380098/110240222-2f6ed700-7f4b-11eb-9c8a-979548092322.png)
+In juntagrico you should see the `Bills and Bookkeeping` Menu, if you are assigned bookkeeping rights.
 
 Go to `Bills` and choose the desired business-year.
 Switch to the `Generate bills` tab. The amount of pending bills for the businessyear should then be displayed.
@@ -83,7 +82,7 @@ They may be viewed afterwards on the `all` tab of the bills list.
 
 ### Modifying or adding bills
 
-There are to modes to view an existing bill object:
+There are two modes to view an existing bill object:
 - admin view of the bill. click on the first column of a bill row to open the bill in django admin.
 - user view of the bill. click on the last columdn of a bill row to open the bill as the user will see it.
 
