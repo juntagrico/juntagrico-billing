@@ -183,7 +183,7 @@ class PaymentProcessorTest(SubscriptionTestBase):
         with self.assertRaisesMessage(
                 PaymentProcessorError,
                 'Payment with unique id 5x81cd67 has already been imported.'):
-            self.processor.check_payment(pinfo)
+            self.processor.process_payments([pinfo])
 
     def test_process_payments_ok(self):
         """

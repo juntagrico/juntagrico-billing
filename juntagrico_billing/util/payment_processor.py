@@ -1,3 +1,4 @@
+from django.db import IntegrityError
 from django.utils.translation import gettext
 from juntagrico.entity.member import Member
 from juntagrico_billing.entity.payment import Payment, PaymentType
@@ -60,11 +61,6 @@ class PaymentProcessor(object):
           - invalid bill and member reference
           - the credit account was not found
         """
-        if paymentinfo.unique_id and PaymentDao.exists_payment_with_unique_id(
-                                        paymentinfo.unique_id):
-            msg = 'Payment with unique id %s has already been imported.'
-            raise PaymentProcessorError(
-                self._(msg) % paymentinfo.unique_id)
 
         if not self.find_paymenttype(paymentinfo):
             msg = 'Payment for account iban %s can not be imported, because there is no paymenttype for this account.'
@@ -133,10 +129,15 @@ class PaymentProcessor(object):
         should be importable and associateable to the given bill.
         """
         for bill, pinfo in bills_and_payments:
-            payment = Payment.objects.create(
-                        bill=bill,
-                        type=self.find_paymenttype(pinfo),
-                        paid_date=pinfo.date,
-                        amount=pinfo.amount,
-                        unique_id=pinfo.unique_id)
-            payment.save()
+            try:
+                payment = Payment.objects.create(
+                            bill=bill,
+                            type=self.find_paymenttype(pinfo),
+                            paid_date=pinfo.date,
+                            amount=pinfo.amount,
+                            unique_id=pinfo.unique_id)
+                payment.save()
+            except IntegrityError:
+                msg = 'Payment with unique id %s has already been imported.'
+                raise PaymentProcessorError(
+                    self._(msg) % pinfo.unique_id)
