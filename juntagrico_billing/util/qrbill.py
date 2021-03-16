@@ -1,8 +1,7 @@
-# from qrbill.bill import QRBill
+from qrbill.bill import QRBill
 from stdnum.ch.esr import calc_check_digit, validate, compact
 import stdnum.iban
-# temporarily commented out because of lxml build problems
-# from lxml import etree
+from lxml import etree
 from io import StringIO
 from juntagrico.config import Config
 
@@ -58,8 +57,13 @@ def modify_svg_fill(svg_string, fill_value):
     modify the fill value of the outermost rect in the qrbill svg.
     is used to modify the default svg output of qrbill from white to none.
     """
-    # temporarily commented out because of xlml problems
-    return svg_string
+    svg = etree.fromstring(svg_string)
+
+    rect = svg.find('.//rect', svg.nsmap)
+    if rect is None:
+        rect.set('fill', fill_value)
+
+    return etree.tostring(svg)
 
 
 def get_qrbill_svg(bill, paymenttype):
