@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-16 23:19+0100\n"
+"POT-Creation-Date: 2021-02-15 22:04+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -66,18 +66,18 @@ msgid "Booking date"
 msgstr "Buchungsdatum"
 
 #: .\juntagrico_billing\entity\bill.py:52
-#: .\juntagrico_billing\entity\bill.py:131
+#: .\juntagrico_billing\entity\bill.py:132
 #: .\juntagrico_billing\entity\payment.py:18
 #: .\juntagrico_billing\templates\jb\bills.html:84
 #: .\juntagrico_billing\templates\jb\bills_notify.html:38
-#: .\juntagrico_billing\templates\jb\user_bills.html:35
+#: .\juntagrico_billing\templates\jb\user_bills.html:24
 msgid "Amount"
 msgstr "Betrag"
 
 #: .\juntagrico_billing\entity\bill.py:53
 #: .\juntagrico_billing\templates\jb\bills.html:90
 #: .\juntagrico_billing\templates\jb\bills_notify.html:44
-#: .\juntagrico_billing\templates\jb\user_bills.html:38
+#: .\juntagrico_billing\templates\jb\user_bills.html:27
 msgid "Paid"
 msgstr "Bezahlt"
 
@@ -99,10 +99,11 @@ msgid "Amount paid"
 msgstr "Betrag bezahlt"
 
 #: .\juntagrico_billing\entity\bill.py:84
-#: .\juntagrico_billing\entity\bill.py:113
+#: .\juntagrico_billing\entity\bill.py:114
 #: .\juntagrico_billing\entity\payment.py:13
 #: .\juntagrico_billing\templates\jb\user_bill.html:6
 #: .\juntagrico_billing\templates\jb\user_bill.html:28
+#: .\juntagrico_billing\util\pdfbill.py:78
 msgid "Bill"
 msgstr "Rechnung"
 
@@ -115,12 +116,12 @@ msgid "Bills"
 msgstr "Rechnungen"
 
 #: .\juntagrico_billing\entity\bill.py:93
-#: .\juntagrico_billing\entity\payment.py:34
+#: .\juntagrico_billing\entity\payment.py:35
 msgid "Name"
 msgstr "Name"
 
 #: .\juntagrico_billing\entity\bill.py:94
-#: .\juntagrico_billing\entity\payment.py:36
+#: .\juntagrico_billing\entity\payment.py:37
 msgid "Booking account"
 msgstr "Buchungskonto"
 
@@ -132,38 +133,38 @@ msgstr "Rechnungsextra Typ"
 msgid "Custom Bill-Item Types"
 msgstr "Rechnungsextra Typen"
 
-#: .\juntagrico_billing\entity\bill.py:120
-#: .\juntagrico_billing\entity\bill.py:148
+#: .\juntagrico_billing\entity\bill.py:121
+#: .\juntagrico_billing\entity\bill.py:156
 msgid "Subscription"
 msgstr "Abo"
 
-#: .\juntagrico_billing\entity\bill.py:124
-#: .\juntagrico_billing\entity\bill.py:150
+#: .\juntagrico_billing\entity\bill.py:125
+#: .\juntagrico_billing\entity\bill.py:158
 msgid "Extrasubscription"
 msgstr "Zusatzabo"
 
-#: .\juntagrico_billing\entity\bill.py:127
+#: .\juntagrico_billing\entity\bill.py:128
 msgid "Custom item type"
 msgstr "Extra Typ"
 
-#: .\juntagrico_billing\entity\bill.py:129
+#: .\juntagrico_billing\entity\bill.py:130
 msgid "Description"
 msgstr "Beschreibung"
 
-#: .\juntagrico_billing\entity\bill.py:156
+#: .\juntagrico_billing\entity\bill.py:164
 msgid "Item kind"
 msgstr "Art"
 
-#: .\juntagrico_billing\entity\bill.py:159
+#: .\juntagrico_billing\entity\bill.py:167
 msgid "Bill item"
 msgstr "Rechungsbestandteil"
 
-#: .\juntagrico_billing\entity\bill.py:160
+#: .\juntagrico_billing\entity\bill.py:168
 msgid "Bill items"
 msgstr "Rechungsbestandteile"
 
 #: .\juntagrico_billing\entity\payment.py:16
-#: .\juntagrico_billing\entity\payment.py:42
+#: .\juntagrico_billing\entity\payment.py:43
 msgid "Payment type"
 msgstr "Zahlungstyp"
 
@@ -171,15 +172,19 @@ msgstr "Zahlungstyp"
 msgid "Payment date"
 msgstr "Zahlungsdatum"
 
-#: .\juntagrico_billing\entity\payment.py:25
+#: .\juntagrico_billing\entity\payment.py:20
+msgid "Unique Id"
+msgstr "Eindeutige Id"
+
+#: .\juntagrico_billing\entity\payment.py:26
 msgid "Payment"
 msgstr "Zahlung"
 
-#: .\juntagrico_billing\entity\payment.py:26
+#: .\juntagrico_billing\entity\payment.py:27
 msgid "Payments"
 msgstr "Zahlungen"
 
-#: .\juntagrico_billing\entity\payment.py:43
+#: .\juntagrico_billing\entity\payment.py:44
 msgid "Payment types"
 msgstr "Zahlungstypen"
 
@@ -201,6 +206,16 @@ msgstr "Rechnungen und Buchhaltung"
 #: .\juntagrico_billing\templates\jb\bills_notify.html:7
 msgid "Send billing notifications"
 msgstr "E-Mails für Rechnungen senden"
+
+#: .\juntagrico_billing\templates\jb\billing_admin_menu.html:14
+#: .\juntagrico_billing\templates\jb\payments_upload.html:5
+msgid "Import payments"
+msgstr "Zahlungen importieren"
+
+#: .\juntagrico_billing\templates\jb\billing_admin_menu.html:17
+#: .\juntagrico_billing\templates\jb\bookings_export.html:5
+msgid "Export bookings"
+msgstr "Buchungen exportieren"
 
 #: .\juntagrico_billing\templates\jb\bills.html:12
 msgid "Year:"
@@ -243,19 +258,19 @@ msgstr "Offene Rechnungen mit bezahltem Betrag weniger als"
 
 #: .\juntagrico_billing\templates\jb\bills.html:72
 #: .\juntagrico_billing\templates\jb\bills_notify.html:26
-#: .\juntagrico_billing\templates\jb\user_bills.html:26
+#: .\juntagrico_billing\templates\jb\user_bills.html:15
 msgid "Number"
 msgstr "Nummer"
 
 #: .\juntagrico_billing\templates\jb\bills.html:78
 #: .\juntagrico_billing\templates\jb\bills_notify.html:32
-#: .\juntagrico_billing\templates\jb\user_bills.html:32
+#: .\juntagrico_billing\templates\jb\user_bills.html:21
 msgid "Kind"
 msgstr "Art"
 
 #: .\juntagrico_billing\templates\jb\bills.html:81
 #: .\juntagrico_billing\templates\jb\bills_notify.html:35
-#: .\juntagrico_billing\templates\jb\user_bills.html:29
+#: .\juntagrico_billing\templates\jb\user_bills.html:18
 msgid "Date"
 msgstr "Datum"
 
@@ -276,10 +291,6 @@ msgstr "Benachrichtigungen zu senden"
 msgid "Send E-Mails"
 msgstr "E-Mails senden"
 
-#: .\juntagrico_billing\templates\jb\bookings_export.html:5
-msgid "Export bookings"
-msgstr "Buchungen exportieren"
-
 #: .\juntagrico_billing\templates\jb\bookings_export.html:9
 msgid "Bookings Period"
 msgstr "Buchungs Zeitraum"
@@ -297,48 +308,46 @@ msgid "Payment bookings"
 msgstr "Zahlungsbuchungen"
 
 #: .\juntagrico_billing\templates\jb\user_bill.html:36
+#: .\juntagrico_billing\util\pdfbill.py:87
 msgid "Period"
 msgstr "Periode"
 
 #: .\juntagrico_billing\templates\jb\user_bill.html:54
+#: .\juntagrico_billing\util\pdfbill.py:117
 msgid "Payments per"
 msgstr "Zahlungen per"
 
 #: .\juntagrico_billing\templates\jb\user_bill.html:64
+#: .\juntagrico_billing\util\pdfbill.py:133
 msgid "Bill paid completely"
 msgstr "Rechnung komplett bezahlt"
 
 #: .\juntagrico_billing\templates\jb\user_bill.html:66
+#: .\juntagrico_billing\util\pdfbill.py:127
 msgid "Amount open yet"
 msgstr "Betrag noch offen"
 
 #: .\juntagrico_billing\templates\jb\user_bill.html:74
+msgid "Download as PDF"
+msgstr "Download als PDF"
+
+#: .\juntagrico_billing\templates\jb\user_bill.html:82
 #: .\juntagrico_billing\templates\mails\bill_notification.txt:20
+#: .\juntagrico_billing\util\pdfbill.py:159
 msgid "Please pay specifying bill number to:"
 msgstr "Bitte einzahlen mit Angabe von Rechnungsnummer auf:"
 
-#: .\juntagrico_billing\templates\jb\user_bill.html:77
+#: .\juntagrico_billing\templates\jb\user_bill.html:85
 #: .\juntagrico_billing\templates\mails\bill_notification.txt:23
+#: .\juntagrico_billing\util\pdfbill.py:162
 msgid "in favor of"
 msgstr "zugunsten von"
 
-#: .\juntagrico_billing\templates\jb\user_bills.html:11
-msgid "Payment details"
-msgstr "Zahlungsverbindung"
-
-#: .\juntagrico_billing\templates\jb\user_bills.html:17
-msgid "IBAN"
-msgstr "IBAN"
-
-#: .\juntagrico_billing\templates\jb\user_bills.html:42
-msgid "Reference Number"
-msgstr "Referenznummer"
-
-#: .\juntagrico_billing\templates\jb\user_bills.html:63
+#: .\juntagrico_billing\templates\jb\user_bills.html:49
 msgid "Yes"
 msgstr "Ja"
 
-#: .\juntagrico_billing\templates\jb\user_bills.html:63
+#: .\juntagrico_billing\templates\jb\user_bills.html:49
 msgid "No"
 msgstr "Nein"
 
@@ -426,6 +435,7 @@ msgid "Find details on the website at"
 msgstr "Details dazu findest Du auf der Webseite unter"
 
 #: .\juntagrico_billing\templates\mails\bill_notification.txt:27
+#: .\juntagrico_billing\util\pdfbill.py:139
 msgid ""
 "The billed amount is due for payment according to the due date notice found "
 "here:"
@@ -469,11 +479,74 @@ msgstr "Es ist kein Geschäftsjahr für Rechnungen definiert"
 msgid "Please create one in the data administration."
 msgstr "Bitte erstelle eines in der Datenadministration"
 
-#: .\juntagrico_billing\util\bookings.py:191
-#: .\juntagrico_billing\util\bookings.py:222
+#: .\juntagrico_billing\util\bookings.py:190
+#: .\juntagrico_billing\util\bookings.py:221
 msgid "Bl"
 msgstr "Rg"
 
-#: .\juntagrico_billing\util\bookings.py:222
+#: .\juntagrico_billing\util\bookings.py:221
 msgid "Pmt"
 msgstr "Zlg"
+
+#: .\juntagrico_billing\util\payment_processor.py:61
+#, python-format
+msgid "Payment with unique id %s has already been imported."
+msgstr "Zahlung mit eindeutiger Id %s ist bereits importiert worden."
+
+#: .\juntagrico_billing\util\payment_processor.py:65
+#, python-format
+msgid ""
+"Payment for account iban %s can not be imported, because there is no "
+"paymenttype for this account."
+msgstr ""
+"Zahlung für Konto IBAN %s kann nicht importiert werden, weil kein "
+"Zahlungstyp für dieses Konto vorhanden ist."
+
+#: .\juntagrico_billing\util\payment_processor.py:70
+#, python-format
+msgid ""
+"Payment from member %d can not be imported, because there is no member with "
+"this id."
+msgstr ""
+"Zahlung für Mitglied %d kann nicht importiert werden, weil kein Mitglied mit "
+"dieser Nummer existiert."
+
+#: .\juntagrico_billing\util\payment_processor.py:82
+#, python-format
+msgid ""
+"Payment from member %d can not be imported, because there is no open bill "
+"for the member."
+msgstr ""
+"Zahlung für Mitglied %d kann nicht importiert werden, weil keine offene "
+"Rechnung für dieses Mitglied vorhanden ist."
+
+#: .\juntagrico_billing\util\pdfbill.py:125
+msgid "Total payments"
+msgstr "Total Zahlungen"
+
+#: .\juntagrico_billing\views_payment.py:53
+#, python-format
+msgid ""
+"Failed to read payments file:\n"
+"%s"
+msgstr ""
+"Zahlungsfile konnte nicht gelesen werden:\n"
+"%s"
+
+#: .\juntagrico_billing\views_payment.py:56
+#, python-format
+msgid ""
+"Failed to process payments:\n"
+"%s"
+msgstr ""
+"Fehler bei der Verarbeitung der Zahlungen:\n"
+"%s"
+
+#: .\juntagrico_billing\views_payment.py:60
+#, python-format
+msgid ""
+"Payments file successfully imported.\n"
+"%d payments have been processed."
+msgstr ""
+"Zahlungen erfolgreich importiert.\n"
+"%d Zahlungen wurden verarbeitet."

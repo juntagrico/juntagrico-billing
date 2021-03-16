@@ -6,19 +6,23 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import get_template
 from django.urls import reverse
+from django.http import HttpResponse
 from django.views.decorators.http import require_POST
 from juntagrico.util import return_to_previous_location
-from juntagrico.util.temporal import start_of_business_year, start_of_next_business_year
+from juntagrico.util.temporal import start_of_business_year, \
+    start_of_next_business_year
 from juntagrico.util.xls import generate_excel
 from juntagrico.views import get_menu_dict
-
 from juntagrico_billing.dao.billdao import BillDao
 from juntagrico_billing.entity.bill import BusinessYear, Bill
 from juntagrico_billing.entity.settings import Settings
 from juntagrico_billing.mailer import send_bill_notification
-from juntagrico_billing.util.billing import get_billable_items, group_billables_by_member, create_bills_for_items, \
-    get_open_bills
-from juntagrico_billing.util.bookings import get_bill_bookings, get_payment_bookings
+from juntagrico_billing.util.billing import get_billable_items, \
+    group_billables_by_member, create_bills_for_items, get_open_bills
+from juntagrico_billing.util.qrbill import is_qr_iban, get_qrbill_svg
+from juntagrico_billing.util.pdfbill import PdfBillRenderer
+from juntagrico_billing.util.bookings import get_bill_bookings, \
+    get_payment_bookings
 
 
 @permission_required('juntagrico.is_book_keeper')
@@ -35,7 +39,9 @@ def bills(request):
     selected_year = None
     selected_year_name = request.session.get('bills_businessyear', None)
     if selected_year_name:
-        selected_year = [year for year in business_years if year.name == selected_year_name][0]
+        selected_year = [
+            year for year in business_years
+            if year.name == selected_year_name][0]
     else:
         if len(business_years):
             selected_year = business_years[-1]
@@ -63,7 +69,6 @@ def bills(request):
             if percent_str:
                 percent_paid = int(percent_str)
             bills_list = get_open_bills(selected_year, percent_paid)
-
     else:
         message = get_template('messages/no_businessyear.html').render()
         renderdict['messages'].append(message)
@@ -125,9 +130,8 @@ def bookings_export(request):
         'tilldate': start_of_next_business_year() - timedelta(1)
     }
 
-    renderdict = get_menu_dict(request)
+    renderdict = get_menu_dict(request)    # daterange for bookings export
 
-    # daterange for bookings export
     if 'fromdate' in request.GET and 'tilldate' in request.GET:
         # request with query parameter
         daterange_form = DateRangeForm(request.GET)
@@ -199,6 +203,12 @@ def user_bill(request, bill_id):
 
     settings = Settings.objects.first()
 
+    # add QR-Bill part if QR-IBAN
+    if is_qr_iban(settings.default_paymenttype.iban):
+        qr_svg = get_qrbill_svg(bill, settings.default_paymenttype)
+    else:
+        qr_svg = None
+
     renderdict = get_menu_dict(request)
     renderdict.update({
         'member': bill.member,
@@ -207,8 +217,28 @@ def user_bill(request, bill_id):
         'payments': bill.payments.all(),
         'open_amount': bill.amount - bill.amount_paid,
         'paymenttype': settings.default_paymenttype,
+        'qr_svg': qr_svg
     })
     return render(request, "jb/user_bill.html", renderdict)
+
+
+@login_required
+def user_bill_pdf(request, bill_id):
+    member = request.user.member
+    bill = get_object_or_404(Bill, id=bill_id)
+
+    # only allow for bookkepper or the bills member
+    if not (request.user.has_perms(('juntagrico.is_book_keeper',))
+            or bill.member == member):
+        raise PermissionDenied()
+
+    filename = "Rechnung %d.pdf" % bill.id
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = \
+        "attachment; filename=\"" + filename + "\""
+
+    PdfBillRenderer().render(bill, response)
+    return response
 
 
 @permission_required('juntagrico.is_book_keeper')

@@ -179,5 +179,7 @@ def get_open_bills(businessyear, expected_percentage_paid):
     # fetch unpaid bills, SQL filtered
     unpaid_bills = businessyear.bills.filter(paid=False)
 
-    return [bill for bill in unpaid_bills
-            if bill.amount_paid / bill.amount * 100.0 < expected_percentage_paid]
+    return [
+        bill for bill in unpaid_bills
+        if (bill.amount > 0) and
+        (bill.amount_paid / bill.amount * 100.0 < expected_percentage_paid)]

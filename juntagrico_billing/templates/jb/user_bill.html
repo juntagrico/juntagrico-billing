@@ -8,6 +8,7 @@
 {% endblock %}
 {% block content %}
 {% config "organisation_address" as addr %}
+{% config "duedate_notice_url" as notice_url %}
 <div class="container">
     <div class="row">
         <div class="col-sm">
@@ -39,8 +40,7 @@
     <div class="row my-2"></div>
     {% for item in bill.items.all %}
     <div class="row">
-        <div class="col-sm-2">{{ item.item_kind }}</div>
-        <div class="col-sm-8">{{ item.description }}</div>
+        <div class="col-sm-10">{{ item }}</div>
         <div class="col-sm-2 text-right">{{ item.amount | floatformat:2 }}</div>
     </div>
     {% endfor %}
@@ -49,8 +49,18 @@
         <div class="col-sm-2 text-right">{{ bill.amount | floatformat:2 }}</div>
     </div>
 
+    {% if notice_url %}
+    <div class="row mb-4">
+        <p class="col">
+            {% trans "The billed amount is due for payment according to the due date notice found here:" %}<br/>
+            <a href="{{ notice_url }}" target="_blank">{{ notice_url }}</a>
+         </p>
+    </div>
+    {% endif %}
+
     <div class="row mb-4"><p class="col">{{ bill.public_notes | default_if_none:"" }}</p></div>
     
+    {% if payments %}
     <h4>{% trans "Payments per" %} {{ today|date:"SHORT_DATE_FORMAT" }}:</h4>
     {% for payment in payments %}
     <div class="row">
@@ -68,7 +78,15 @@
         <div class="col-sm-2 text-right">{{ open_amount | floatformat:2 }}</div>
         {% endif %}
     </div>
-    {% if not bill.paid %}
+    {% endif %}
+    
+    <div class="row my-3">
+        <div class="col"><a href="{% url 'jb:user-bill-pdf' bill.pk  %}">{% trans "Download as PDF" %}</a></div>
+    </div>
+
+    {% if qr_svg %}
+{{ qr_svg | safe }}
+    {% else %}
     <p class="mt-5">
         {% config "organisation_address" as addr %}
         {% trans "Please pay specifying bill number to:" %}<br>
@@ -77,7 +95,7 @@
         {% trans "in favor of" %}<br> 
         {{ addr.name }}, {{ addr.zip }} {{ addr.city }}
     </p>
-    {% endif %}
+    {% endif %}   
 </div>
 
 {% endblock %}

@@ -11,7 +11,10 @@
             <a class="nav-link" href="{% url 'jb:bills-notify' %}">{% trans "Send billing notifications" %}</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/jb/bookings_export">Buchungen exportieren</a>
+            <a class="nav-link" href="{% url 'jb:payments-upload' %}">{% trans "Import payments" %}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/jb/bookings_export">{% trans "Export bookings" %}</a>
         </li>
     </ul>
     </div>

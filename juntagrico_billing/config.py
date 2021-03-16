@@ -18,3 +18,5 @@ class Config:
     )
 
     bills_usermenu = _get_setting('BILLS_USERMENU', False)
+
+    duedate_notice_url = _get_setting('DUEDATE_NOTICE_URL', '')

@@ -23,10 +23,11 @@ IBAN {{ payment_type.iban }}
 {% trans "in favor of" %}
 {{ addr.name }}, {{ addr.zip }} {{ addr.city }}
 
-{% with notice_url="https://ortoloco.ch/dokumente/F%C3%A4Hi_2021.pdf" %}
-{% trans "The billed amount is due for payment according to the due date notice found here:" %}
-{{ notice_url }}.
-{% endwith %}
+{% config "duedate_notice_url" as notice_url %}
+{% if notice_url %}
+    {% trans "The billed amount is due for payment according to the due date notice found here:" %}
+    {{ notice_url }}.
+{% endif %}
 {% trans "Please always specify the bill number with your payments to allow correct attribution." %}
 
 {% blocktrans trimmed %}

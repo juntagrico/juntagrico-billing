@@ -75,7 +75,7 @@ class Bill(JuntagricoBaseModel):
         """
         Concatenation of the BillItem descriptions, joined by line breaks.
         """
-        return "\n".join([itm.description or itm.item_kind for itm in self.items.all()])
+        return "\n".join([str(itm) for itm in self.items.all()])
 
     def __str__(self):
         return '{}'.format(self.id)
@@ -132,7 +132,14 @@ class BillItem(JuntagricoBaseModel):
     amount = models.FloatField(_('Amount'), null=False, blank=False, default=0.0)
 
     def __str__(self):
-        return ('%s %s' % (self.item_kind, self.description)).strip()
+        if self.subscription_type:
+            return self.subscription_type.long_name
+        elif self.extrasubscription_type:
+            return self.extrasubscription_type.name
+        elif self.custom_item_type:
+            return ('%s %s' % (self.custom_item_type.name, self.description)).strip()
+        else:
+            return self.description
 
     # derived property
     @property

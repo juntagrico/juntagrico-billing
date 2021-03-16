@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load config %}
+{% block page_title %}
+    <h3>{% trans "Import payments" %}</h3>
+{% endblock %}
+
+{% block content %}
+
+{% for message in django_messages %}
+    {%if message.tags == "error" %}
+    <div class="alert alert-danger alert-dismissible fade show">
+    {% else %}
+    <div class="alert alert-success alert-dismissible fade show">
+    {% endif %}
+        {{ message | linebreaks }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+{% endfor %}
+
+<form method="post" class="form" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group">
+    {{ form }}
+    </div>
+    <input type="submit" class="btn btn-success" value="Upload"/>
+</form>
+{% endblock %}

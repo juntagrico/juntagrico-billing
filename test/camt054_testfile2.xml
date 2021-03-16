@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:camt.054.001.04"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:camt.054.001.04 camt.054.001.04.xsd">
+    <BkToCstmrDbtCdtNtfctn>
+        <GrpHdr>
+            <MsgId>1931ABCF/203914/270404</MsgId>
+            <CreDtTm>2021-02-05T20:39:14</CreDtTm>
+            <MsgPgntn>
+                <PgNb>1</PgNb>
+                <LastPgInd>true</LastPgInd>
+            </MsgPgntn>
+            <AddtlInf>SPS/1.7/TEST</AddtlInf>
+        </GrpHdr>
+        <Ntfctn>
+            <Id>1931ABCF/203914/270404</Id>
+            <CreDtTm>2021-02-05T20:39:14</CreDtTm>
+            <RptgSrc>
+                <Prtry>OTHR</Prtry>
+            </RptgSrc>
+            <Acct>
+                <Id>
+                    <IBAN>CH6109000000156196402</IBAN>
+                </Id>
+            </Acct>
+            <Ntry>
+                <Amt Ccy="CHF">1.00</Amt>
+                <CdtDbtInd>DBIT</CdtDbtInd>
+                <Sts>BOOK</Sts>
+                <BookgDt>
+                    <Dt>2021-02-05</Dt>
+                </BookgDt>
+                <ValDt>
+                    <Dt>2021-02-05</Dt>
+                </ValDt>
+                <BkTxCd>
+                    <Domn>
+                        <Cd>PMNT</Cd>
+                        <Fmly>
+                            <Cd>ICDT</Cd>
+                            <SubFmlyCd>AUTT</SubFmlyCd>
+                        </Fmly>
+                    </Domn>
+                </BkTxCd>
+                <NtryDtls>
+                    <TxDtls>
+                        <Refs>
+                            <MsgId>MSG-01</MsgId>
+                            <PmtInfId>PMTINF-01</PmtInfId>
+                            <InstrId>INSTRID-01-01</InstrId>
+                            <EndToEndId>ENDTOENDID-001</EndToEndId>
+                        </Refs>
+                        <Amt Ccy="CHF">1.00</Amt>
+                        <CdtDbtInd>DBIT</CdtDbtInd>
+                        <BkTxCd>
+                            <Domn>
+                                <Cd>PMNT</Cd>
+                                <Fmly>
+                                    <Cd>ICDT</Cd>
+                                    <SubFmlyCd>DMCT</SubFmlyCd>
+                                </Fmly>
+                            </Domn>
+                        </BkTxCd>
+                        <RltdPties>
+                            <DbtrAcct>
+                                <Id>
+                                    <IBAN>CH6109000000156196402</IBAN>
+                                </Id>
+                            </DbtrAcct>
+                            <UltmtDbtr>
+                                <Nm>Samuel Iseli</Nm>
+                                <PstlAdr>
+                                    <Ctry>CH</Ctry>
+                                    <AdrLine>Regensdorferstrasse 194</AdrLine>
+                                    <AdrLine>8049 Zürich</AdrLine>
+                                </PstlAdr>
+                            </UltmtDbtr>
+                            <Cdtr>
+                                <Nm>ortoloco</Nm>
+                                <PstlAdr>
+                                    <Ctry>CH</Ctry>
+                                    <AdrLine>Spreitenbacherstrasse 35</AdrLine>
+                                    <AdrLine>8953 Dietikon</AdrLine>
+                                </PstlAdr>
+                            </Cdtr>
+                            <CdtrAcct>
+                                <Id>
+                                    <IBAN>CH1230000001156196402</IBAN>
+                                </Id>
+                            </CdtrAcct>
+                        </RltdPties>
+                        <RmtInf>
+                            <Strd>
+                                <CdtrRefInf>
+                                    <Tp>
+                                        <CdOrPrtry>
+                                            <Prtry>QRR</Prtry>
+                                        </CdOrPrtry>
+                                    </Tp>
+                                    <Ref>000000000000014200000000566</Ref>
+                                </CdtrRefInf>
+                            </Strd>
+                        </RmtInf>
+                    </TxDtls>
+                </NtryDtls>
+            </Ntry>
+        </Ntfctn>
+    </BkToCstmrDbtCdtNtfctn>
+</Document>
