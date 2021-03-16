@@ -8,9 +8,9 @@ from django.utils.translation import gettext as _
 from juntagrico.config import Config
 from juntagrico_billing.config import Config as BillingConfig
 from juntagrico_billing.entity.settings import Settings
-from juntagrico_billing.util.qrbill import get_qrbill_svg, is_qr_iban
-from svglib.svglib import SvgRenderer
-from lxml import etree
+from juntagrico_billing.util.qrbill import is_qr_iban
+# from svglib.svglib import SvgRenderer
+# from lxml import etree
 
 
 class PdfBillRenderer(object):
@@ -201,10 +201,12 @@ class PdfBillRenderer(object):
 
         payment_type = settings.default_paymenttype
         if is_qr_iban(payment_type.iban):
-            qr_svg = get_qrbill_svg(bill, payment_type)
-            svg_element = etree.fromstring(qr_svg)
+            # qr_svg = get_qrbill_svg(bill, payment_type)
+            # svg_element = etree.fromstring(qr_svg)
+            svg_element = None
 
-            renderer = SvgRenderer("")
+            # renderer = SvgRenderer("")
+            renderer = None
 
             # save payslip drawing and
             # offset bottom margin
