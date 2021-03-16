@@ -1,4 +1,4 @@
-from qrbill.bill import QRBill
+# from qrbill.bill import QRBill
 from stdnum.ch.esr import calc_check_digit, validate, compact
 import stdnum.iban
 # temporarily commented out because of lxml build problems
