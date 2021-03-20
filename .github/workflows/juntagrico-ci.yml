@@ -49,7 +49,7 @@ jobs:
         ./cc-test-reporter format-coverage -t coverage.py -o coverageupload
         ./cc-test-reporter upload-coverage -i coverageupload
     - name: flake 8
-      if: ${{ secrets.SLACK_WEBHOOK != null && github.event_name == 'pull_request'}}
+      if: ${{ github.event_name == 'pull_request'}}
       run: |
         flake8 --count --ignore E501 juntagrico
         flake8 --count --ignore E501 test
