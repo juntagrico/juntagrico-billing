@@ -54,4 +54,4 @@ jobs:
         flake8 --count --ignore E501 juntagrico
         flake8 --count --ignore E501 test
     - name: Slack notification
-      uses: juntagrico/slack-action@7ba2f25
+      uses: juntagrico/slack-action@v1
