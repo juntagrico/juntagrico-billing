@@ -30,7 +30,7 @@ jobs:
         pip install --upgrade -r requirements-local.txt
         pip install coverage flake8
     - name: install CodeClimate reporter
-      if: ${{ secrets.CODECOV_TOKEN!= null && github.event_name == 'push'}}
+      if: ${{ secrets.CODECOV_TOKEN != null && github.event_name == 'push'}}
       run: |
         curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
         chmod +x ./cc-test-reporter
@@ -40,7 +40,7 @@ jobs:
         django-admin.py makemigrations --noinput
         coverage run -m manage test
     - name: publish code coverage
-      if: ${{ secrets.CODECOV_TOKEN!= null && github.event_name == 'push'}}
+      if: ${{ secrets.CODECOV_TOKEN != null && github.event_name == 'push'}}
       run: |
         coverage report
         coverage xml
@@ -49,7 +49,7 @@ jobs:
       env:
         CC_TEST_REPORTER_ID: ${{ secrets.CODECOV_TOKEN }}
     - name: flake 8
-      if: ${{ secrets.SLACK_WEBHOOK!= null && github.event_name == 'pull_request'}}
+      if: ${{ secrets.SLACK_WEBHOOK != null && github.event_name == 'pull_request'}}
       run: |
         flake8 --count --ignore E501 juntagrico
         flake8 --count --ignore E501 test
@@ -62,7 +62,7 @@ jobs:
       with:
         args: 'A new <{{GITHUB_SERVER_URL}}/{{GITHUB_REPOSITORY}}/commit/{{GITHUB_SHA}}|commit> in repo {{GITHUB_REPOSITORY}} has been pushed by {{GITHUB_ACTOR}} and has the status {{STATUS}}.'
     - name: Slack notification pullrequest
-      if: ${{ secrets.SLACK_WEBHOOK!= null && github.event_name == 'pull_request' && always()}}
+      if: ${{ secrets.SLACK_WEBHOOK != null && github.event_name == 'pull_request' && always()}}
       env:
         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
         PULL_ID: ${{ github.event.number }}
