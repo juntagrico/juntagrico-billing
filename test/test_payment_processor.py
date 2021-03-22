@@ -67,13 +67,13 @@ class PaymentProcessorTest(SubscriptionTestBase):
         test paymentinfo that is valid for importing.
         """
         pinfo = PaymentInfo(
-                    date(2018, 3, 15),
-                    'CH7730000001250094239',
-                    250.0,
-                    'QRR',
-                    '000000000000000100000000010',
-                    'xa56-klkw345'
-                     )
+            date(2018, 3, 15),
+            'CH7730000001250094239',
+            250.0,
+            'QRR',
+            '000000000000000100000000010',
+            'xa56-klkw345'
+        )
 
         code, bill = self.processor.check_payment(pinfo)
         self.assertEqual('OK', code)
@@ -85,13 +85,13 @@ class PaymentProcessorTest(SubscriptionTestBase):
         other bill can be found.
         """
         pinfo = PaymentInfo(
-                    date(2018, 3, 15),
-                    'CH7730000001250094239',
-                    250.0,
-                    'QRR',
-                    '000000000000000100000000052',
-                    'xa56-klkw345'
-                     )
+            date(2018, 3, 15),
+            'CH7730000001250094239',
+            250.0,
+            'QRR',
+            '000000000000000100000000052',
+            'xa56-klkw345'
+        )
 
         code, bill = self.processor.check_payment(pinfo)
         self.assertEqual('OTHER_BILL', code)
@@ -109,13 +109,13 @@ class PaymentProcessorTest(SubscriptionTestBase):
         self.bill2.save()
 
         pinfo = PaymentInfo(
-                    date(2018, 3, 15),
-                    'CH7730000001250094239',
-                    250.0,
-                    'QRR',
-                    '000000000000000100000000052',
-                    'xa56-klkw345'
-                     )
+            date(2018, 3, 15),
+            'CH7730000001250094239',
+            250.0,
+            'QRR',
+            '000000000000000100000000052',
+            'xa56-klkw345'
+        )
 
         with self.assertRaisesMessage(
                 PaymentProcessorError,
@@ -127,13 +127,13 @@ class PaymentProcessorTest(SubscriptionTestBase):
         test payment with invalid bill and member reference
         """
         pinfo = PaymentInfo(
-                    date(2018, 3, 15),
-                    'CH7730000001250094239',
-                    250.0,
-                    'QRR',
-                    '000000000000000300000000051',
-                    'xa56-klkw345'
-                     )
+            date(2018, 3, 15),
+            'CH7730000001250094239',
+            250.0,
+            'QRR',
+            '000000000000000300000000051',
+            'xa56-klkw345'
+        )
 
         with self.assertRaisesMessage(
                 PaymentProcessorError,
@@ -145,13 +145,13 @@ class PaymentProcessorTest(SubscriptionTestBase):
         test payment with invalid iban
         """
         pinfo = PaymentInfo(
-                    date(2018, 3, 15),
-                    'CH7730000001230094239',
-                    250.0,
-                    'QRR',
-                    '000000000000000300000000051',
-                    'xa56-klkw345'
-                     )
+            date(2018, 3, 15),
+            'CH7730000001230094239',
+            250.0,
+            'QRR',
+            '000000000000000300000000051',
+            'xa56-klkw345'
+        )
 
         with self.assertRaisesMessage(
                 PaymentProcessorError,
@@ -164,20 +164,20 @@ class PaymentProcessorTest(SubscriptionTestBase):
         """
         # create an existing payment
         payment = Payment.objects.create(
-                        bill=self.bill1,
-                        type=self.paymenttype1,
-                        paid_date=date(2018, 3, 1),
-                        amount=10.0,
-                        unique_id='5x81cd67')
+            bill=self.bill1,
+            type=self.paymenttype1,
+            paid_date=date(2018, 3, 1),
+            amount=10.0,
+            unique_id='5x81cd67')
         payment.save()
 
         pinfo = PaymentInfo(
-                    date(2018, 3, 15),
-                    'CH7730000001250094239',
-                    250.0,
-                    'QRR',
-                    '000000000000000100000000010',
-                    '5x81cd67'
+            date(2018, 3, 15),
+            'CH7730000001250094239',
+            250.0,
+            'QRR',
+            '000000000000000100000000010',
+            '5x81cd67'
         )
 
         with self.assertRaisesMessage(
@@ -192,23 +192,23 @@ class PaymentProcessorTest(SubscriptionTestBase):
         payment_infos = []
 
         pinfo = PaymentInfo(
-                    date(2018, 3, 15),
-                    'CH7730000001250094239',
-                    250.0,
-                    'QRR',
-                    '000000000000000100000000010',
-                    'xa56-klkw345'
-                     )
+            date(2018, 3, 15),
+            'CH7730000001250094239',
+            250.0,
+            'QRR',
+            '000000000000000100000000010',
+            'xa56-klkw345'
+        )
         payment_infos.append(pinfo)
 
         pinfo = PaymentInfo(
-                    date(2018, 3, 16),
-                    'CH7730000001250094239',
-                    210.0,
-                    'QRR',
-                    '000000000000000100000000021',
-                    'xa56-klkw789'
-                     )
+            date(2018, 3, 16),
+            'CH7730000001250094239',
+            210.0,
+            'QRR',
+            '000000000000000100000000021',
+            'xa56-klkw789'
+        )
         payment_infos.append(pinfo)
 
         self.processor.process_payments(payment_infos)
@@ -234,23 +234,23 @@ class PaymentProcessorTest(SubscriptionTestBase):
         payment_infos = []
 
         pinfo = PaymentInfo(
-                    date(2018, 3, 15),
-                    'CH7730000001250094239',
-                    250.0,
-                    'QRR',
-                    '000000000000000100000000010',
-                    'xa56-klkw345'
-                     )
+            date(2018, 3, 15),
+            'CH7730000001250094239',
+            250.0,
+            'QRR',
+            '000000000000000100000000010',
+            'xa56-klkw345'
+        )
         payment_infos.append(pinfo)
 
         pinfo = PaymentInfo(
-                    date(2018, 3, 16),
-                    'CH7730000001250094239',
-                    210.0,
-                    'QRR',
-                    '000000000000000300000000027',
-                    'xa56-klkw789'
-                     )
+            date(2018, 3, 16),
+            'CH7730000001250094239',
+            210.0,
+            'QRR',
+            '000000000000000300000000027',
+            'xa56-klkw789'
+        )
         payment_infos.append(pinfo)
 
         with self.assertRaisesMessage(

@@ -267,7 +267,7 @@ class BillsListTest(SubscriptionTestBase):
         self.bill2 = Bill.objects.create(
             business_year=self.year, member=self.member,
             bill_date=date(2018, 3, 1), booking_date=date(2018, 3, 1),
-            )
+        )
         self.bill2.save()
 
     def test_get_open_bills(self):

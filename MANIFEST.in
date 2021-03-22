@@ -4,3 +4,7 @@ recursive-include juntagrico_billing/templates *
 recursive-include juntagrico_billing/locale *
 include requirements.txt
 global-exclude *.pyc
+exclude manage.py
+exclude testsettings*.py
+exclude testurls.py
+recursive-exclude test *

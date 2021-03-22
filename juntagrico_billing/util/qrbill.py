@@ -75,25 +75,25 @@ def get_qrbill_svg(bill, paymenttype):
 
     addr = Config.organisation_address()
     qr = QRBill(
-                language='de',
-                account=stdnum.iban.compact(paymenttype.iban),
-                ref_number=calc_refnumber(bill),
-                creditor={
-                    'name': addr['name'],
-                    'line1': '%s %s' % (addr['street'], addr['number']),
-                    'line2': '%s %s' % (addr['zip'], addr['city']),
-                    'country': 'CH',
-                },
-                debtor={
-                    'name': '%s %s' % (
-                        bill.member.first_name,
-                        bill.member.last_name),
-                    'line1': bill.member.addr_street,
-                    'line2': '%s %s' % (
-                        bill.member.addr_zipcode,
-                        bill.member.addr_location),
-                    'country': 'CH',
-                }
+        language='de',
+        account=stdnum.iban.compact(paymenttype.iban),
+        ref_number=calc_refnumber(bill),
+        creditor={
+            'name': addr['name'],
+            'line1': '%s %s' % (addr['street'], addr['number']),
+            'line2': '%s %s' % (addr['zip'], addr['city']),
+            'country': 'CH',
+        },
+        debtor={
+            'name': '%s %s' % (
+                bill.member.first_name,
+                bill.member.last_name),
+            'line1': bill.member.addr_street,
+            'line2': '%s %s' % (
+                bill.member.addr_zipcode,
+                bill.member.addr_location),
+            'country': 'CH',
+        }
     )
     str_io = StringIO()
     qr.as_svg(str_io)

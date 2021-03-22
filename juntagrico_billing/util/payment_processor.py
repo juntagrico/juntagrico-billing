@@ -1,9 +1,9 @@
 from django.db import IntegrityError
 from django.utils.translation import gettext
 from juntagrico.entity.member import Member
-from juntagrico_billing.entity.payment import Payment, PaymentType
-from juntagrico_billing.dao.paymentdao import PaymentDao
+
 from juntagrico_billing.entity.bill import Bill
+from juntagrico_billing.entity.payment import Payment, PaymentType
 from juntagrico_billing.util.qrbill import bill_id_from_refnumber
 from juntagrico_billing.util.qrbill import member_id_from_refnumber
 
@@ -20,7 +20,7 @@ class PaymentInfo(object):
 
     def __repr__(self):
         return 'PaymentInfo %s %.2f %s %s' % (
-                self.date, self.amount, self.reference, self.unique_id)
+            self.date, self.amount, self.reference, self.unique_id)
 
 
 class PaymentProcessorError(Exception):
@@ -131,11 +131,11 @@ class PaymentProcessor(object):
         for bill, pinfo in bills_and_payments:
             try:
                 payment = Payment.objects.create(
-                            bill=bill,
-                            type=self.find_paymenttype(pinfo),
-                            paid_date=pinfo.date,
-                            amount=pinfo.amount,
-                            unique_id=pinfo.unique_id)
+                    bill=bill,
+                    type=self.find_paymenttype(pinfo),
+                    paid_date=pinfo.date,
+                    amount=pinfo.amount,
+                    unique_id=pinfo.unique_id)
                 payment.save()
             except IntegrityError:
                 msg = 'Payment with unique id %s has already been imported.'
