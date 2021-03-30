@@ -23,29 +23,29 @@ class PdfBillRenderer(object):
 
         self.normal = ParagraphStyle(name='Normal')
         self.normalright = ParagraphStyle(
-                            'Normal-Right',
-                            parent=self.normal, alignment=2)
+            'Normal-Right',
+            parent=self.normal, alignment=2)
         self.text = ParagraphStyle(
-                            name='Text',
-                            parent=self.normal, spaceBefore=6)
+            name='Text',
+            parent=self.normal, spaceBefore=6)
         self.heading1 = ParagraphStyle(
-                            'Heading1',
-                            parent=self.normal,
-                            fontName=self.org_heading.fontName,
-                            fontSize=14, leading=18,
-                            spaceBefore=12, spaceAfter=6)
+            'Heading1',
+            parent=self.normal,
+            fontName=self.org_heading.fontName,
+            fontSize=14, leading=18,
+            spaceBefore=12, spaceAfter=6)
         self.heading2 = ParagraphStyle(
-                            'Heading2', parent=self.normal,
-                            fontName=self.org_heading.fontName,
-                            spaceBefore=6, spaceAfter=2)
+            'Heading2', parent=self.normal,
+            fontName=self.org_heading.fontName,
+            spaceBefore=6, spaceAfter=2)
 
         self.table_style = [
-            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),    # left align all cells
-            ('VALIGN', (0, 0), (-1, -1), 'TOP'),    # valign top all cells
-            ('TOPPADDING', (0, 0), (-1, -1), 1),    # reduce top and bottom
-                                                    # padding (default is 3)
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),  # left align all cells
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),  # valign top all cells
+            ('TOPPADDING', (0, 0), (-1, -1), 1),  # reduce top and bottom
+            # padding (default is 3)
             ('BOTTOMPADDING', (0, 0), (-1, -1), 1),
-            ('LEFTPADDING', (0, 0), (0, -1), 0)     # right align last row
+            ('LEFTPADDING', (0, 0), (0, -1), 0)  # right align last row
         ]
 
     def render(self, bill, outfile):
@@ -54,11 +54,11 @@ class PdfBillRenderer(object):
         """
         story = []
 
-        story.append(Spacer(1, 2*cm))
+        story.append(Spacer(1, 2 * cm))
         self.render_addresses(bill, story)
-        story.append(Spacer(1, 3*cm))
+        story.append(Spacer(1, 3 * cm))
         self.render_header(bill, story)
-        story.append(Spacer(1, 0.5*cm))
+        story.append(Spacer(1, 0.5 * cm))
         self.render_bill_items(bill, story)
 
         # public notes
@@ -70,8 +70,7 @@ class PdfBillRenderer(object):
         # payment notice
         url = BillingConfig.duedate_notice_url()
         if url:
-            text = _('The billed amount is due for payment according to ' +
-                     'the due date notice found here:')
+            text = _('The billed amount is due for payment according to ' + 'the due date notice found here:')
             story.append(Paragraph(
                 f'{text} <link href="{url}">{url}</link>.',
                 self.text))
@@ -91,26 +90,26 @@ class PdfBillRenderer(object):
         """
         addr = Config.organisation_address()
         org_address = Paragraph(
-                        '<br/>'.join(
-                            [addr['name'],
-                                '%s %s' % (addr['street'], addr['number']),
-                                '%s %s' % (addr['zip'], addr['city'])]),
-                        self.normal)
+            '<br/>'.join(
+                [addr['name'],
+                 '%s %s' % (addr['street'], addr['number']),
+                 '%s %s' % (addr['zip'], addr['city'])]),
+            self.normal)
         memb = bill.member
         memb_address = Paragraph(
-                        '<br/>'.join([
-                                '%s %s' % (
-                                    memb.first_name,
-                                    memb.last_name),
-                                memb.addr_street,
-                                '%s %s' % (
-                                    memb.addr_zipcode,
-                                    memb.addr_location)]),
-                        self.normal)
+            '<br/>'.join([
+                '%s %s' % (
+                    memb.first_name,
+                    memb.last_name),
+                memb.addr_street,
+                '%s %s' % (
+                    memb.addr_zipcode,
+                    memb.addr_location)]),
+            self.normal)
 
         address_table = Table(
-                            [[org_address, memb_address]],
-                            style=self.table_style)
+            [[org_address, memb_address]],
+            style=self.table_style)
         story.append(address_table)
 
     def render_header(self, bill, story):
@@ -125,11 +124,11 @@ class PdfBillRenderer(object):
 
         # billing period
         period = Paragraph(
-                    '%s %s - %s' % (
-                        _('Period'),
-                        self.date_format(bill.business_year.start_date),
-                        self.date_format(bill.business_year.end_date)),
-                    self.normal)
+            '%s %s - %s' % (
+                _('Period'),
+                self.date_format(bill.business_year.start_date),
+                self.date_format(bill.business_year.end_date)),
+            self.normal)
         story.append(period)
 
     def render_bill_items(self, bill, story):
@@ -145,7 +144,7 @@ class PdfBillRenderer(object):
             Paragraph('<b>Total</b>', self.normal),
             Paragraph('<b>%10.2f</b>' % bill.amount, self.normalright)))
 
-        bill_table = Table(lines, (None, 2*cm), style=self.table_style)
+        bill_table = Table(lines, (None, 2 * cm), style=self.table_style)
         story.append(bill_table)
 
     def render_payments(self, bill, story):
@@ -154,9 +153,8 @@ class PdfBillRenderer(object):
         """
         if bill.payments.all():
             story.append(Paragraph('<b>%s %s</b>' % (
-                    _('Payments per'),
-                    self.date_format(datetime.date.today())),
-                self.heading2))
+                _('Payments per'),
+                self.date_format(datetime.date.today())), self.heading2))
 
             lines = []
             sum = 0.0
@@ -181,8 +179,8 @@ class PdfBillRenderer(object):
                         self.normalright)))
 
             payments_table = Table(
-                                lines, (4*cm, None, 2*cm),
-                                style=self.table_style)
+                lines, (4 * cm, None, 2 * cm),
+                style=self.table_style)
 
             story.append(payments_table)
 
@@ -212,9 +210,9 @@ class PdfBillRenderer(object):
             self.bottom_margin = self.qrpayslip_drawing.height
         else:
             self.qrpayslip_drawing = None
-            self.bottom_margin = 2*cm
+            self.bottom_margin = 2 * cm
 
-            story.append(Spacer(1, 2*cm))
+            story.append(Spacer(1, 2 * cm))
 
             # if no qr payslip, display account info for payment
             story.append(

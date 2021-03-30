@@ -1,6 +1,8 @@
 import os
 from setuptools import find_packages, setup
 
+import juntagrico_billing
+
 ROOT_DIR = os.path.dirname(__file__)
 SOURCE_DIR = os.path.join(ROOT_DIR)
 
@@ -16,8 +18,8 @@ def get_requirements(requirements_file):
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
-    name='juntagrico-billing',
-    version='0.0.1',
+    name=juntagrico_billing.name,
+    version=juntagrico_billing.version,
     packages=find_packages(),
     include_package_data=True,
     license='LPGLv3',  # example license
