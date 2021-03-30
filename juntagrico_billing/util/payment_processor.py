@@ -136,11 +136,11 @@ class PaymentProcessor(object):
             for bill, pinfo in bills_and_payments:
                 try:
                     payment = Payment.objects.create(
-                                bill=bill,
-                                type=self.find_paymenttype(pinfo),
-                                paid_date=pinfo.date,
-                                amount=pinfo.amount,
-                                unique_id=pinfo.unique_id)
+                        bill=bill,
+                        type=self.find_paymenttype(pinfo),
+                        paid_date=pinfo.date,
+                        amount=pinfo.amount,
+                        unique_id=pinfo.unique_id)
                     payment.save()
                 except IntegrityError:
                     msg = 'Payment with unique id %s has already been imported.'
