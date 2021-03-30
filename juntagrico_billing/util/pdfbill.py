@@ -137,7 +137,7 @@ class PdfBillRenderer(object):
         render the list of items on the bill.
         """
         lines = []
-        for item in bill.items.all():
+        for item in bill.ordered_items:
             lines.append((
                 Paragraph(str(item), self.normal),
                 Paragraph('%10.2f' % item.amount, self.normalright)))

@@ -38,7 +38,7 @@
         </div>
     </div>
     <div class="row my-2"></div>
-    {% for item in bill.items.all %}
+    {% for item in bill.ordered_items %}
     <div class="row">
         <div class="col-sm-10">{{ item }}</div>
         <div class="col-sm-2 text-right">{{ item.amount | floatformat:2 }}</div>
