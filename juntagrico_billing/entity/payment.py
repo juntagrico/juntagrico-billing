@@ -13,11 +13,18 @@ class Payment(JuntagricoBaseModel):
                              on_delete=models.PROTECT, verbose_name=_('Bill'))
     type = models.ForeignKey('PaymentType', related_name='payments',
                              null=False, blank=False,
-                             on_delete=models.PROTECT, verbose_name=_('Payment type'))
+                             on_delete=models.PROTECT,
+                             verbose_name=_('Payment type'))
     paid_date = models.DateField(_('Payment date'), null=True, blank=True)
-    amount = models.FloatField(_('Amount'), null=False, blank=False, default=0.0)
-    private_notes = models.TextField(_('Notes not visible to {}').format(Config.vocabulary('member_pl')), null=True, blank=True)
-    unique_id = models.CharField(_('Unique Id'), max_length=50, null=True, unique=True)
+    amount = models.FloatField(
+        _('Amount'),
+        null=False, blank=False, default=0.0)
+    private_notes = models.TextField(
+        _('Notes not visible to {}').format(Config.vocabulary('member_pl')),
+        null=True, blank=True)
+    unique_id = models.CharField(
+        _('Unique Id'), max_length=50,
+        null=True, blank=True, unique=True)
 
     def __str__(self):
         return '{}'.format(self.bill.id)

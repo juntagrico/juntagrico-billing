@@ -77,6 +77,26 @@ class Bill(JuntagricoBaseModel):
         """
         return "\n".join([str(itm) for itm in self.items.all()])
 
+    @property
+    def ordered_items(self):
+        """
+        Bill items ordered for display.
+        1. Subscription ordered by id
+        2. Extrasubscriptions ordered by id
+        3. Custom Items ordered by type and id
+        """
+        def order_key(itm):
+            if itm.subscription_type:
+                return (0, itm.id)
+            elif itm.extrasubscription_type:
+                return (1, itm.id)
+            elif itm.custom_item_type:
+                return (2, itm.custom_item_type.id, itm.id)
+            else:
+                return (3)
+
+        return sorted(self.items.all(), key=order_key)
+
     def __str__(self):
         return '{}'.format(self.id)
 
