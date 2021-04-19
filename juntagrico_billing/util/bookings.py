@@ -4,7 +4,7 @@ from django.utils.translation import gettext as _
 
 from juntagrico_billing.dao.billdao import BillDao
 from juntagrico_billing.dao.paymentdao import PaymentDao
-from juntagrico_billing.dao.subscriptions import subscriptions_by_date, extrasubscriptions_by_date
+from juntagrico_billing.dao.subscriptions import subscriptions_by_date
 from juntagrico_billing.entity.settings import Settings
 from juntagrico_billing.util.billing import scale_subscription_price
 
@@ -60,62 +60,6 @@ def subscription_bookings_by_date(fromdate, tilldate):
             else:
                 booking.member_account = ""
 
-            bookings.append(booking)
-    return bookings
-
-
-def extrasub_bookings_by_date(fromdate, tilldate):
-    """
-    Generate a list of booking for extra subscriptions.
-    We generate a booking for each period.
-    """
-    extrasubs = extrasubscriptions_by_date(fromdate, tilldate)
-
-    # global debtor account on settings object
-    debtor_account = Settings.objects.first().debtor_account
-
-    bookings = []
-    for extrasub in extrasubs:
-        for period in extrasub.type.periods.all():
-            period_start = date(fromdate.year, period.start_month, period.start_day)
-            period_end = date(fromdate.year, period.end_month, period.end_day)
-            if (period_start > tilldate) or (period_end < fromdate):
-                # skip periods outside our interval
-                continue
-
-            # create a booking for each period
-            booking = Booking()
-            eff_period_start = max(period_start, extrasub.activation_date or date.min)
-            eff_period_end = min(period_end, extrasub.deactivation_date or date.max)
-
-            eff_start = max(fromdate, eff_period_start)
-            eff_end = min(tilldate, eff_period_end)
-
-            if (eff_start != period_start) or (eff_end != period_end):
-                # extrasubscription is only active for a part of the period
-                # mark booking as partial with price of 0.99
-                booking.price = 0.99
-            else:
-                # price from period
-                booking.price = period.price
-
-            booking.date = period_start
-            booking.activation_date = extrasub.activation_date
-            booking.deactivation_date = extrasub.deactivation_date
-            booking.member = extrasub.main_subscription.primary_member
-            booking.text = "Zusatz: %s, %s-%s, %s" % (extrasub.type.name,
-                                                      eff_start.strftime("%d.%m.%y"), eff_end.strftime("%d.%m.%y"),
-                                                      booking.member)
-            booking.docnumber = gen_document_number(extrasub, period_start)
-            booking.debit_account = debtor_account  # soll: debitor-konto
-            if hasattr(extrasub.type.category, "extrasub_account"):
-                booking.credit_account = extrasub.type.category.extrasub_account.account
-            else:
-                booking.credit_account = ""
-            if hasattr(extrasub.main_subscription.primary_member, "member_account"):
-                booking.member_account = extrasub.main_subscription.primary_member.member_account.account
-            else:
-                booking.member_account = ""
             bookings.append(booking)
     return bookings
 

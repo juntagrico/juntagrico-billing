@@ -14,21 +14,9 @@ class BillItemInline(admin.TabularInline):
     def item_kind_link(self, item):
         """
         generate a link to the subscription admin page
-        for subscriptions and extrasubscriptions.
         """
-        member = item.bill.member
-        subscription = None
-        if item.subscription_type:
-            subs_parts = item.subscription_type.subscription_parts \
-                .filter(subscription__primary_member=member)
-            if subs_parts:
-                subscription = subs_parts[0].subscription
-        elif item.extrasubscription_type:
-            extrasubs = item.extrasubscription_type.extra_subscriptions \
-                .filter(main_subscription__primary_member=member)
-            if extrasubs:
-                subscription = extrasubs[0].main_subscription
-        if subscription:
+        if item.subscription_part:
+            subscription = item.subscription_part.subscription
             link = reverse("admin:juntagrico_subscription_change", args=[subscription.id])
             return mark_safe(f'<a href="{link}">{escape(item.item_kind)}</a>')
 

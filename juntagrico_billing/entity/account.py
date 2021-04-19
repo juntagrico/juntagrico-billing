@@ -1,5 +1,4 @@
 from django.db import models
-from juntagrico.entity.extrasubs import ExtraSubscriptionCategory
 from juntagrico.entity.member import Member
 from juntagrico.entity.subtypes import SubscriptionType
 
@@ -24,14 +23,4 @@ class SubscriptionTypeAccount(models.Model):
     """
     subscriptiontype = models.OneToOneField(SubscriptionType, on_delete=models.CASCADE,
                                             related_name='subscriptiontype_account')
-    account = models.CharField('Konto', max_length=100)
-
-
-class ExtraSubscriptionCategoryAccount(models.Model):
-    """
-    Account number for extra subscriptions. Is located on extra subscription category.
-    Implemented as inline admin record on ExtraSubscriptionCategory.
-    """
-    extrasubcategory = models.OneToOneField(ExtraSubscriptionCategory, on_delete=models.CASCADE,
-                                            related_name="extrasub_account")
     account = models.CharField('Konto', max_length=100)
