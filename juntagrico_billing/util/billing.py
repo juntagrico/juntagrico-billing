@@ -1,7 +1,7 @@
 from collections import defaultdict
 from datetime import date
 
-from juntagrico_billing.dao.subscriptions import subscription_parts_by_date
+from juntagrico_billing.dao.subscription_parts import subscription_parts_by_date
 from juntagrico_billing.entity.bill import Bill, BillItem
 
 
