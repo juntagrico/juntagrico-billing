@@ -1,11 +1,10 @@
 from datetime import date
 
 from django.conf import settings
-from juntagrico.entity.extrasubs import ExtraSubscription
 from juntagrico.entity.subs import SubscriptionPart
 
 from juntagrico_billing.entity.bill import Bill, BusinessYear, BillItem, BillItemType
-from juntagrico_billing.util.billing import get_billable_items, create_bill, create_bills_for_items
+from juntagrico_billing.util.billing import get_billable_subscription_parts, create_bill, create_bills_for_items
 from juntagrico_billing.util.billing import scale_subscription_price, scale_extrasubscription_price
 from juntagrico_billing.util.billing import get_open_bills
 from test.test_base import SubscriptionTestBase
@@ -56,8 +55,8 @@ class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
     def setUp(self):
         super().setUp()
 
-        self.extrasubs = ExtraSubscription.objects.create(
-            main_subscription=self.subscription,
+        self.extrasubs = SubscriptionPart.objects.create(
+            subscription=self.subscription,
             activation_date=date(2018, 1, 1),
             type=self.extrasub_type
         )
@@ -112,12 +111,13 @@ class BillSubscriptionsTests(SubscriptionTestBase):
     def setUp(self):
         super().setUp()
 
-        # create some subscriptions
+        # create some additional subscriptions
         self.subs2 = self.create_subscription_and_member(self.subs_type, date(2017, 1, 1), date(2017, 1, 1), None, "Test2", "17321")
         self.subs3 = self.create_subscription_and_member(self.subs_type, date(2018, 3, 1), date(2018, 3, 1), None, "Test3", "17321")
 
-        self.extrasubs = ExtraSubscription.objects.create(
-            main_subscription=self.subscription,
+        # add an extra subscription part to base subscription
+        self.extrasubs = SubscriptionPart.objects.create(
+            subscription=self.subscription,
             activation_date=date(2018, 1, 1),
             type=self.extrasub_type
         )
@@ -127,32 +127,30 @@ class BillSubscriptionsTests(SubscriptionTestBase):
                                                 name="2018")
 
     def test_get_billable_subscriptions_without_bills(self):
-        billable_items = get_billable_items(self.year)
-        self.assertTrue(billable_items)
-        billable_subscription_parts = [part for part in billable_items if isinstance(part, SubscriptionPart)]
+        billable_parts = get_billable_subscription_parts(self.year)
+        self.assertTrue(billable_parts)
 
-        self.assertEqual(3, len(billable_subscription_parts))
-        subscription = billable_subscription_parts[0].subscription
+        # excpect 3 subscriptions and 1 extra
+        self.assertEqual(4, len(billable_parts))
+        subscription = billable_parts[0].subscription
         self.assertEqual('Test', subscription.primary_member.last_name)
 
     def test_get_billable_subscriptions(self):
         # create bill for subs2
         create_bill(self.subs2.parts.all(), self.year, self.year.start_date)
 
-        billable_items = get_billable_items(self.year)
-        self.assertTrue(billable_items)
+        billable_parts = get_billable_subscription_parts(self.year)
+        self.assertTrue(billable_parts)
 
-        billable_subscription_parts = [part for part in billable_items if isinstance(part, SubscriptionPart)]
-
-        # we expect only 2 billable subscriptions
-        self.assertEqual(2, len(billable_subscription_parts))
-        subscription = billable_subscription_parts[0].subscription
+        # we expect 2 normal subscriptions and 1 extra
+        self.assertEqual(3, len(billable_parts))
+        subscription = billable_parts[0].subscription
         self.assertEqual('Test', subscription.primary_member.last_name)
 
     def test_create_bill_multiple_members(self):
         # creating a bill for billable items from different members
         # should result in an error
-        billable_items = get_billable_items(self.year)
+        billable_items = get_billable_subscription_parts(self.year)
         with self.assertRaisesMessage(Exception, 'billable items belong to different members'):
             create_bill(billable_items, self.year, self.year.start_date)
 
@@ -164,13 +162,13 @@ class BillSubscriptionsTests(SubscriptionTestBase):
         self.assertEquals('Abo, Zusatzabo', bill.item_kinds)
 
     def test_create_bill_for_all(self):
-        billable_items = get_billable_items(self.year)
+        billable_items = get_billable_subscription_parts(self.year)
         bills = create_bills_for_items(billable_items, self.year, self.year.start_date)
 
         self.assertEqual(3, len(bills))
 
         # there should be no billable items left
-        billable_items = get_billable_items(self.year)
+        billable_items = get_billable_subscription_parts(self.year)
         self.assertEqual(0, len(billable_items))
 
 
@@ -183,11 +181,11 @@ class GetBillableItemsTests(SubscriptionTestBase):
                                                 name="2018")
 
     def test_inactive_subscription(self):
-        items_before = get_billable_items(self.year)
+        items_before = get_billable_subscription_parts(self.year)
         # create subscription without activation date, only start_date
         self.create_subscription_and_member(self.subs_type, date(2017, 1, 1), None, None, "Test2", "4322")
         # we expect no billable items because subscription is not active in 2018
-        items = get_billable_items(self.year)
+        items = get_billable_subscription_parts(self.year)
         self.assertEqual(len(items_before), len(items), "expecting no items for additional inactive subscription")
 
 

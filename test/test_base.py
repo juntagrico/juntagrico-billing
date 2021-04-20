@@ -1,14 +1,13 @@
 from datetime import date
 
 import django.test
-from juntagrico.entity.billing import ExtraSubBillingPeriod
 from juntagrico.entity.depot import Depot
-from juntagrico.entity.extrasubs import ExtraSubscriptionCategory, ExtraSubscriptionType
 from juntagrico.entity.member import Member
 from juntagrico.entity.subs import Subscription, SubscriptionPart
 from juntagrico.entity.subtypes import SubscriptionProduct, SubscriptionSize, SubscriptionType
+from juntagrico.entity.billing import BillingPeriod
 
-from juntagrico_billing.entity.account import MemberAccount, SubscriptionTypeAccount, ExtraSubscriptionCategoryAccount
+from juntagrico_billing.entity.account import MemberAccount, SubscriptionTypeAccount
 from juntagrico_billing.entity.settings import Settings
 
 
@@ -41,7 +40,6 @@ class SubscriptionTestBase(django.test.TestCase):
         )
 
         self.depot = Depot.objects.create(
-            code="Depot 1",
             name="Das erste Depot",
             contact=self.create_member("Test", "Depot"),
             weekday=5,
@@ -54,24 +52,34 @@ class SubscriptionTestBase(django.test.TestCase):
                                                                 "Test",
                                                                 "4321")
 
-        # extra subscription category and account
-        extrasub_category = ExtraSubscriptionCategory.objects.create(
-            name="ExtraCat1"
+        # extra subscription product, size and account
+        extra_product = SubscriptionProduct.objects.create(
+            name="Extra1",
+            description="Extra1 Product Description",
+            is_extra=True
         )
 
-        ExtraSubscriptionCategoryAccount.objects.create(
-            extrasubcategory=extrasub_category,
+        extra_size = SubscriptionSize.objects.create(
+            name="Normal",
+            long_name="Normal (extra)",
+            units=1,
+            product=extra_product,
+        )
+
+        self.extrasub_type = SubscriptionType.objects.create(
+            name="Extra 1",
+            size=extra_size,
+            description="Extra1 Subscription",
+            required_assignments=0,
+            price=300.0
+        )
+
+        SubscriptionTypeAccount.objects.create(
+            subscriptiontype=self.extrasub_type,
             account="3010"
         )
 
-        self.extrasub_type = ExtraSubscriptionType.objects.create(
-            name="Extra 1",
-            size="Extragross",
-            description="Extra Subscription",
-            category=extrasub_category
-        )
-
-        self.extrasub_period1 = ExtraSubBillingPeriod.objects.create(
+        self.extrasub_period1 = BillingPeriod.objects.create(
             type=self.extrasub_type,
             price=100,
             start_day=1,
@@ -81,7 +89,7 @@ class SubscriptionTestBase(django.test.TestCase):
             cancel_day=31,
             cancel_month=5
         )
-        self.extrasub_period2 = ExtraSubBillingPeriod.objects.create(
+        self.extrasub_period2 = BillingPeriod.objects.create(
             type=self.extrasub_type,
             price=200,
             start_day=1,

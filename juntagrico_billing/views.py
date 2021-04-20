@@ -16,7 +16,7 @@ from juntagrico_billing.dao.billdao import BillDao
 from juntagrico_billing.entity.bill import BusinessYear, Bill
 from juntagrico_billing.entity.settings import Settings
 from juntagrico_billing.mailer import send_bill_notification
-from juntagrico_billing.util.billing import get_billable_items, \
+from juntagrico_billing.util.billing import get_billable_subscription_parts, \
     group_billables_by_member, create_bills_for_items, get_open_bills
 from juntagrico_billing.util.qrbill import is_qr_iban, get_qrbill_svg
 from juntagrico_billing.util.pdfbill import PdfBillRenderer
@@ -58,7 +58,7 @@ def bills(request):
     if selected_year:
         bills_list = selected_year.bills.all()
         if state == "generate":
-            billable_items = get_billable_items(selected_year)
+            billable_items = get_billable_subscription_parts(selected_year)
             pending_bills = len(group_billables_by_member(billable_items))
 
         elif state.startswith("open"):
@@ -103,7 +103,7 @@ def bills_generate(request):
     year_name = request.session['bills_businessyear']
     year = BusinessYear.objects.filter(name=year_name).first()
 
-    billable_items = get_billable_items(year)
+    billable_items = get_billable_subscription_parts(year)
 
     create_bills_for_items(billable_items, year, date.today())
 

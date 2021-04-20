@@ -54,11 +54,10 @@ def scale_extrasubscription_price(extrasub, fromdate, tilldate):
     return round(sum(period_prices), 2)
 
 
-def get_billable_items(business_year):
+def get_billable_subscription_parts(business_year):
     """
-    get all billable items that are active during the given period and
+    get all subscription parts that are active during the given period and
     don't have a corresponding bill.
-    Billable items are either SubscriptionPart or Extrasubscription objects
     """
     from_date = business_year.start_date
     till_date = business_year.end_date
@@ -72,7 +71,9 @@ def get_billable_items(business_year):
     active_parts = subscription_parts_by_date(from_date, till_date)
 
     # get parts that are not billed yet
-    not_billed = active_parts.exclude(bill_parts)
+    billed_dict = dict([(part, None) for part in bill_parts])
+
+    not_billed = [part for part in active_parts if part not in billed_dict]
 
     return not_billed
 

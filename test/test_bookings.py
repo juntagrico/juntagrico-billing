@@ -1,9 +1,6 @@
 from datetime import date
-
-from juntagrico.entity.extrasubs import ExtraSubscription
-
-from juntagrico_billing.util.bookings import subscription_bookings_by_date, gen_document_number, \
-    extrasub_bookings_by_date
+from juntagrico.entity.subs import SubscriptionPart
+from juntagrico_billing.util.bookings import subscription_bookings_by_date, gen_document_number
 from test.test_base import SubscriptionTestBase
 
 
@@ -74,8 +71,8 @@ class ExtraSubscriptionBookingsTest(SubscriptionTestBase):
     def setUp(self):
         super().setUp()
 
-        self.extrasubs = ExtraSubscription.objects.create(
-            main_subscription=self.subscription,
+        self.extrasubs = SubscriptionPart.objects.create(
+            subscription=self.subscription,
             activation_date=date(2018, 1, 1),
             type=self.extrasub_type
         )
@@ -94,7 +91,7 @@ class ExtraSubscriptionBookingsTest(SubscriptionTestBase):
     def test_bookings_full_year(self):
         start_date = date(2018, 1, 1)
         end_date = date(2018, 12, 31)
-        bookings_list = extrasub_bookings_by_date(start_date, end_date)
+        bookings_list = subscription_bookings_by_date(start_date, end_date)
         self.assertEqual(2, len(bookings_list))
 
         booking = bookings_list[0]
@@ -126,7 +123,7 @@ class ExtraSubscriptionBookingsTest(SubscriptionTestBase):
 
         start_date = date(2018, 1, 1)
         end_date = date(2018, 12, 31)
-        bookings_list = extrasub_bookings_by_date(start_date, end_date)
+        bookings_list = subscription_bookings_by_date(start_date, end_date)
         self.assertEqual(2, len(bookings_list))
 
         booking = bookings_list[0]
@@ -154,7 +151,7 @@ class ExtraSubscriptionBookingsTest(SubscriptionTestBase):
         """
         start_date = date(2018, 1, 1)
         end_date = date(2018, 6, 30)
-        bookings_list = extrasub_bookings_by_date(start_date, end_date)
+        bookings_list = subscription_bookings_by_date(start_date, end_date)
         self.assertEqual(1, len(bookings_list))
 
         booking = bookings_list[0]
@@ -173,7 +170,7 @@ class ExtraSubscriptionBookingsTest(SubscriptionTestBase):
         """
         start_date = date(2018, 2, 1)
         end_date = date(2018, 11, 30)
-        bookings_list = extrasub_bookings_by_date(start_date, end_date)
+        bookings_list = subscription_bookings_by_date(start_date, end_date)
         self.assertEqual(2, len(bookings_list))
 
         booking = bookings_list[0]
