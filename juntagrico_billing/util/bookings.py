@@ -1,12 +1,8 @@
-from datetime import date
-
 from django.utils.translation import gettext as _
 
 from juntagrico_billing.dao.billdao import BillDao
 from juntagrico_billing.dao.paymentdao import PaymentDao
-from juntagrico_billing.dao.subscription_parts import subscription_parts_by_date
 from juntagrico_billing.entity.settings import Settings
-from juntagrico_billing.util.billing import scale_subscription_price
 
 # Offset for generating Document numbers for bookings
 DOCNUMBER_OFFSET_BILL = 500000
@@ -15,84 +11,6 @@ DOCNUMBER_OFFSET_PAYMENT = 600000
 
 class Booking(object):
     pass
-
-
-def subscription_bookings_by_date(fromdate, tilldate):
-    """
-    Generate a list of booking for subscriptions.
-    For each type that is assigned to a subscription, a separate booking
-    is generated.
-    """
-    subscription_parts = subscription_parts_by_date(fromdate, tilldate)
-
-    # global debtor account on settings object
-    debtor_account = Settings.objects.first().debtor_account
-
-    bookings = []
-    for subs_part in subscription_parts:
-        subs = subs_part.subscription
-        booking = Booking()
-        booking.date = max(fromdate, subs_part.activation_date or date.min)
-        booking.activation_date = subs_part.activation_date
-        booking.deactivation_date = subs_part.deactivation_date
-        booking.docnumber = gen_document_number(subs_part, fromdate)
-        booking.member = subs.primary_member
-        if subs_part.type.size.product.is_extra:
-            booking.text = "Zusatzabo: %s, %s" % (
-                subs_part.type, subs.primary_member)
-        else:
-            booking.text = "Abo: %s, %s" % (
-                subs_part.type, subs.primary_member)
-        eff_start = max(fromdate, subs_part.activation_date or date.min)
-        eff_end = min(tilldate, subs_part.deactivation_date or date.max)
-        if (eff_start > fromdate) or (eff_end < tilldate):
-            # subscription is activated or deactivated inside our interval
-            # set special marker price and mention interval in text
-            booking.price = 0.99
-            booking.text = "%s, Teilperiode %s - %s" % (booking.text,
-                                                        eff_start.strftime("%d.%m.%y"),
-                                                        eff_end.strftime("%d.%m.%y"))
-        else:
-            booking.price = scale_subscription_price(subs, fromdate, tilldate)
-            # accounts
-        booking.debit_account = debtor_account  # soll: debitor-konto
-        if hasattr(subs_part.type, "subscriptiontype_account"):
-            booking.credit_account = subs_part.type.subscriptiontype_account.account
-        else:
-            booking.credit_account = ""
-        if hasattr(subs.primary_member, "member_account"):
-            booking.member_account = subs.primary_member.member_account.account
-        else:
-            booking.member_account = ""
-
-        bookings.append(booking)
-    return bookings
-
-
-def gen_document_number(entry, range_start):
-    """
-    Generate document number for booking a suscription or extra subscription.
-    The generated document number is affected by the start-date of the booking period, so
-    that each subscription gets a unique document number per booking period.
-
-    Structure of document number:
-    YYMMDD<id of primary member 9-digits><id of subcription 9-digits>
-
-    If no member is assigned, the member part is all 0.
-    """
-    date_part = range_start.strftime('%y%m%d')
-    member = None
-    if hasattr(entry, 'primary_member'):
-        member = entry.primary_member
-    elif hasattr(entry, 'subscription'):
-        member = entry.subscription.primary_member
-    if member:
-        member_id = str(member.id)
-    else:
-        member_id = ""
-    member_part = member_id.rjust(9, '0')
-    entry_part = str(entry.id).rjust(9, '0')
-    return date_part + member_part + entry_part
 
 
 def get_bill_bookings(fromdate, tilldate):
