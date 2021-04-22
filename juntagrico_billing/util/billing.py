@@ -5,21 +5,35 @@ from juntagrico_billing.dao.subscription_parts import subscription_parts_by_date
 from juntagrico_billing.entity.bill import Bill, BillItem
 
 
-def scale_subscription_price(subscription, fromdate, tilldate):
-    """
-    scale subscription price for a certain date interval.
-    """
-    result = []
-    for part in subscription.parts.all():
-        result.append(scale_subscriptionpart_price(part, fromdate, tilldate))
-
-    return sum(result)
-
-
 def scale_subscriptionpart_price(part, fromdate, tilldate):
     """
     scale subscription part price for a certain date interval.
     """
+
+    if len(part.type.periods.all()):
+        # calculate price based on billing periods.
+        # takes into account periods that overlap with the requested interval.
+        period_prices = []
+        for period in part.type.periods.all():
+            period_start = date(fromdate.year, period.start_month, period.start_day)
+            period_end = date(fromdate.year, period.end_month, period.end_day)
+            if period_start <= tilldate and period_end >= fromdate:
+                # calculate the resulting start and end of the period that overlaps
+                # with the activation date and our requested date interval
+                eff_start = max(fromdate, max(period_start, part.activation_date or date.min))
+                eff_end = min(tilldate, min(period_end, part.deactivation_date or date.max))
+
+                # scale the period price
+                full_days = (period_end - period_start).days + 1
+                eff_days = (eff_end - eff_start).days + 1
+
+                period_prices.append(float(period.price) * eff_days / full_days)
+
+        return round(sum(period_prices), 2)
+
+    # otherwise    
+    # calculate price without billing periods.
+    # just scale the subscription type price proportionately
     days_period = (tilldate - fromdate).days + 1
     if part.activation_date and part.activation_date <= tilldate:
         part_start = max(part.activation_date or date.min, fromdate)
@@ -28,30 +42,6 @@ def scale_subscriptionpart_price(part, fromdate, tilldate):
         return round(part.type.price * days_part / days_period, 2)
 
     return 0
-
-
-def scale_extrasubscription_price(extrasub, fromdate, tilldate):
-    """
-    calculate price of an extrasubscription for a certain date intverval.
-    takes into account periods that overlap with the requested interval.
-    """
-    period_prices = []
-    for period in extrasub.type.periods.all():
-        period_start = date(fromdate.year, period.start_month, period.start_day)
-        period_end = date(fromdate.year, period.end_month, period.end_day)
-        if period_start <= tilldate and period_end >= fromdate:
-            # calculate the resulting start and end of the period that overlaps
-            # with the activation date and our requested date interval
-            eff_start = max(fromdate, max(period_start, extrasub.activation_date or date.min))
-            eff_end = min(tilldate, min(period_end, extrasub.deactivation_date or date.max))
-
-            # scale the period price
-            full_days = (period_end - period_start).days + 1
-            eff_days = (eff_end - eff_start).days + 1
-
-            period_prices.append(float(period.price) * eff_days / full_days)
-
-    return round(sum(period_prices), 2)
 
 
 def get_billable_subscription_parts(business_year):

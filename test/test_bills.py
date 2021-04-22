@@ -5,7 +5,7 @@ from juntagrico.entity.subs import SubscriptionPart
 
 from juntagrico_billing.entity.bill import Bill, BusinessYear, BillItem, BillItemType
 from juntagrico_billing.util.billing import get_billable_subscription_parts, create_bill, create_bills_for_items
-from juntagrico_billing.util.billing import scale_subscription_price, scale_extrasubscription_price
+from juntagrico_billing.util.billing import scale_subscriptionpart_price
 from juntagrico_billing.util.billing import get_open_bills
 from test.test_base import SubscriptionTestBase
 
@@ -13,11 +13,12 @@ from test.test_base import SubscriptionTestBase
 class ScaleSubscriptionPriceTest(SubscriptionTestBase):
     def setUp(self):
         super().setUp()
+        self.part = self.subscription.parts.all()[0]
 
     def test_price_by_date_fullyear(self):
         start_date = date(2018, 1, 1)
         end_date = date(2018, 12, 31)
-        price_fullyear = scale_subscription_price(self.subscription,
+        price_fullyear = scale_subscriptionpart_price(self.part,
                                                   start_date, end_date)
         self.assertEqual(1200.0, price_fullyear, "full year")
 
@@ -26,7 +27,7 @@ class ScaleSubscriptionPriceTest(SubscriptionTestBase):
         try:
             start_date = date(2018, 7, 1)
             end_date = date(2019, 6, 30)
-            price_fullyear = scale_subscription_price(self.subscription,
+            price_fullyear = scale_subscriptionpart_price(self.part,
                                                       start_date, end_date)
             self.assertEqual(1200.0, price_fullyear, "full year")
         finally:
@@ -36,14 +37,13 @@ class ScaleSubscriptionPriceTest(SubscriptionTestBase):
         self.subscription.activation_date = date(2018, 7, 1)
         self.subscription.deactivation_date = date(2018, 9, 30)
         self.subscription.cancellation_date = self.subscription.deactivation_date
-        for part in self.subscription.parts.all():
-            part.activation_date = date(2018, 7, 1)
-            part.deactivation_date = date(2018, 9, 30)
-            part.cancellation_date = part.deactivation_date
-            part.save()
+        self.part.activation_date = date(2018, 7, 1)
+        self.part.deactivation_date = date(2018, 9, 30)
+        self.part.cancellation_date = self.part.deactivation_date
+        self.part.save()
         start_date = date(2018, 1, 1)
         end_date = date(2018, 12, 31)
-        price = scale_subscription_price(self.subscription,
+        price = scale_subscriptionpart_price(self.part,
                                          start_date, end_date)
         price_expected = round(1200.0 * (31 + 31 + 30) / 365, 2)
         self.assertEqual(price_expected, price,
@@ -69,7 +69,7 @@ class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
         start_date = date(2018, 1, 1)
         end_date = date(2018, 12, 31)
 
-        price = scale_extrasubscription_price(self.extrasubs, start_date, end_date)
+        price = scale_subscriptionpart_price(self.extrasubs, start_date, end_date)
         self.assertEqual(300.00, price, "full year")
 
     def test_first_half_year(self):
@@ -77,7 +77,7 @@ class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
         start_date = date(2018, 1, 1)
         end_date = date(2018, 6, 30)
 
-        price = scale_extrasubscription_price(self.extrasubs, start_date, end_date)
+        price = scale_subscriptionpart_price(self.extrasubs, start_date, end_date)
         self.assertEqual(100.00, price, "first half year")
 
     def test_second_half_year(self):
@@ -85,14 +85,14 @@ class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
         start_date = date(2018, 7, 1)
         end_date = date(2018, 12, 31)
 
-        price = scale_extrasubscription_price(self.extrasubs, start_date, end_date)
+        price = scale_subscriptionpart_price(self.extrasubs, start_date, end_date)
         self.assertEqual(200.00, price, "second half year")
 
     def test_partial_year(self):
         start_date = date(2018, 3, 1)
         end_date = date(2018, 10, 31)
 
-        price = scale_extrasubscription_price(self.extrasubs, start_date, end_date)
+        price = scale_subscriptionpart_price(self.extrasubs, start_date, end_date)
         self.assertEquals(ScaleExtraSubscriptionPriceTest.expected_price, price, "partial year")
 
     def test_partial_active(self):
@@ -103,7 +103,7 @@ class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
         self.extrasubs.activation_date = date(2018, 3, 1)
         self.extrasubs.deactivation_date = date(2018, 10, 31)
 
-        price = scale_extrasubscription_price(self.extrasubs, start_date, end_date)
+        price = scale_subscriptionpart_price(self.extrasubs, start_date, end_date)
         self.assertEquals(ScaleExtraSubscriptionPriceTest.expected_price, price, "partial active")
 
 

@@ -71,7 +71,7 @@ class SubscriptionTestBase(django.test.TestCase):
             size=extra_size,
             description="Extra1 Subscription",
             required_assignments=0,
-            price=300.0
+            price=0.0
         )
 
         SubscriptionTypeAccount.objects.create(
