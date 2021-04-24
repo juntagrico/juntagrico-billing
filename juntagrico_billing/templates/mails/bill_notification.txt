@@ -1,7 +1,7 @@
 {% extends "mails/email.txt" %}
 {% load i18n %}
 {% load l10n %}
-{% load config %}
+{% load juntagrico.config %}
 {% block content %}
 {% config "organisation_name" as organisation_name %}
 {% config "organisation_address" as addr %}
