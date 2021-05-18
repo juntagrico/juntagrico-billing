@@ -31,7 +31,7 @@ def scale_subscriptionpart_price(part, fromdate, tilldate):
 
         return round(sum(period_prices), 2)
 
-    # otherwise    
+    # otherwise
     # calculate price without billing periods.
     # just scale the subscription type price proportionately
     days_period = (tilldate - fromdate).days + 1
