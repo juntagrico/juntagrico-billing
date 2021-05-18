@@ -82,6 +82,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(migrate_bill_items),
-        migrations.RunPython(migrate_extrasubscription_accounts)
+        # migrations.RunPython(migrate_bill_items),
+        # migrations.RunPython(migrate_extrasubscription_accounts)
     ]
