@@ -18,8 +18,8 @@ class ScaleSubscriptionPriceTest(SubscriptionTestBase):
     def test_price_by_date_fullyear(self):
         start_date = date(2018, 1, 1)
         end_date = date(2018, 12, 31)
-        price_fullyear = scale_subscriptionpart_price(self.part,
-                                                  start_date, end_date)
+        price_fullyear = scale_subscriptionpart_price(
+            self.part, start_date, end_date)
         self.assertEqual(1200.0, price_fullyear, "full year")
 
     def test_price_by_date_shifted_business_year(self):
@@ -27,8 +27,8 @@ class ScaleSubscriptionPriceTest(SubscriptionTestBase):
         try:
             start_date = date(2018, 7, 1)
             end_date = date(2019, 6, 30)
-            price_fullyear = scale_subscriptionpart_price(self.part,
-                                                      start_date, end_date)
+            price_fullyear = scale_subscriptionpart_price(
+                self.part, start_date, end_date)
             self.assertEqual(1200.0, price_fullyear, "full year")
         finally:
             del settings.BUSINESS_YEAR_START
@@ -43,8 +43,8 @@ class ScaleSubscriptionPriceTest(SubscriptionTestBase):
         self.part.save()
         start_date = date(2018, 1, 1)
         end_date = date(2018, 12, 31)
-        price = scale_subscriptionpart_price(self.part,
-                                         start_date, end_date)
+        price = scale_subscriptionpart_price(
+            self.part, start_date, end_date)
         price_expected = round(1200.0 * (31 + 31 + 30) / 365, 2)
         self.assertEqual(price_expected, price,
                          "quarter subscription over a year")
