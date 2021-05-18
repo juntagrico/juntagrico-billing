@@ -1,28 +1,39 @@
 from collections import defaultdict
 from datetime import date
 
-from juntagrico.entity.extrasubs import ExtraSubscription
-from juntagrico.entity.subs import SubscriptionPart
-
-from juntagrico_billing.dao.subscriptions import subscriptions_by_date, extrasubscriptions_by_date
+from juntagrico_billing.dao.subscription_parts import subscription_parts_by_date
 from juntagrico_billing.entity.bill import Bill, BillItem
-
-
-def scale_subscription_price(subscription, fromdate, tilldate):
-    """
-    scale subscription price for a certain date interval.
-    """
-    result = []
-    for part in subscription.parts.all():
-        result.append(scale_subscriptionpart_price(part, fromdate, tilldate))
-
-    return sum(result)
 
 
 def scale_subscriptionpart_price(part, fromdate, tilldate):
     """
     scale subscription part price for a certain date interval.
     """
+
+    if len(part.type.periods.all()):
+        # calculate price based on billing periods.
+        # takes into account periods that overlap with the requested interval.
+        period_prices = []
+        for period in part.type.periods.all():
+            period_start = date(fromdate.year, period.start_month, period.start_day)
+            period_end = date(fromdate.year, period.end_month, period.end_day)
+            if period_start <= tilldate and period_end >= fromdate:
+                # calculate the resulting start and end of the period that overlaps
+                # with the activation date and our requested date interval
+                eff_start = max(fromdate, max(period_start, part.activation_date or date.min))
+                eff_end = min(tilldate, min(period_end, part.deactivation_date or date.max))
+
+                # scale the period price
+                full_days = (period_end - period_start).days + 1
+                eff_days = (eff_end - eff_start).days + 1
+
+                period_prices.append(float(period.price) * eff_days / full_days)
+
+        return round(sum(period_prices), 2)
+
+    # otherwise
+    # calculate price without billing periods.
+    # just scale the subscription type price proportionately
     days_period = (tilldate - fromdate).days + 1
     if part.activation_date and part.activation_date <= tilldate:
         part_start = max(part.activation_date or date.min, fromdate)
@@ -33,65 +44,28 @@ def scale_subscriptionpart_price(part, fromdate, tilldate):
     return 0
 
 
-def scale_extrasubscription_price(extrasub, fromdate, tilldate):
+def get_billable_subscription_parts(business_year):
     """
-    calculate price of an extrasubscription for a certain date intverval.
-    takes into account periods that overlap with the requested interval.
-    """
-    period_prices = []
-    for period in extrasub.type.periods.all():
-        period_start = date(fromdate.year, period.start_month, period.start_day)
-        period_end = date(fromdate.year, period.end_month, period.end_day)
-        if period_start <= tilldate and period_end >= fromdate:
-            # calculate the resulting start and end of the period that overlaps
-            # with the activation date and our requested date interval
-            eff_start = max(fromdate, max(period_start, extrasub.activation_date or date.min))
-            eff_end = min(tilldate, min(period_end, extrasub.deactivation_date or date.max))
-
-            # scale the period price
-            full_days = (period_end - period_start).days + 1
-            eff_days = (eff_end - eff_start).days + 1
-
-            period_prices.append(float(period.price) * eff_days / full_days)
-
-    return round(sum(period_prices), 2)
-
-
-def get_billable_items(business_year):
-    """
-    get all billable items that are active during the given period and
+    get all subscription parts that are active during the given period and
     don't have a corresponding bill.
-    Billable items are either SubscriptionPart or Extrasubscription objects
     """
     from_date = business_year.start_date
     till_date = business_year.end_date
 
-    # prepare a dictionary with member, billable_reference tuples as keys
+    # prepare a dictionary with member, subscription_part tuples as keys
     # based on the bills of this year
-    # billable_references are either subscription types and extrasubscription types
     bill_items = BillItem.objects.filter(bill__business_year=business_year)
-    already_billed = dict((((itm.bill.member, itm.billable_reference), None) for itm in bill_items))
+    bill_parts = [itm.subscription_part for itm in bill_items if itm.subscription_part]
 
-    # get all active subscriptions and extra subscriptions that overlap our date range
-    subscriptions = subscriptions_by_date(from_date, till_date)
-    # todo: change to get subscription parts directly
-    subscription_parts = [part for sub in subscriptions for part in sub.parts.all()]
-    extra_subs = extrasubscriptions_by_date(from_date, till_date)
+    # get all active subscription parts for billing period
+    active_parts = subscription_parts_by_date(from_date, till_date)
 
-    # check if we have a member for every billable
-    parts_without_member = [part for part in subscription_parts if not part.subscription.primary_member]
-    es_without_member = [es for es in extra_subs if not es.main_subscription.primary_member]
-    if parts_without_member:
-        raise Exception('SubscriptionPart without member: %s' % parts_without_member[0])
+    # get parts that are not billed yet
+    billed_dict = dict([(part, None) for part in bill_parts])
 
-    if es_without_member:
-        raise Exception('ExtraSubscription without member: %s' % es_without_member[0])
+    not_billed = [part for part in active_parts if part not in billed_dict]
 
-    # check if they already have a bill with billing date in the date range
-    result_list = [part for part in subscription_parts if (part.subscription.primary_member, part.type) not in already_billed] + \
-                  [es for es in extra_subs if (es.main_subscription.primary_member, es.type) not in already_billed]
-
-    return result_list
+    return not_billed
 
 
 def create_bill(billable_items, businessyear, bill_date):
@@ -108,28 +82,17 @@ def create_bill(billable_items, businessyear, bill_date):
                                bill_date=bill_date, booking_date=booking_date)
 
     items = []
-    for billable in billable_items:
-        if isinstance(billable, SubscriptionPart):
-            # subscription part
-            part = billable
-            price = scale_subscriptionpart_price(part, businessyear.start_date, businessyear.end_date)
-            text = str(part.type)
-            bill_item = BillItem.objects.create(bill=bill, subscription_type=part.type,
-                                                amount=price, description=text)
-            bill_item.save()
-            items.append(bill_item)
-        elif isinstance(billable, ExtraSubscription):
-            # extra subscription
-            price = scale_extrasubscription_price(billable,
-                                                  businessyear.start_date, businessyear.end_date)
-            text = str(billable.type)
-            bill_item = BillItem.objects.create(bill=bill, extrasubscription_type=billable.type,
-                                                amount=price, description=text)
-            bill_item.save()
-            items.append(bill_item)
+    for part in billable_items:
+        price = scale_subscriptionpart_price(part, businessyear.start_date, businessyear.end_date)
+        text = str(part.type)
+        bill_item = BillItem.objects.create(
+            bill=bill, subscription_part=part,
+            amount=price, description=text)
+        bill_item.save()
+        items.append(bill_item)
 
-        # set total amount on bill
-        bill.amount = sum([itm.amount for itm in items])
+    # set total amount on bill
+    bill.amount = sum([itm.amount for itm in items])
 
     bill.save()
     return bill
@@ -137,21 +100,16 @@ def create_bill(billable_items, businessyear, bill_date):
 
 def group_billables_by_member(billable_items):
     """
-    returns a dictionary grouping the billable items (SubscriptionPart or Extrasubscriptions)
+    returns a dictionary grouping the billable subscription parts
     per member.
     """
-    # group the items per member
-    items_per_member = defaultdict(list)
+    # group the subscription parts per member
+    parts_per_member = defaultdict(list)
 
-    for item in billable_items:
-        if isinstance(item, SubscriptionPart):
-            items_per_member[item.subscription.primary_member].append(item)
-        elif isinstance(item, ExtraSubscription):
-            items_per_member[item.main_subscription.primary_member].append(item)
-        else:
-            raise Exception('unsupported item for bill: %s' % repr(item))
+    for part in billable_items:
+        parts_per_member[part.subscription.primary_member].append(part)
 
-    return items_per_member
+    return parts_per_member
 
 
 def create_bills_for_items(billable_items, businessyear, bill_date):

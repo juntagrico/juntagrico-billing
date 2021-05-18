@@ -12,12 +12,11 @@ from juntagrico.util import return_to_previous_location
 from juntagrico.util.temporal import start_of_business_year, \
     start_of_next_business_year
 from juntagrico.util.xls import generate_excel
-from juntagrico.views import get_menu_dict
 from juntagrico_billing.dao.billdao import BillDao
 from juntagrico_billing.entity.bill import BusinessYear, Bill
 from juntagrico_billing.entity.settings import Settings
 from juntagrico_billing.mailer import send_bill_notification
-from juntagrico_billing.util.billing import get_billable_items, \
+from juntagrico_billing.util.billing import get_billable_subscription_parts, \
     group_billables_by_member, create_bills_for_items, get_open_bills
 from juntagrico_billing.util.qrbill import is_qr_iban, get_qrbill_svg
 from juntagrico_billing.util.pdfbill import PdfBillRenderer
@@ -30,8 +29,6 @@ def bills(request):
     """
     List of bills per year
     """
-    renderdict = get_menu_dict(request)
-
     # get all business years
     business_years = list(BusinessYear.objects.all().order_by('start_date'))
 
@@ -61,7 +58,7 @@ def bills(request):
     if selected_year:
         bills_list = selected_year.bills.all()
         if state == "generate":
-            billable_items = get_billable_items(selected_year)
+            billable_items = get_billable_subscription_parts(selected_year)
             pending_bills = len(group_billables_by_member(billable_items))
 
         elif state.startswith("open"):
@@ -70,10 +67,12 @@ def bills(request):
                 percent_paid = int(percent_str)
             bills_list = get_open_bills(selected_year, percent_paid)
     else:
-        message = get_template('messages/no_businessyear.html').render()
-        renderdict['messages'].append(message)
+        # add message 'no businessyear'
+        messages = getattr(request, 'member_messages', []) or []
+        messages.extend(get_template('messages/no_businessyear.html').render())
+        request.member_messages = messages
 
-    renderdict.update({
+    renderdict = {
         'business_years': business_years,
         'selected_year': selected_year,
         'bills_list': bills_list,
@@ -84,7 +83,7 @@ def bills(request):
         'change_date_disabled': True,
         'state': state,
         'state_active': state_active
-    })
+    }
 
     return render(request, "jb/bills.html", renderdict)
 
@@ -104,7 +103,7 @@ def bills_generate(request):
     year_name = request.session['bills_businessyear']
     year = BusinessYear.objects.filter(name=year_name).first()
 
-    billable_items = get_billable_items(year)
+    billable_items = get_billable_subscription_parts(year)
 
     create_bills_for_items(billable_items, year, date.today())
 
@@ -130,8 +129,7 @@ def bookings_export(request):
         'tilldate': start_of_next_business_year() - timedelta(1)
     }
 
-    renderdict = get_menu_dict(request)    # daterange for bookings export
-
+    # daterange for bookings export
     if 'fromdate' in request.GET and 'tilldate' in request.GET:
         # request with query parameter
         daterange_form = DateRangeForm(request.GET)
@@ -155,11 +153,11 @@ def bookings_export(request):
         return export_bookings(bookings, "bookings")
 
     # otherwise return page
-    renderdict.update({
+    renderdict = {
         'daterange_form': daterange_form,
         'bill_bookings_count': len(bill_bookings),
         'payment_bookings_count': len(payment_bookings),
-    })
+    }
 
     return render(request, 'jb/bookings_export.html', renderdict)
 
@@ -182,12 +180,11 @@ def export_bookings(bookings, filename):
 def user_bills(request):
     member = request.user.member
     settings = Settings.objects.first()
-    renderdict = get_menu_dict(request)
-    renderdict.update({
+    renderdict = {
         'bills': BillDao.bills_for_member(member),
         'paymenttype': settings.default_paymenttype,
         'menu': {'bills': 'active'},
-    })
+    }
     return render(request, "jb/user_bills.html", renderdict)
 
 
@@ -208,8 +205,7 @@ def user_bill(request, bill_id):
     else:
         qr_svg = None
 
-    renderdict = get_menu_dict(request)
-    renderdict.update({
+    renderdict = {
         'member': bill.member,
         'bill': bill,
         'today': date.today(),
@@ -217,7 +213,7 @@ def user_bill(request, bill_id):
         'open_amount': bill.amount - bill.amount_paid,
         'paymenttype': settings.default_paymenttype,
         'qr_svg': qr_svg
-    })
+    }
     return render(request, "jb/user_bill.html", renderdict)
 
 
@@ -244,8 +240,6 @@ def bills_notify(request):
     """
     List of bills to send notification e-mails
     """
-    renderdict = get_menu_dict(request)
-
     bills_list = list(Bill.objects.filter(notification_sent=False))
 
     if request.method == 'POST':
@@ -256,11 +250,11 @@ def bills_notify(request):
 
         return return_to_previous_location(request)
 
-    renderdict.update({
+    renderdict = {
         'bills_list': bills_list,
         'bills_count': len(bills_list),
         'email_form_disabled': True,
         'change_date_disabled': True,
-    })
+    }
 
     return render(request, "jb/bills_notify.html", renderdict)

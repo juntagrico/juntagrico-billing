@@ -3,9 +3,8 @@ from django.db import models
 from django.utils.translation import gettext as _
 from juntagrico.config import Config
 from juntagrico.entity import JuntagricoBaseModel
-from juntagrico.entity.extrasubs import ExtraSubscriptionType
 from juntagrico.entity.member import Member
-from juntagrico.entity.subtypes import SubscriptionType
+from juntagrico.entity.subs import SubscriptionPart
 
 
 class BusinessYear(JuntagricoBaseModel):
@@ -86,10 +85,11 @@ class Bill(JuntagricoBaseModel):
         3. Custom Items ordered by type and id
         """
         def order_key(itm):
-            if itm.subscription_type:
-                return (0, itm.id)
-            elif itm.extrasubscription_type:
-                return (1, itm.id)
+            if itm.subscription_part:
+                if itm.subscription_part.type.size.product.is_extra:
+                    return (1, itm.id)
+                else:
+                    return (0, itm.id)
             elif itm.custom_item_type:
                 return (2, itm.custom_item_type.id, itm.id)
             else:
@@ -133,38 +133,31 @@ class BillItem(JuntagricoBaseModel):
                              null=False, blank=False,
                              on_delete=models.CASCADE, verbose_name=_('Bill'))
 
-    # a bill item has either a subscription type, an extrasubscription type
+    # a bill item has either a subscription part
     # or a custom item_type assigned
-    subscription_type = models.ForeignKey(SubscriptionType, related_name='bill_items',
-                                          null=True, blank=True,
-                                          on_delete=models.PROTECT,
-                                          verbose_name=_('Subscription'))
-    extrasubscription_type = models.ForeignKey(ExtraSubscriptionType, related_name='bill_items',
-                                               null=True, blank=True,
-                                               on_delete=models.PROTECT,
-                                               verbose_name=_('Extrasubscription'))
-    custom_item_type = models.ForeignKey(BillItemType, related_name='bill_items',
-                                         null=True, blank=True, on_delete=models.PROTECT,
-                                         verbose_name=_('Custom item type'))
+    subscription_part = models.ForeignKey(
+        SubscriptionPart, related_name='bill_items',
+        null=True, blank=True, on_delete=models.PROTECT,
+        verbose_name=_('{} Bestandteil').format(
+            Config.vocabulary('subscription')))
+
+    custom_item_type = models.ForeignKey(
+        BillItemType, related_name='bill_items',
+        null=True, blank=True, on_delete=models.PROTECT,
+        verbose_name=_('Custom item type'))
 
     description = models.CharField(_('Description'), null=False, blank=True, max_length=100)
 
     amount = models.FloatField(_('Amount'), null=False, blank=False, default=0.0)
 
     def __str__(self):
-        if self.subscription_type:
-            return self.subscription_type.long_name
-        elif self.extrasubscription_type:
-            return self.extrasubscription_type.name
+        if self.subscription_part:
+            return self.subscription_part.type.long_name or\
+                self.subscription_part.type.size.name
         elif self.custom_item_type:
             return ('%s %s' % (self.custom_item_type.name, self.description)).strip()
         else:
             return self.description
-
-    # derived property
-    @property
-    def billable_reference(self):
-        return self.subscription_type or self.extrasubscription_type
 
     @property
     def item_kind(self):
@@ -172,10 +165,11 @@ class BillItem(JuntagricoBaseModel):
         the type of the item.
         used as a short description the bill item.
         """
-        if self.subscription_type:
-            return _('Subscription')
-        elif self.extrasubscription_type:
-            return _('Extrasubscription')
+        if self.subscription_part:
+            if self.subscription_part.type.size.product.is_extra:
+                return _('Extrasubscription')
+            else:
+                return _('Subscription')
         elif self.custom_item_type:
             return self.custom_item_type.name
         else:

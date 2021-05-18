@@ -1,7 +1,6 @@
 from datetime import date
 
-from juntagrico.entity.extrasubs import ExtraSubscription
-
+from juntagrico.entity.subs import SubscriptionPart
 from juntagrico_billing.entity.bill import BusinessYear, BillItem, BillItemType
 from juntagrico_billing.entity.payment import Payment, PaymentType
 from juntagrico_billing.util.billing import create_bill
@@ -23,12 +22,12 @@ class BillBookingsTest(SubscriptionTestBase):
             iban="CH4108390031346010006",
             booking_account="1010")
 
-        self.extrasubs = ExtraSubscription.objects.create(
-            main_subscription=self.subscription,
+        self.extrasubs = SubscriptionPart.objects.create(
+            subscription=self.subscription,
             activation_date=date(2018, 1, 1),
             type=self.extrasub_type)
 
-        items = list(self.subscription.parts.all()) + [self.extrasubs]
+        items = list(self.subscription.parts.all())
 
         self.bill = create_bill(items, self.year, self.year.start_date)
 
