@@ -13,9 +13,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('juntagrico', '0020_auto_20200123_1044'),
-        ('juntagrico', '0032_data_1_4'),
-        ('juntagrico', '0027_auto_20200921_0817'),
+        ('juntagrico', '0033_post_1_4'),
     ]
 
     operations = [
