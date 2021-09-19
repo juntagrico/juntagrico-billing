@@ -275,3 +275,56 @@ class BillsListTest(SubscriptionTestBase):
         # get bills that are not fully paid
         bills = get_open_bills(self.year, 100)
         self.assertEqual(1, len(bills), '1 open bill, not counting zero bill')
+
+
+class BillTest(SubscriptionTestBase):
+    def setUp(self):
+        super().setUp()
+
+        self.year = BusinessYear.objects.create(start_date=date(2018, 1, 1),
+                                                end_date=date(2018, 12, 31),
+                                                name="2018")
+
+        self.item_type = BillItemType(name='Custom', booking_account='2211')
+        self.item_type.save()
+
+        # add an extra subscription part to base subscription
+        self.extrasubs = SubscriptionPart.objects.create(
+            subscription=self.subscription,
+            activation_date=date(2018, 1, 1),
+            type=self.extrasub_type
+        )
+
+        self.bill = create_bill(self.subscription.parts.all(), self.year, self.year.start_date)
+
+        # add custom item
+        item = BillItem.objects.create(
+            bill=self.bill,
+            custom_item_type=self.item_type,
+            amount=200.0
+        )
+        item.save()
+        self.bill.save()
+
+    def test_ordered_items(self):
+        """
+        test ordered_items property on bill.
+        introduced on bugfix for items without reference.
+        """
+        # create a bill with subscription, extra subscription and
+        # custom item
+
+        # add an item without reference (should not happen)
+        item = BillItem.objects.create(
+            bill=self.bill,
+            amount=100.0
+        )
+        item.save()
+
+        # test the ordered_items property
+        items = self.bill.ordered_items
+        self.assertEqual(4, len(items), 'should be 4 items')
+        self.assertEqual('Abo', items[0].item_kind)
+        self.assertEqual('Zusatzabo', items[1].item_kind)
+        self.assertEqual('Custom', items[2].item_kind)
+        self.assertEqual('', items[3].item_kind)
