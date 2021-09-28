@@ -93,7 +93,8 @@ class Bill(JuntagricoBaseModel):
             elif itm.custom_item_type:
                 return (2, itm.custom_item_type.id, itm.id)
             else:
-                return (3)
+                # itm without reference (unexpected)
+                return (3, None)
 
         return sorted(self.items.all(), key=order_key)
 
