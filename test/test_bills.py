@@ -4,7 +4,8 @@ from django.conf import settings
 from juntagrico.entity.subs import SubscriptionPart
 
 from juntagrico_billing.entity.bill import Bill, BusinessYear, BillItem, BillItemType
-from juntagrico_billing.util.billing import get_billable_subscription_parts, create_bill, create_bills_for_items
+from juntagrico_billing.util.billing import get_billable_subscription_parts,\
+     create_bill, create_bills_for_items, recalc_bill
 from juntagrico_billing.util.billing import scale_subscriptionpart_price
 from juntagrico_billing.util.billing import get_open_bills
 from test.test_base import SubscriptionTestBase
@@ -170,6 +171,75 @@ class BillSubscriptionsTests(SubscriptionTestBase):
         # there should be no billable items left
         billable_items = get_billable_subscription_parts(self.year)
         self.assertEqual(0, len(billable_items))
+
+    def test_recalc_bill_no_changes(self):
+        """
+        test that recalc bill does not alter a bill, if nothing was changed.
+        """
+        billable_items = get_billable_subscription_parts(self.year)
+        bills = create_bills_for_items(billable_items, self.year, self.year.start_date)
+
+        bill = bills[0]
+        amount = bill.amount
+        part_count = len(bill.items.all())
+
+        recalc_bill(bill)
+        self.assertEqual(amount, bill.amount)
+        self.assertEqual(part_count, len(bill.items.all()))
+
+    def test_recalc_bill_remove_part(self):
+        """
+        remove a subscription part from a subscription
+        and recalc bill
+        """
+        billable_items = get_billable_subscription_parts(self.year)
+        bills = create_bills_for_items(billable_items, self.year, self.year.start_date)
+
+        bill = bills[0]
+        items = bill.items.all()
+        org_amount = bill.amount
+        self.assertEqual(2, len(items))
+        self.assertEqual('Normal', items[0].subscription_part.type.name)
+        self.assertEqual(1200.0, items[0].amount)
+        self.assertEqual('Extra 1', items[1].subscription_part.type.name)
+        self.assertEqual(300.0, items[1].amount)
+
+        # remove Extra 1 part
+        # need to first remove item that references the part to delete 
+        part = items[1].subscription_part
+        items[1].delete()
+        part.delete()
+
+        # recalced bill should have only 1 item and 300.0 less amount
+        recalc_bill(bill)
+        items = bill.items.all()
+        self.assertEqual(1, len(items))
+        self.assertEqual(org_amount - 300.0, bill.amount)
+        self.assertEqual('Normal', items[0].subscription_part.type.name)
+
+    def test_recalc_bill_change_period(self):
+        """
+        change start date of subscription and
+        recalc bill.
+        """
+        billable_items = get_billable_subscription_parts(self.year)
+        bills = create_bills_for_items(billable_items, self.year, self.year.start_date)
+
+        bill = bills[0]
+        org_amount = bill.amount
+        items = bill.items.all()
+        extra_item = items[1]
+        self.assertEqual(300.0, extra_item.amount)
+
+        # change activation date from 2018, 1, 1 to 2018, 7, 1
+        extra_item.subscription_part.activation_date = date(2018, 7, 1)
+        extra_item.subscription_part.save()
+
+        # recalc: amount should be 100.0 less
+        # because first half year of extrasub is 100.0
+        # second half ist 200.0
+        recalc_bill(bill)
+        self.assertEqual(org_amount - 100.0, bill.amount)
 
 
 class GetBillableItemsTests(SubscriptionTestBase):

@@ -1,7 +1,8 @@
 from collections import defaultdict
 from datetime import date
 
-from juntagrico_billing.dao.subscription_parts import subscription_parts_by_date
+from juntagrico_billing.dao.subscription_parts import\
+    subscription_parts_by_date, subscription_parts_member_date
 from juntagrico_billing.entity.bill import Bill, BillItem
 
 
@@ -68,6 +69,34 @@ def get_billable_subscription_parts(business_year):
     return not_billed
 
 
+def update_bill_parts(bill, subscription_parts):
+    """
+    update a bill with the given subscription parts.
+    all existing parts will be removed and replaced by the new ones.
+    """
+    # remove existing subscription part items
+    for itm in bill.items.all():
+        if itm.subscription_part:
+            itm.delete()
+
+    items = []
+    for part in subscription_parts:
+        price = scale_subscriptionpart_price(
+                 part,
+                 bill.business_year.start_date,
+                 bill.business_year.end_date)
+        text = str(part.type)
+        bill_item = BillItem.objects.create(
+            bill=bill, subscription_part=part,
+            amount=price, description=text)
+        bill_item.save()
+        items.append(bill_item)
+
+    # set total amount on bill
+    bill.amount = sum([itm.amount for itm in items])
+    bill.save()
+
+
 def create_bill(billable_items, businessyear, bill_date):
     booking_date = max(businessyear.start_date, bill_date)
 
@@ -81,21 +110,35 @@ def create_bill(billable_items, businessyear, bill_date):
     bill = Bill.objects.create(business_year=businessyear, amount=0.0, member=member,
                                bill_date=bill_date, booking_date=booking_date)
 
-    items = []
-    for part in billable_items:
-        price = scale_subscriptionpart_price(part, businessyear.start_date, businessyear.end_date)
-        text = str(part.type)
-        bill_item = BillItem.objects.create(
-            bill=bill, subscription_part=part,
-            amount=price, description=text)
-        bill_item.save()
-        items.append(bill_item)
-
-    # set total amount on bill
-    bill.amount = sum([itm.amount for itm in items])
-
-    bill.save()
+    update_bill_parts(bill, billable_items)
     return bill
+
+
+def recalc_bill(bill):
+    """
+    update an existing bill with all items that are not 
+    on another bill in the same businessyear.
+    """
+    # get all subscription parts for member and businessyear
+    year = bill.business_year
+    member = bill.member
+    parts_in_year = subscription_parts_member_date(
+        member, year.start_date, year.end_date)
+
+    # determine if part is on another bill in the same year
+    def is_on_other_bill(part):
+        items = part.bill_items.all()
+        for itm in items:
+            if itm.bill:
+                if itm.bill != bill:
+                    if itm.bill.business_year == year:
+                        return True
+        return False
+
+    parts = [part for part in parts_in_year
+             if not is_on_other_bill(part)]
+
+    update_bill_parts(bill, parts)
 
 
 def group_billables_by_member(billable_items):
