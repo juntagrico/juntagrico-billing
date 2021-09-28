@@ -5,7 +5,7 @@ from juntagrico.entity.subs import SubscriptionPart
 
 from juntagrico_billing.entity.bill import Bill, BusinessYear, BillItem, BillItemType
 from juntagrico_billing.util.billing import get_billable_subscription_parts,\
-     create_bill, create_bills_for_items, recalc_bill
+    create_bill, create_bills_for_items, recalc_bill
 from juntagrico_billing.util.billing import scale_subscriptionpart_price
 from juntagrico_billing.util.billing import get_open_bills
 from test.test_base import SubscriptionTestBase
@@ -205,7 +205,7 @@ class BillSubscriptionsTests(SubscriptionTestBase):
         self.assertEqual(300.0, items[1].amount)
 
         # remove Extra 1 part
-        # need to first remove item that references the part to delete 
+        # need to first remove item that references the part to delete
         part = items[1].subscription_part
         items[1].delete()
         part.delete()

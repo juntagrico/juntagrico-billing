@@ -125,7 +125,6 @@ class BillWithCustomItemBookingsTest(SubscriptionTestBase):
         self.assertEquals("4321", booking.member_account)
         self.assertEquals(200.0, booking.price)
 
-    
     def test_get_bill_bookings_negative(self):
         """
         custom bill items with negative amount
