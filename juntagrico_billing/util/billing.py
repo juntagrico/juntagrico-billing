@@ -82,9 +82,9 @@ def update_bill_parts(bill, subscription_parts):
     items = []
     for part in subscription_parts:
         price = scale_subscriptionpart_price(
-                 part,
-                 bill.business_year.start_date,
-                 bill.business_year.end_date)
+                part,
+                bill.business_year.start_date,
+                bill.business_year.end_date)
         text = str(part.type)
         bill_item = BillItem.objects.create(
             bill=bill, subscription_part=part,
@@ -116,7 +116,7 @@ def create_bill(billable_items, businessyear, bill_date):
 
 def recalc_bill(bill):
     """
-    update an existing bill with all items that are not 
+    update an existing bill with all items that are not
     on another bill in the same businessyear.
     """
     # get all subscription parts for member and businessyear
