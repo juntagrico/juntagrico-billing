@@ -52,7 +52,14 @@ def create_item_booking(idx, item, debtor_account):
     # "Bl" is short form for "Bill"
     booking.text = "%s %d: %s %s" % (_('Bl'), bill.id, item.item_kind, bill.member)
     booking.debit_account = debtor_account
-    booking.price = item.amount
+    if item.amount >= 0:
+        booking.price = item.amount
+    else:
+        # negative amount: exchange accounts and set positive amount
+        booking.price = -item.amount
+        booking.debit_account = booking.credit_account
+        booking.credit_account = debtor_account
+
     if hasattr(bill.member, "member_account"):
         booking.member_account = bill.member.member_account.account
     else:

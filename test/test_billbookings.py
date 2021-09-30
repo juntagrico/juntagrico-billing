@@ -124,3 +124,38 @@ class BillWithCustomItemBookingsTest(SubscriptionTestBase):
         self.assertEquals("2212", booking.credit_account)
         self.assertEquals("4321", booking.member_account)
         self.assertEquals(200.0, booking.price)
+
+    def test_get_bill_bookings_negative(self):
+        """
+        custom bill items with negative amount
+        should result in bookings with credit and debit
+        exchanged and positive amount.
+        """
+        year = BusinessYear.objects.create(start_date=date(2018, 1, 1),
+                                           end_date=date(2018, 12, 31),
+                                           name="2018")
+        year.save()
+
+        item_type1 = BillItemType(name='Custom Item 1', booking_account='2211')
+        item_type1.save()
+
+        bill = create_bill(self.subscription.parts.all(), year, year.start_date)
+        item = BillItem(bill=bill, custom_item_type=item_type1, amount=-100.0)
+        item.save()
+
+        # get bookigs
+        bookings = get_bill_bookings(year.start_date, year.end_date)
+
+        self.assertEquals(2, len(bookings))
+
+        booking = bookings[1]
+        self.assertEquals(year.start_date, booking.date)
+        self.assertEquals("500012", booking.docnumber)
+        self.assertEquals("Rg 1: Custom Item 1 Michael Test", booking.text)
+
+        # credit and debit account are exchanged
+        # and amount is positive
+        self.assertEquals("2211", booking.debit_account)
+        self.assertEquals("1100", booking.credit_account)
+        self.assertEquals("4321", booking.member_account)
+        self.assertEquals(100.0, booking.price)
