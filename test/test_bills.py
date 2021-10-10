@@ -305,6 +305,25 @@ class BillCustomItemsTest(SubscriptionTestBase):
         self.assertEquals('Custom Item 1 some custom item 1', description_lines[1])
         self.assertEquals('Custom Item 2', description_lines[2])
 
+    def test_recalc_with_custom_items(self):
+        # create a subscription bill
+        bill = create_bill(self.subscription.parts.all(), self.year, self.year.start_date)
+
+        # add custom item
+        item = BillItem(bill=bill, custom_item_type=self.item_type1,
+                        description='some custom item 1', amount=110.0)
+        item.save()
+        bill.save()
+
+        # check items count and total amount
+        self.assertEquals(2, len(bill.items.all()), "items before recalc")
+        self.assertEquals(1310.0, bill.amount, "amount before recalc")
+
+        # recalc bill, amount should stay the same
+        recalc_bill(bill)
+        self.assertEquals(2, len(bill.items.all()), "items after recalc")
+        self.assertEquals(1310.0, bill.amount, "amount after recalc")
+
 
 class BillsListTest(SubscriptionTestBase):
     def setUp(self):

@@ -79,7 +79,6 @@ def update_bill_parts(bill, subscription_parts):
         if itm.subscription_part:
             itm.delete()
 
-    items = []
     for part in subscription_parts:
         price = scale_subscriptionpart_price(
             part,
@@ -90,10 +89,9 @@ def update_bill_parts(bill, subscription_parts):
             bill=bill, subscription_part=part,
             amount=price, description=text)
         bill_item.save()
-        items.append(bill_item)
 
     # set total amount on bill
-    bill.amount = sum([itm.amount for itm in items])
+    bill.amount = sum([itm.amount for itm in bill.items.all()])
     bill.save()
 
 
