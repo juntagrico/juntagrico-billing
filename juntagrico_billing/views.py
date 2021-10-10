@@ -17,11 +17,13 @@ from juntagrico_billing.entity.bill import BusinessYear, Bill
 from juntagrico_billing.entity.settings import Settings
 from juntagrico_billing.mailer import send_bill_notification
 from juntagrico_billing.util.billing import get_billable_subscription_parts, \
-    group_billables_by_member, create_bills_for_items, get_open_bills
+    group_billables_by_member, create_bills_for_items, get_open_bills, \
+    scale_subscriptionpart_price
 from juntagrico_billing.util.qrbill import is_qr_iban, get_qrbill_svg
 from juntagrico_billing.util.pdfbill import PdfBillRenderer
 from juntagrico_billing.util.bookings import get_bill_bookings, \
     get_payment_bookings
+from django.utils.translation import gettext as _
 
 
 @permission_required('juntagrico.is_book_keeper')
@@ -29,27 +31,13 @@ def bills(request):
     """
     List of bills per year
     """
-    # get all business years
-    business_years = list(BusinessYear.objects.all().order_by('start_date'))
-
-    # if no year set, choose most recent year
-    selected_year = None
-    selected_year_name = request.session.get('bills_businessyear', None)
-    if selected_year_name:
-        selected_year = [
-            year for year in business_years
-            if year.name == selected_year_name][0]
-    else:
-        if len(business_years):
-            selected_year = business_years[-1]
-            request.session['bills_businessyear'] = selected_year.name
+    business_years, selected_year = get_years_and_selected(request)
 
     bills_list = []
-    pending_bills = 0
     percent_paid = 100
 
-    # determine view state (all, open, open75, open50, open25, generate)
-    states = ('all', 'open', 'open75', 'open50', 'open25', 'generate')
+    # determine view state (all, open, open75, open50, open25)
+    states = ('all', 'open', 'open75', 'open50', 'open25')
     state = request.GET.get('state', 'all')
 
     # array to set active tab state in template
@@ -57,27 +45,16 @@ def bills(request):
 
     if selected_year:
         bills_list = selected_year.bills.all()
-        if state == "generate":
-            billable_items = get_billable_subscription_parts(selected_year)
-            pending_bills = len(group_billables_by_member(billable_items))
-
-        elif state.startswith("open"):
+        if state.startswith("open"):
             percent_str = state[4:]
             if percent_str:
                 percent_paid = int(percent_str)
             bills_list = get_open_bills(selected_year, percent_paid)
-    else:
-        # add message 'no businessyear'
-        messages = getattr(request, 'member_messages', []) or []
-        messages.extend(get_template('messages/no_businessyear.html').render())
-        request.member_messages = messages
 
     renderdict = {
         'business_years': business_years,
         'selected_year': selected_year,
         'bills_list': bills_list,
-        'bills_count': len(bills_list),
-        'pending_bills': pending_bills,
         'percent_paid': percent_paid,
         'email_form_disabled': True,
         'change_date_disabled': True,
@@ -108,6 +85,72 @@ def bills_generate(request):
     create_bills_for_items(billable_items, year, date.today())
 
     return redirect(reverse('jb:bills-list'))
+
+
+@permission_required('juntagrico.is_book_keeper')
+def pending_bills(request):
+    """
+    List pending bills (bills to generate)
+    """
+    business_years, selected_year = get_years_and_selected(request)
+    if selected_year:
+        billable_items = get_billable_subscription_parts(selected_year)
+        members_and_parts = group_billables_by_member(billable_items).items()
+        pending_bills = [
+            (
+                member,
+                get_subscription(parts),
+                get_short_parts(parts),
+                get_price(parts, selected_year),
+                get_existing_bills(member, selected_year)
+            )
+            for member, parts in members_and_parts
+        ]
+
+    renderdict = {
+        'business_years': business_years,
+        'selected_year': selected_year,
+        'pending_bills': pending_bills,
+        'email_form_disabled': True,
+        'change_date_disabled': True,
+    }
+
+    return render(request, "jb/pending_bills.html", renderdict)
+
+
+# helper functions for pending_bills
+def get_subscription(parts):
+    if len(parts) == 0:
+        return None
+
+    return parts[0].subscription
+
+
+def get_short_parts(parts):
+
+    def short_name(part):
+        if part.type.size.product.is_extra:
+            return _('Extrasubscription')
+        else:
+            return _('Subscription')
+
+    return ", ".join([short_name(part) for part in parts])
+
+
+def get_price(parts, year):
+    prices = [
+        scale_subscriptionpart_price(
+            part,
+            year.start_date,
+            year.end_date)
+        for part in parts
+    ]
+    return sum(prices)
+
+
+def get_existing_bills(member, year):
+    bills = member.bills.filter(business_year=year)
+    return bills
 
 
 class DateRangeForm(forms.Form):
@@ -258,3 +301,33 @@ def bills_notify(request):
     }
 
     return render(request, "jb/bills_notify.html", renderdict)
+
+
+def get_years_and_selected(request):
+    """
+    get selected year from request.
+    If none is selected, select the most
+    recent year.
+    """
+    # get all business years
+    business_years = list(BusinessYear.objects.all().order_by('start_date'))
+
+    if len(business_years) == 0:
+        # add message 'no businessyear'
+        messages = getattr(request, 'member_messages', []) or []
+        messages.extend(get_template('messages/no_businessyear.html').render())
+        request.member_messages = messages
+
+    # if no year set, choose most recent year
+    selected_year = None
+    selected_year_name = request.session.get('bills_businessyear', None)
+    if selected_year_name:
+        selected_year = [
+            year for year in business_years
+            if year.name == selected_year_name][0]
+    else:
+        if len(business_years):
+            selected_year = business_years[-1]
+            request.session['bills_businessyear'] = selected_year.name
+
+    return (business_years, selected_year)

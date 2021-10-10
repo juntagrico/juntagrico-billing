@@ -39,93 +39,80 @@
     <li class="nav-item">
         <a class="nav-link {{ state_active.4 }}" href="{% url 'jb:bills-list' %}?state=open25">{% trans "Open" %} 25%</a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link {{ state_active.5 }}" href="{% url 'jb:bills-list' %}?state=generate">{% trans "Generate bills" %}</a>
-    </li>
 </ul>
   
-{% if state == "generate" %}
-<form class="row mb-3" action="{% url 'jb:bills-generate' %}" method="POST">
-    {% csrf_token %}
-    <p class="col-md-4">{{ pending_bills }} {% trans "pending bills for" %} {{ selected_year.name }}.</p>
-    <div class="col-md-2">
-        <button type="submit" class="btn btn-success">{% trans "Generate" %}</button>
-    </div>
-</form>
-{% elif state == "all" %}
+{% if state == "all" %}
 <p class="mb-3">
-    {{ bills_count }} {% trans "bills for" %} {{ selected_year.name }}
+    {{ bills_list | length }} {% trans "bills for" %} {{ selected_year.name }}
 </p>
 {% else %}
 <p class="mb-3">
-    {{ bills_count}} {% trans "open bills with paid amount less than" %} {{ percent_paid }}%
+    {{ bills_list | length }} {% trans "open bills with paid amount less than" %} {{ percent_paid }}%
 </p>
 {% endif %}
 
 {% endblock %}
 {% block list %}
-{% if state != "generate" %}
-    <table id="filter-table" class="table">
-        <thead>
+<table id="filter-table" class="table">
+    <thead>
+        <tr>
+            <th scope="col" class="filter">
+                {% trans "Number" %}
+            </th>
+            <th scope="col" class="filter">
+                {% trans "Member" %}
+            </th>
+            <th scope="col" class="filter">
+                {% trans "Kind" %}
+            </th>
+            <th scope="col" class="filter">
+                {% trans "Date" %}
+            </th>
+            <th scope="col" class="filter text-right">
+                {% trans "Amount" %}
+            </th>
+            <th scope="col" class="text-right">
+                {% trans "Paid Amount" %}
+            </th>
+            <th scope="col">
+                {% trans "Paid" %}
+            </th>
+            <th>
+                {% trans "User view" %}
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for bill in bills_list %}
             <tr>
-                <th scope="col" class="filter">
-                    {% trans "Number" %}
-                </th>
-                <th scope="col" class="filter">
-                    {% trans "Member" %}
-                </th>
-                <th scope="col" class="filter">
-                    {% trans "Kind" %}
-                </th>
-                <th scope="col" class="filter">
-                    {% trans "Date" %}
-                </th>
-                <th scope="col" class="filter text-right">
-                    {% trans "Amount" %}
-                </th>
-                <th scope="col" class="filter text-right">
-                    {% trans "Paid Amount" %}
-                </th>
-                <th scope="col" class="filter">
-                    {% trans "Paid" %}
-                </th>
-                <th>
-                    {% trans "User view" %}
-                </th>
+                <td>
+                    <a href="{% url 'admin:juntagrico_billing_bill_change' bill.id %}">
+                    {{ bill.id }}
+                    </a>
+                </td>
+                <td>
+                    {{ bill.member }}
+                </td>
+                <td>
+                    {{ bill.item_kinds }}
+                </td>
+                <td>
+                    {{ bill.bill_date|date:"SHORT_DATE_FORMAT" }}
+                </td>
+                <td class="text-right">
+                    {{ bill.amount | floatformat:2 }}
+                </td>
+                <td class="text-right">
+                    {{ bill.amount_paid | floatformat:2 }}
+                </td>
+                <td>
+                    {{ bill.paid }}
+                </td>
+                <td>
+                    <a href="{% url 'jb:user-bill' bill.id %}">{{ bill.id }}</a>
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            {% for bill in bills_list %}
-                <tr>
-                    <td>
-                        <a href="{% url 'admin:juntagrico_billing_bill_change' bill.id %}">
-                        {{ bill.id }}
-                        </a>
-                    </td>
-                    <td>
-                        {{ bill.member }}
-                    </td>
-                    <td>
-                        {{ bill.item_kinds }}
-                    </td>
-                    <td>
-                        {{ bill.bill_date|date:"SHORT_DATE_FORMAT" }}
-                    </td>
-                    <td class="text-right">
-                        {{ bill.amount | floatformat:2 }}
-                    </td>
-                    <td class="text-right">
-                        {{ bill.amount_paid | floatformat:2 }}
-                    </td>
-                    <td>
-                        {{ bill.paid }}
-                    </td>
-                    <td>
-                        <a href="{% url 'jb:user-bill' bill.id %}">{{ bill.id }}</a>
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% endif %}
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}
