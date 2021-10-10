@@ -18,7 +18,7 @@ from juntagrico_billing.entity.settings import Settings
 from juntagrico_billing.mailer import send_bill_notification
 from juntagrico_billing.util.billing import get_billable_subscription_parts, \
     group_billables_by_member, create_bills_for_items, get_open_bills, \
-    scale_subscriptionpart_price
+    scale_subscriptionpart_price, recalc_bill
 from juntagrico_billing.util.qrbill import is_qr_iban, get_qrbill_svg
 from juntagrico_billing.util.pdfbill import PdfBillRenderer
 from juntagrico_billing.util.bookings import get_bill_bookings, \
@@ -151,6 +151,15 @@ def get_price(parts, year):
 def get_existing_bills(member, year):
     bills = member.bills.filter(business_year=year)
     return bills
+
+
+@permission_required('juntagrico.is_book_keeper')
+def bill_recalc(request, bill_id):
+    bill = Bill.objects.get(pk=bill_id)
+    recalc_bill(bill)
+
+    next_url = request.GET.get('next')
+    return redirect(next_url)
 
 
 class DateRangeForm(forms.Form):
