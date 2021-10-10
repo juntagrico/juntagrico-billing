@@ -25,7 +25,7 @@ def do_recalc_bill(modeladmin, request, queryset):
         recalc_bill(bill)
 
 
-do_recalc_bill.short_description = _("Recalculate bill")
+do_recalc_bill.short_description = _("Recalculate bills")
 
 
 class BillAdmin(BaseAdmin):

@@ -1,0 +1,13 @@
+{% extends "admin/change_form.html" %}
+
+{% load i18n admin_urls %}
+
+{% block object-tools-items %}
+    <li>
+        <a href="{% url 'jb:bill-recalc' original.pk %}?next={% url 'admin:juntagrico_billing_bill_change' original.pk %}" class="historylink">{% trans 'Recalculate bill' %}</a>
+    </li>
+    <li>
+        <a href="{% url opts|admin_urlname:'history' original.pk|admin_urlquote %}" class="historylink">{% trans "History" %}</a>
+    </li>
+{% endblock %}
+

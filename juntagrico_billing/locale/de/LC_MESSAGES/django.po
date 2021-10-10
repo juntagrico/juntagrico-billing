@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-28 21:32+0200\n"
+"POT-Creation-Date: 2021-10-10 23:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,7 +27,7 @@ msgid "Reset flag for 'notification sent'"
 msgstr "Markierung 'Benachrichtigung gesandt' zurücksetzen"
 
 #: .\juntagrico_billing\admin\bill.py:28
-msgid "Recalculate bill"
+msgid "Recalculate bills"
 msgstr "Rechnungen neu berechnen"
 
 #: .\juntagrico_billing\admin\billitem_inline.py:25
@@ -60,8 +60,9 @@ msgid "Businessyear end_date must be after start_date."
 msgstr "Geschäftsjahr Enddatum muss nach dem Startdatum sein."
 
 #: .\juntagrico_billing\entity\bill.py:44
-#: .\juntagrico_billing\templates\jb\bills.html:75
+#: .\juntagrico_billing\templates\jb\bills.html:63
 #: .\juntagrico_billing\templates\jb\bills_notify.html:29
+#: .\juntagrico_billing\templates\jb\pending_bills.html:42
 msgid "Member"
 msgstr "Mitglied"
 
@@ -74,16 +75,17 @@ msgid "Booking date"
 msgstr "Buchungsdatum"
 
 #: .\juntagrico_billing\entity\bill.py:51
-#: .\juntagrico_billing\entity\bill.py:151
+#: .\juntagrico_billing\entity\bill.py:152
 #: .\juntagrico_billing\entity\payment.py:20
-#: .\juntagrico_billing\templates\jb\bills.html:84
+#: .\juntagrico_billing\templates\jb\bills.html:72
 #: .\juntagrico_billing\templates\jb\bills_notify.html:38
+#: .\juntagrico_billing\templates\jb\pending_bills.html:48
 #: .\juntagrico_billing\templates\jb\user_bills.html:24
 msgid "Amount"
 msgstr "Betrag"
 
 #: .\juntagrico_billing\entity\bill.py:52
-#: .\juntagrico_billing\templates\jb\bills.html:90
+#: .\juntagrico_billing\templates\jb\bills.html:78
 #: .\juntagrico_billing\templates\jb\bills_notify.html:44
 #: .\juntagrico_billing\templates\jb\user_bills.html:27
 msgid "Paid"
@@ -106,8 +108,8 @@ msgstr "Benachrichtigung versandt"
 msgid "Amount paid"
 msgstr "Betrag bezahlt"
 
-#: .\juntagrico_billing\entity\bill.py:104
-#: .\juntagrico_billing\entity\bill.py:134
+#: .\juntagrico_billing\entity\bill.py:105
+#: .\juntagrico_billing\entity\bill.py:135
 #: .\juntagrico_billing\entity\payment.py:13
 #: .\juntagrico_billing\templates\jb\user_bill.html:6
 #: .\juntagrico_billing\templates\jb\user_bill.html:29
@@ -115,7 +117,7 @@ msgstr "Betrag bezahlt"
 msgid "Bill"
 msgstr "Rechnung"
 
-#: .\juntagrico_billing\entity\bill.py:105
+#: .\juntagrico_billing\entity\bill.py:106
 #: .\juntagrico_billing\templates\jb\billing_admin_menu.html:8
 #: .\juntagrico_billing\templates\jb\billing_user_menu.html:7
 #: .\juntagrico_billing\templates\jb\bills.html:6
@@ -123,53 +125,53 @@ msgstr "Rechnung"
 msgid "Bills"
 msgstr "Rechnungen"
 
-#: .\juntagrico_billing\entity\bill.py:113
+#: .\juntagrico_billing\entity\bill.py:114
 #: .\juntagrico_billing\entity\payment.py:42
 msgid "Name"
 msgstr "Name"
 
-#: .\juntagrico_billing\entity\bill.py:114
+#: .\juntagrico_billing\entity\bill.py:115
 #: .\juntagrico_billing\entity\payment.py:44
 msgid "Booking account"
 msgstr "Buchungskonto"
 
-#: .\juntagrico_billing\entity\bill.py:120
+#: .\juntagrico_billing\entity\bill.py:121
 msgid "Custom Bill-Item Type"
 msgstr "Rechnungsextra Typ"
 
-#: .\juntagrico_billing\entity\bill.py:121
+#: .\juntagrico_billing\entity\bill.py:122
 msgid "Custom Bill-Item Types"
 msgstr "Rechnungsextra Typen"
 
-#: .\juntagrico_billing\entity\bill.py:141
+#: .\juntagrico_billing\entity\bill.py:142
 msgid "{} Bestandteil"
 msgstr ""
 
-#: .\juntagrico_billing\entity\bill.py:147
+#: .\juntagrico_billing\entity\bill.py:148
 msgid "Custom item type"
 msgstr "Extra Typ"
 
-#: .\juntagrico_billing\entity\bill.py:149
+#: .\juntagrico_billing\entity\bill.py:150
 msgid "Description"
 msgstr "Beschreibung"
 
-#: .\juntagrico_billing\entity\bill.py:170
+#: .\juntagrico_billing\entity\bill.py:171 .\juntagrico_billing\views.py:133
 msgid "Extrasubscription"
 msgstr "Zusatzabo"
 
-#: .\juntagrico_billing\entity\bill.py:172
+#: .\juntagrico_billing\entity\bill.py:173 .\juntagrico_billing\views.py:135
 msgid "Subscription"
 msgstr "Abo"
 
-#: .\juntagrico_billing\entity\bill.py:178
+#: .\juntagrico_billing\entity\bill.py:179
 msgid "Item kind"
 msgstr "Art"
 
-#: .\juntagrico_billing\entity\bill.py:181
+#: .\juntagrico_billing\entity\bill.py:182
 msgid "Bill item"
 msgstr "Rechungsbestandteil"
 
-#: .\juntagrico_billing\entity\bill.py:182
+#: .\juntagrico_billing\entity\bill.py:183
 msgid "Bill items"
 msgstr "Rechungsbestandteile"
 
@@ -208,30 +210,45 @@ msgstr "Rechnung {0}"
 msgid "{0} Bill"
 msgstr "{0} Rechnung"
 
+#: .\juntagrico_billing\templates\admin\juntagrico_billing\bill\change_form.html:7
+msgid "Recalculate bill"
+msgstr "Rechnung neu berechnen"
+
+#: .\juntagrico_billing\templates\admin\juntagrico_billing\bill\change_form.html:10
+msgid "History"
+msgstr ""
+
 #: .\juntagrico_billing\templates\jb\billing_admin_menu.html:4
 msgid "Bills and Bookkeeping"
 msgstr "Rechnungen und Buchhaltung"
 
 #: .\juntagrico_billing\templates\jb\billing_admin_menu.html:11
+#: .\juntagrico_billing\templates\jb\pending_bills.html:6
+msgid "Pending bills"
+msgstr "Anstehende Rechnungen"
+
+#: .\juntagrico_billing\templates\jb\billing_admin_menu.html:14
 #: .\juntagrico_billing\templates\jb\bills_notify.html:7
 msgid "Send billing notifications"
 msgstr "E-Mails für Rechnungen senden"
 
-#: .\juntagrico_billing\templates\jb\billing_admin_menu.html:14
+#: .\juntagrico_billing\templates\jb\billing_admin_menu.html:17
 #: .\juntagrico_billing\templates\jb\payments_upload.html:5
 msgid "Import payments"
 msgstr "Zahlungen importieren"
 
-#: .\juntagrico_billing\templates\jb\billing_admin_menu.html:17
+#: .\juntagrico_billing\templates\jb\billing_admin_menu.html:20
 #: .\juntagrico_billing\templates\jb\bookings_export.html:5
 msgid "Export bookings"
 msgstr "Buchungen exportieren"
 
 #: .\juntagrico_billing\templates\jb\bills.html:12
+#: .\juntagrico_billing\templates\jb\pending_bills.html:12
 msgid "Year:"
 msgstr "Jahr"
 
 #: .\juntagrico_billing\templates\jb\bills.html:22
+#: .\juntagrico_billing\templates\jb\pending_bills.html:22
 msgid "Change"
 msgstr "Ändern"
 
@@ -246,50 +263,38 @@ msgstr "Alle"
 msgid "Open"
 msgstr "Offen"
 
-#: .\juntagrico_billing\templates\jb\bills.html:43
-msgid "Generate bills"
-msgstr "Rechnungen generieren"
-
-#: .\juntagrico_billing\templates\jb\bills.html:50
-msgid "pending bills for"
-msgstr "anstehende Rechnungen für"
-
-#: .\juntagrico_billing\templates\jb\bills.html:52
-msgid "Generate"
-msgstr "Generieren"
-
-#: .\juntagrico_billing\templates\jb\bills.html:57
+#: .\juntagrico_billing\templates\jb\bills.html:46
 msgid "bills for"
 msgstr "Rechnungen für"
 
-#: .\juntagrico_billing\templates\jb\bills.html:61
+#: .\juntagrico_billing\templates\jb\bills.html:50
 msgid "open bills with paid amount less than"
 msgstr "Offene Rechnungen mit bezahltem Betrag weniger als"
 
-#: .\juntagrico_billing\templates\jb\bills.html:72
+#: .\juntagrico_billing\templates\jb\bills.html:60
 #: .\juntagrico_billing\templates\jb\bills_notify.html:26
 #: .\juntagrico_billing\templates\jb\user_bills.html:15
 msgid "Number"
 msgstr "Nummer"
 
-#: .\juntagrico_billing\templates\jb\bills.html:78
+#: .\juntagrico_billing\templates\jb\bills.html:66
 #: .\juntagrico_billing\templates\jb\bills_notify.html:32
 #: .\juntagrico_billing\templates\jb\user_bills.html:21
 msgid "Kind"
 msgstr "Art"
 
-#: .\juntagrico_billing\templates\jb\bills.html:81
+#: .\juntagrico_billing\templates\jb\bills.html:69
 #: .\juntagrico_billing\templates\jb\bills_notify.html:35
 #: .\juntagrico_billing\templates\jb\user_bills.html:18
 msgid "Date"
 msgstr "Datum"
 
-#: .\juntagrico_billing\templates\jb\bills.html:87
+#: .\juntagrico_billing\templates\jb\bills.html:75
 #: .\juntagrico_billing\templates\jb\bills_notify.html:41
 msgid "Paid Amount"
 msgstr "Bezahlter Betrag"
 
-#: .\juntagrico_billing\templates\jb\bills.html:93
+#: .\juntagrico_billing\templates\jb\bills.html:81
 msgid "User view"
 msgstr "Benutzer Ansicht"
 
@@ -316,6 +321,22 @@ msgstr "Rechnungsbuchungen"
 #: .\juntagrico_billing\templates\jb\bookings_export.html:29
 msgid "Payment bookings"
 msgstr "Zahlungsbuchungen"
+
+#: .\juntagrico_billing\templates\jb\pending_bills.html:29
+msgid "pending bills for"
+msgstr "anstehende Rechnungen für"
+
+#: .\juntagrico_billing\templates\jb\pending_bills.html:31
+msgid "Generate all"
+msgstr "Alle generieren"
+
+#: .\juntagrico_billing\templates\jb\pending_bills.html:45
+msgid "Parts"
+msgstr "Bestandteile"
+
+#: .\juntagrico_billing\templates\jb\pending_bills.html:51
+msgid "Existing bills"
+msgstr "Bestehende Rechnungen"
 
 #: .\juntagrico_billing\templates\jb\user_bill.html:37
 #: .\juntagrico_billing\util\pdfbill.py:128
@@ -529,3 +550,9 @@ msgid ""
 msgstr ""
 "Zahlungen erfolgreich importiert.\n"
 "%d Zahlungen wurden verarbeitet."
+
+#~ msgid "Generate bills"
+#~ msgstr "Rechnungen generieren"
+
+#~ msgid "Generate"
+#~ msgstr "Generieren"

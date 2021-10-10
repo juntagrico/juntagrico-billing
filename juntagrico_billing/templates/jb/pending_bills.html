@@ -1,0 +1,84 @@
+{% extends "management_lists/man_list_base.html" %}
+{% load i18n %}
+{% load juntagrico.config %}
+{% block page_title %}
+    <h3>
+        {% trans "Pending bills" %}
+    </h3>
+{% endblock %}
+{% block management_cmd %}
+<form class="row mb-3" action="{% url 'jb:bills-setyear' %}" method="POST">
+    {% csrf_token %} 
+    <p class="col-md-2">{% trans "Year:" %} {{ selected_year.name }}</p>
+    <div class="col-md-2">
+        <select class="form-control" name="year" id="year">
+            {% for year in business_years %}
+            <option {% if year == selected_year %}selected="selected"{% endif %}>{{ year.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <button type="submit" class="btn btn-success">
+            {% trans "Change" %}
+        </button>
+    </div>
+</form>
+
+<form class="row mb-3" action="{% url 'jb:bills-generate' %}" method="POST">
+    {% csrf_token %}
+    <p class="col-md-4">{{ pending_bills | length }} {% trans "pending bills for" %} {{ selected_year.name }}.</p>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-success">{% trans "Generate all" %}</button>
+    </div>
+</form>
+
+{% endblock %}
+
+{% block list %}
+<table id="filter-table" class="table">
+    <thead>
+        <tr>
+            <th scope="col" class="filter">
+                {% trans "Member" %}
+            </th>
+            <th scope="col">
+                {% trans "Parts" %}
+            </th>
+            <th scope="col" >
+                {% trans "Amount" %}
+            </th>
+            <th scope="col">
+                {% trans "Existing bills" %}
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for member, subscription, short_parts, price, existing_bills in pending_bills %}
+            <tr>
+                <td>
+                    <a href="{% url 'admin:juntagrico_member_change' member.id %}">
+                    {{ member }}
+                    </a>
+                </td>
+                <td>
+                    {% if subscription %}
+                        <a href="{% url 'admin:juntagrico_subscription_change' subscription.id %}">
+                            {{ short_parts }}
+                        </a>
+                    {% endif %}
+                </td>
+                <td>
+                    {{ price | floatformat:2 }}
+                </td>
+                <td>
+                    {% for bill in existing_bills %}
+                        <a href="{% url 'admin:juntagrico_billing_bill_change' bill.id %}">
+                        {{bill.id}}
+                        </a>
+                    {% endfor %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -6,9 +6,11 @@ app_name = 'jb'
 urlpatterns = [
     # bills (admin)
     path('jb/bills', views.bills, name='bills-list'),
+    path('jb/pending_bills', views.pending_bills, name='pending-bills-list'),
     path('jb/bills_setyear', views.bills_setyear, name='bills-setyear'),
     path('jb/bills_generate', views.bills_generate, name='bills-generate'),
     path('jb/bills_notify', views.bills_notify, name='bills-notify'),
+    path('jb/bill_recalc/<int:bill_id>', views.bill_recalc, name='bill-recalc'),
 
     # bookings export
     path('jb/bookings_export', views.bookings_export, name='bookings-export'),
