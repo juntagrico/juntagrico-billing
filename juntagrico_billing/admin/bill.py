@@ -43,7 +43,7 @@ class BillAdmin(BaseAdmin):
     readonly_fields = ['business_year']
     search_fields = ['id', 'member__first_name', 'member__last_name']
     list_display = [
-        'id', 'business_year', 'member', 'bill_date', 'item_kinds', 
+        'id', 'business_year', 'member', 'bill_date', 'item_kinds',
         'amount_f', 'amount_open_f', 'paid', 'published', 'user_bill_link']
     inlines = [BillItemInline, PaymentInline, ]
     actions = [
@@ -66,4 +66,3 @@ class BillAdmin(BaseAdmin):
         return mark_safe(f'<a href="{link}">{bill.id}</a>')
 
     user_bill_link.short_description = _('User view')
-

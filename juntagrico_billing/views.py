@@ -176,7 +176,7 @@ def bills_publish(request):
     POST handler for publishing bills.
     Called from unpublished_bills view.
     """
-    if request.method == 'POST':   
+    if request.method == 'POST':
         selected_ids = request.POST.getlist('_selected')
         publish_bills(selected_ids)
 
@@ -280,8 +280,8 @@ def user_bill(request, bill_id):
 
     # only allow for bookkepper or the bills member
     if not (
-        request.user.has_perms(('juntagrico.is_book_keeper',))
-            or bill.member == member):
+        request.user.has_perms(('juntagrico.is_book_keeper',)) or
+            bill.member == member):
         raise PermissionDenied()
 
     settings = Settings.objects.first()
@@ -309,10 +309,10 @@ def user_bill_pdf(request, bill_id):
     member = request.user.member
     bill = get_object_or_404(Bill, id=bill_id)
 
-    # only allow for bookkepper or the bills member
+    # only allow for bookkeeper or the bills member
     if not (
-        request.user.has_perms(('juntagrico.is_book_keeper',))
-            or bill.member == member):
+        request.user.has_perms(('juntagrico.is_book_keeper',)) or
+            bill.member == member):
         raise PermissionDenied()
 
     filename = "Rechnung %d.pdf" % bill.id

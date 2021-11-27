@@ -199,4 +199,3 @@ def publish_bills(id_list):
         bill = Bill.objects.get(pk=bill_id)
         bill.published = True
         bill.save()
-
