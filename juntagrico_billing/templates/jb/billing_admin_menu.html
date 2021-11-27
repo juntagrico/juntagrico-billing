@@ -5,10 +5,13 @@
     <div class="collapse" id="jb">
     <ul class="nav flex-column admin-menu subadmin-menu">
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'jb:bills-list' %}">{% trans "Bills" %}</a>
+            <a class="nav-link" href="{% url 'jb:pending-bills-list' %}">{% trans "Pending bills" %}</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'jb:pending-bills-list' %}">{% trans "Pending bills" %}</a>
+            <a class="nav-link" href="{% url 'jb:unpublished-bills-list' %}">{% trans "Unpublished bills" %}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'jb:open-bills-list' %}">{% trans "Open bills" %}</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="{% url 'jb:bills-notify' %}">{% trans "Send billing notifications" %}</a>

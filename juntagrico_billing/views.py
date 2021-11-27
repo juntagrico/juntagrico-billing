@@ -18,7 +18,7 @@ from juntagrico_billing.entity.settings import Settings
 from juntagrico_billing.mailer import send_bill_notification
 from juntagrico_billing.util.billing import get_billable_subscription_parts, \
     group_billables_by_member, create_bills_for_items, get_open_bills, \
-    scale_subscriptionpart_price, recalc_bill
+    scale_subscriptionpart_price, recalc_bill, get_unpublished_bills
 from juntagrico_billing.util.qrbill import is_qr_iban, get_qrbill_svg
 from juntagrico_billing.util.pdfbill import PdfBillRenderer
 from juntagrico_billing.util.bookings import get_bill_bookings, \
@@ -27,9 +27,9 @@ from django.utils.translation import gettext as _
 
 
 @permission_required('juntagrico.is_book_keeper')
-def bills(request):
+def open_bills(request):
     """
-    List of bills per year
+    List of open bills per year
     """
     business_years, selected_year = get_years_and_selected(request)
 
@@ -37,19 +37,17 @@ def bills(request):
     percent_paid = 100
 
     # determine view state (all, open, open75, open50, open25)
-    states = ('all', 'open', 'open75', 'open50', 'open25')
-    state = request.GET.get('state', 'all')
+    states = ('open', 'open75', 'open50', 'open25')
+    state = request.GET.get('state', 'open')
 
     # array to set active tab state in template
     state_active = [(state == st and 'active') or '' for st in states]
 
     if selected_year:
-        bills_list = selected_year.bills.all()
-        if state.startswith("open"):
-            percent_str = state[4:]
-            if percent_str:
-                percent_paid = int(percent_str)
-            bills_list = get_open_bills(selected_year, percent_paid)
+        percent_str = state[4:]
+        if percent_str:
+            percent_paid = int(percent_str)
+        bills_list = get_open_bills(selected_year, percent_paid)
 
     renderdict = {
         'business_years': business_years,
@@ -62,7 +60,7 @@ def bills(request):
         'state_active': state_active
     }
 
-    return render(request, "jb/bills.html", renderdict)
+    return render(request, "jb/open_bills.html", renderdict)
 
 
 @permission_required('juntagrico.is_book_keeper')
@@ -84,7 +82,7 @@ def bills_generate(request):
 
     create_bills_for_items(billable_items, year, date.today())
 
-    return redirect(reverse('jb:bills-list'))
+    return redirect(reverse('jb:unpublished-bills-list'))
 
 
 @permission_required('juntagrico.is_book_keeper')
@@ -151,6 +149,29 @@ def get_price(parts, year):
 def get_existing_bills(member, year):
     bills = member.bills.filter(business_year=year)
     return bills
+
+
+@permission_required('juntagrico.is_book_keeper')
+def unpublished_bills(request):
+    """
+    Show bills that are not published (not yet
+    visible to members)
+    """
+    business_years, selected_year = get_years_and_selected(request)
+    if selected_year:
+        bills_list = get_unpublished_bills(selected_year)
+    else:
+        bills_list = []
+
+    renderdict = {
+        'business_years': business_years,
+        'selected_year': selected_year,
+        'bills_list': bills_list,
+        'email_form_disabled': True,
+        'change_date_disabled': True,
+    }
+
+    return render(request, "jb/unpublished_bills.html", renderdict)
 
 
 @permission_required('juntagrico.is_book_keeper')

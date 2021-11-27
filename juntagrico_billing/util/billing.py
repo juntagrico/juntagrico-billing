@@ -176,8 +176,15 @@ def get_open_bills(businessyear, expected_percentage_paid):
     than the given expected percentage.
     """
     # fetch unpaid bills, SQL filtered
-    unpaid_bills = businessyear.bills.filter(paid=False)
+    unpaid_bills = businessyear.bills.filter(paid=False, published=True)
 
     return [
         bill for bill in unpaid_bills
         if (bill.amount > 0) and (bill.amount_paid / bill.amount * 100.0 < expected_percentage_paid)]
+
+
+def get_unpublished_bills(businessyear):
+    """
+    get bills not published yet (no visible to members).
+    """
+    return businessyear.bills.filter(published=False)
