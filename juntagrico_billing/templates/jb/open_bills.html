@@ -3,7 +3,7 @@
 {% load juntagrico.config %}
 {% block page_title %}
     <h3>
-        {% trans "Bills" %}
+        {% trans "Open bills" %}
     </h3>
 {% endblock %}
 {% block management_cmd %}
@@ -25,19 +25,16 @@
 </form>
 <ul class="nav nav-tabs mb-3">
     <li class="nav-item">
-      <a class="nav-link {{ state_active.0 }}" href="{% url 'jb:bills-list' %}">{% trans "All" %}</a>
+      <a class="nav-link {{ state_active.0 }}" href="{% url 'jb:open-bills-list' %}?state=open">{% trans "Open" %}</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link {{ state_active.1 }}" href="{% url 'jb:bills-list' %}?state=open">{% trans "Open" %}</a>
+        <a class="nav-link {{ state_active.1 }}" href="{% url 'jb:open-bills-list' %}?state=open75">{% trans "Open" %} 75%</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link {{ state_active.2 }}" href="{% url 'jb:bills-list' %}?state=open75">{% trans "Open" %} 75%</a>
+        <a class="nav-link {{ state_active.2 }}" href="{% url 'jb:open-bills-list' %}?state=open50">{% trans "Open" %} 50%</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link {{ state_active.3 }}" href="{% url 'jb:bills-list' %}?state=open50">{% trans "Open" %} 50%</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link {{ state_active.4 }}" href="{% url 'jb:bills-list' %}?state=open25">{% trans "Open" %} 25%</a>
+        <a class="nav-link {{ state_active.3 }}" href="{% url 'jb:open-bills-list' %}?state=open25">{% trans "Open" %} 25%</a>
     </li>
 </ul>
   
@@ -74,9 +71,6 @@
             <th scope="col" class="text-right">
                 {% trans "Paid Amount" %}
             </th>
-            <th scope="col">
-                {% trans "Paid" %}
-            </th>
             <th>
                 {% trans "User view" %}
             </th>
@@ -104,9 +98,6 @@
                 </td>
                 <td class="text-right">
                     {{ bill.amount_paid | floatformat:2 }}
-                </td>
-                <td>
-                    {{ bill.paid }}
                 </td>
                 <td>
                     <a href="{% url 'jb:user-bill' bill.id %}">{{ bill.id }}</a>
