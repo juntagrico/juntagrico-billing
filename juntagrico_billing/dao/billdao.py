@@ -5,7 +5,7 @@ class BillDao:
 
     @staticmethod
     def bills_for_member(member):
-        return Bill.objects.filter(member=member)
+        return Bill.objects.filter(member=member, published=True)
 
     @staticmethod
     def bills_for_daterange(fromdate, tilldate):

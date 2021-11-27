@@ -8,6 +8,7 @@ from juntagrico_billing.util.billing import get_billable_subscription_parts,\
     create_bill, create_bills_for_items, recalc_bill
 from juntagrico_billing.util.billing import scale_subscriptionpart_price
 from juntagrico_billing.util.billing import get_open_bills
+from juntagrico_billing.dao.billdao import BillDao 
 from test.test_base import SubscriptionTestBase
 
 
@@ -340,7 +341,7 @@ class BillsListTest(SubscriptionTestBase):
 
         # create some bills
         self.bill1 = Bill.objects.create(
-            business_year=self.year, member=self.member,
+            business_year=self.year, member=self.member, published=True,
             bill_date=date(2018, 2, 1), booking_date=date(2018, 2, 1),
         )
         item = BillItem.objects.create(
@@ -352,18 +353,33 @@ class BillsListTest(SubscriptionTestBase):
         self.bill1.save()
 
         self.bill2 = Bill.objects.create(
-            business_year=self.year, member=self.member,
+            business_year=self.year, member=self.member, published=True,
             bill_date=date(2018, 3, 1), booking_date=date(2018, 3, 1),
         )
         self.bill2.save()
+
+        # bill3 is not published yet
+        self.bill3 = Bill.objects.create(
+            business_year=self.year, member=self.member,
+            bill_date=date(2018, 5, 1), booking_date=date(2018, 5, 1),
+        )
+        self.bill3.save()
 
     def test_get_open_bills(self):
         """
         query open bills
         """
-        # get bills that are not fully paid
+        # get bills that are published but not fully paid
         bills = get_open_bills(self.year, 100)
         self.assertEqual(1, len(bills), '1 open bill, not counting zero bill')
+
+    def test_bills_for_member(self):
+        """
+        query bills displayed to members.
+        this should only include published bills.
+        """
+        bills = BillDao.bills_for_member(self.member)
+        self.assertEqual(2, len(bills), '2 published bills')
 
 
 class BillTest(SubscriptionTestBase):
