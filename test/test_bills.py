@@ -47,7 +47,7 @@ class ScaleSubscriptionPriceTest(SubscriptionTestBase):
         end_date = date(2018, 12, 31)
         price = scale_subscriptionpart_price(
             self.part, start_date, end_date)
-        price_expected = round(1200.0 * (31 + 31 + 30) / 365, 2)
+        price_expected = round(2 * (1200.0 * (31 + 31 + 30) / 365), 1) / 2.0
         self.assertEqual(price_expected, price,
                          "quarter subscription over a year")
 
@@ -63,9 +63,12 @@ class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
             type=self.extrasub_type
         )
 
-    expected_price = round(
-        (100.0 * (31 + 30 + 31 + 30) / (31 + 28 + 31 + 30 + 31 + 30)) + (200.0 * (31 + 31 + 30 + 31) / (31 + 31 + 30 + 31 + 30 + 31)),
-        2)
+        # calcluate expected price
+        first_part = round(
+            2.0 * (100.0 * (31 + 30 + 31 + 30) / (31 + 28 + 31 + 30 + 31 + 30)), 1) / 2.0
+        second_part = round(
+            2.0 * (200.0 * (31 + 31 + 30 + 31) / (31 + 31 + 30 + 31 + 30 + 31)), 1) / 2.0
+        self.expected_price = first_part + second_part
 
     def test_full_year(self):
         start_date = date(2018, 1, 1)
@@ -95,7 +98,7 @@ class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
         end_date = date(2018, 10, 31)
 
         price = scale_subscriptionpart_price(self.extrasubs, start_date, end_date)
-        self.assertEquals(ScaleExtraSubscriptionPriceTest.expected_price, price, "partial year")
+        self.assertEquals(self.expected_price, price, "partial year")
 
     def test_partial_active(self):
         # full year but partial active extrasubscription
@@ -106,7 +109,7 @@ class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
         self.extrasubs.deactivation_date = date(2018, 10, 31)
 
         price = scale_subscriptionpart_price(self.extrasubs, start_date, end_date)
-        self.assertEquals(ScaleExtraSubscriptionPriceTest.expected_price, price, "partial active")
+        self.assertEquals(self.expected_price, price, "partial active")
 
 
 class BillSubscriptionsTests(SubscriptionTestBase):

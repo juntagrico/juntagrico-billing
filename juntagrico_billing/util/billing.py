@@ -30,7 +30,8 @@ def scale_subscriptionpart_price(part, fromdate, tilldate):
 
                 period_prices.append(float(period.price) * eff_days / full_days)
 
-        return round(sum(period_prices), 2)
+        # round to .05
+        return round(2.0 * sum(period_prices), 1) / 2.0
 
     # otherwise
     # calculate price without billing periods.
@@ -40,7 +41,7 @@ def scale_subscriptionpart_price(part, fromdate, tilldate):
         part_start = max(part.activation_date or date.min, fromdate)
         part_end = min(part.deactivation_date or date.max, tilldate)
         days_part = (part_end - part_start).days + 1
-        return round(part.type.price * days_part / days_period, 2)
+        return round(2.0 * (part.type.price * days_part / days_period), 1) / 2.0
 
     return 0
 
