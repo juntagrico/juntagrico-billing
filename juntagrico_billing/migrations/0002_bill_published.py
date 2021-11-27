@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='bill',
             name='published',
-            field=models.BooleanField(default=False, verbose_name='Published'),
+            field=models.BooleanField(default=True, verbose_name='Published'),
         ),
     ]
