@@ -183,8 +183,19 @@ def get_open_bills(businessyear, expected_percentage_paid):
         if (bill.amount > 0) and (bill.amount_paid / bill.amount * 100.0 < expected_percentage_paid)]
 
 
-def get_unpublished_bills(businessyear):
+def get_unpublished_bills():
     """
     get bills not published yet (no visible to members).
     """
-    return businessyear.bills.filter(published=False)
+    return Bill.objects.filter(published=False)
+
+
+def publish_bills(id_list):
+    """
+    Publishes a set of bills given by their ids.
+    """
+    for bill_id in id_list:
+        bill = Bill.objects.get(pk=bill_id)
+        bill.published = True
+        bill.save()
+

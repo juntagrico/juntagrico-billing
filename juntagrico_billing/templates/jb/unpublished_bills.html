@@ -6,73 +6,70 @@
         {% trans "Unpublished Bills" %}
     </h3>
 {% endblock %}
-{% block management_cmd %}
-<form class="row mb-3" action="{% url 'jb:bills-setyear' %}" method="POST">
-    {% csrf_token %} 
-    <p class="col-md-2">{% trans "Year:" %} {{ selected_year.name }}</p>
-    <div class="col-md-2">
-        <select class="form-control" name="year" id="year">
-            {% for year in business_years %}
-            <option {% if year == selected_year %}selected="selected"{% endif %}>{{ year.name }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="col-md-4">
-        <button type="submit" class="btn btn-success">
-            {% trans "Change" %}
-        </button>
-    </div>
-</form>
-{% endblock %}
 {% block list %}
-<table id="filter-table" class="table">
-    <thead>
-        <tr>
-            <th scope="col" class="filter">
-                {% trans "Number" %}
-            </th>
-            <th scope="col" class="filter">
-                {% trans "Member" %}
-            </th>
-            <th scope="col" class="filter">
-                {% trans "Kind" %}
-            </th>
-            <th scope="col" class="filter">
-                {% trans "Date" %}
-            </th>
-            <th scope="col" class="filter text-right">
-                {% trans "Amount" %}
-            </th>
-            <th>
-                {% trans "User view" %}
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for bill in bills_list %}
+<form action="{% url 'jb:bills-publish' %}" method="POST">
+    {% csrf_token %} 
+    <div class="row mb-3">
+        <p class="col-md-3">{% trans "Publish selected bills" %}</p>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-success">
+                {% trans "Publish" %}
+            </button>
+        </div>
+    </div>
+    <table id="filter-table" class="table" searching="false">
+        <thead>
             <tr>
-                <td>
-                    <a href="{% url 'admin:juntagrico_billing_bill_change' bill.id %}">
-                    {{ bill.id }}
-                    </a>
-                </td>
-                <td>
-                    {{ bill.member }}
-                </td>
-                <td>
-                    {{ bill.item_kinds }}
-                </td>
-                <td>
-                    {{ bill.bill_date|date:"SHORT_DATE_FORMAT" }}
-                </td>
-                <td class="text-right">
-                    {{ bill.amount | floatformat:2 }}
-                </td>
-                <td>
-                    <a href="{% url 'jb:user-bill' bill.id %}">{{ bill.id }}</a>
-                </td>
+                <th></th>
+                <th scope="col" class="filter">
+                    {% trans "Number" %}
+                </th>
+                <th scope="col" class="filter">
+                    {% trans "Member" %}
+                </th>
+                <th scope="col" class="filter">
+                    {% trans "Kind" %}
+                </th>
+                <th scope="col" class="filter">
+                    {% trans "Date" %}
+                </th>
+                <th scope="col" class="filter text-right">
+                    {% trans "Amount" %}
+                </th>
+                <th>
+                    {% trans "User view" %}
+                </th>
             </tr>
-        {% endfor %}
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            {% for bill in bills_list %}
+                <tr>
+                    <td>
+                        <input type="checkbox" name="_selected" value="{{ bill.id }}">
+                    </td>
+                    <td>
+                        <a href="{% url 'admin:juntagrico_billing_bill_change' bill.id %}">
+                        {{ bill.id }}
+                        </a>
+                    </td>
+                    <td>
+                        {{ bill.member }}
+                    </td>
+                    <td>
+                        {{ bill.item_kinds }}
+                    </td>
+                    <td>
+                        {{ bill.bill_date|date:"SHORT_DATE_FORMAT" }}
+                    </td>
+                    <td class="text-right">
+                        {{ bill.amount | floatformat:2 }}
+                    </td>
+                    <td>
+                        <a href="{% url 'jb:user-bill' bill.id %}">{{ bill.id }}</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</form>
 {% endblock %}

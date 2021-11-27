@@ -18,7 +18,8 @@ from juntagrico_billing.entity.settings import Settings
 from juntagrico_billing.mailer import send_bill_notification
 from juntagrico_billing.util.billing import get_billable_subscription_parts, \
     group_billables_by_member, create_bills_for_items, get_open_bills, \
-    scale_subscriptionpart_price, recalc_bill, get_unpublished_bills
+    scale_subscriptionpart_price, recalc_bill, get_unpublished_bills, \
+    publish_bills
 from juntagrico_billing.util.qrbill import is_qr_iban, get_qrbill_svg
 from juntagrico_billing.util.pdfbill import PdfBillRenderer
 from juntagrico_billing.util.bookings import get_bill_bookings, \
@@ -157,21 +158,29 @@ def unpublished_bills(request):
     Show bills that are not published (not yet
     visible to members)
     """
-    business_years, selected_year = get_years_and_selected(request)
-    if selected_year:
-        bills_list = get_unpublished_bills(selected_year)
-    else:
-        bills_list = []
+    bills_list = get_unpublished_bills()
 
     renderdict = {
-        'business_years': business_years,
-        'selected_year': selected_year,
         'bills_list': bills_list,
+        'search_disabled': True,
         'email_form_disabled': True,
         'change_date_disabled': True,
     }
 
     return render(request, "jb/unpublished_bills.html", renderdict)
+
+
+@permission_required('juntagrico.is_book_keeper')
+def bills_publish(request):
+    """
+    POST handler for publishing bills.
+    Called from unpublished_bills view.
+    """
+    if request.method == 'POST':   
+        selected_ids = request.POST.getlist('_selected')
+        publish_bills(selected_ids)
+
+    return redirect(reverse('jb:unpublished-bills-list'))
 
 
 @permission_required('juntagrico.is_book_keeper')

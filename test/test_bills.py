@@ -5,7 +5,7 @@ from juntagrico.entity.subs import SubscriptionPart
 
 from juntagrico_billing.entity.bill import Bill, BusinessYear, BillItem, BillItemType
 from juntagrico_billing.util.billing import get_billable_subscription_parts,\
-    create_bill, create_bills_for_items, recalc_bill
+    create_bill, create_bills_for_items, recalc_bill, publish_bills
 from juntagrico_billing.util.billing import scale_subscriptionpart_price
 from juntagrico_billing.util.billing import get_open_bills
 from juntagrico_billing.dao.billdao import BillDao 
@@ -380,6 +380,21 @@ class BillsListTest(SubscriptionTestBase):
         """
         bills = BillDao.bills_for_member(self.member)
         self.assertEqual(2, len(bills), '2 published bills')
+
+    def test_publish_bills(self):
+        """
+        publish some bills by id.
+        bill1 and bill2 are already published, bill 3 not.
+        """
+        # first query published bills, only 2 are published
+        self.assertEqual(2, len(Bill.objects.filter(published=True)), "only 2 bills are published")
+
+        id_list = [self.bill1.id, self.bill2.id, self.bill3.id]
+        publish_bills(id_list)
+
+        # query published bills from db
+        self.assertEqual(3, len(Bill.objects.filter(published=True)), "all 3 bills are published")
+
 
 
 class BillTest(SubscriptionTestBase):
