@@ -69,7 +69,7 @@
                 {% trans "Amount" %}
             </th>
             <th scope="col" class="text-right">
-                {% trans "Paid Amount" %}
+                {% trans "Amount open" %}
             </th>
             <th>
                 {% trans "User view" %}
@@ -97,7 +97,7 @@
                     {{ bill.amount | floatformat:2 }}
                 </td>
                 <td class="text-right">
-                    {{ bill.amount_paid | floatformat:2 }}
+                    {{ bill.amount_open | floatformat:2 }}
                 </td>
                 <td>
                     <a href="{% url 'jb:user-bill' bill.id %}">{{ bill.id }}</a>

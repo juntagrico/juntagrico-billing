@@ -63,6 +63,12 @@ class Bill(JuntagricoBaseModel):
     amount_paid.fget.short_description = _('Amount paid')
 
     @property
+    def amount_open(self):
+        return self.amount - self.amount_paid
+
+    amount_open.fget.short_description = _('Amount open')
+
+    @property
     def item_kinds(self):
         """
         List the kind of items on the bill.
