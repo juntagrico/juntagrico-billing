@@ -200,9 +200,12 @@ def bookings_export(request):
     # export button pressed and date fields OK -> do excel export
     if ('export' in request.GET) and daterange_form.is_valid():
         # sort bookings on date and docnumber
-        bookings = sorted(bill_bookings + payment_bookings,
-                          key=lambda bk: (bk.date, bk.docnumber))
-        return export_bookings(bookings, "bookings")
+        bill_bookings_sorted = sorted(
+            bill_bookings, key=lambda bk: (bk.date, bk.docnumber))
+        payment_bookings_sorted = sorted(
+            payment_bookings, key=lambda bk: (bk.date, bk.docnumber))
+        return export_bookings(
+            bill_bookings_sorted + payment_bookings_sorted, "bookings")
 
     # otherwise return page
     renderdict = {
@@ -246,7 +249,9 @@ def user_bill(request, bill_id):
     bill = get_object_or_404(Bill, id=bill_id)
 
     # only allow for bookkepper or the bills member
-    if not (request.user.has_perms(('juntagrico.is_book_keeper',)) or bill.member == member):
+    if not (
+        request.user.has_perms(('juntagrico.is_book_keeper',))
+            or bill.member == member):
         raise PermissionDenied()
 
     settings = Settings.objects.first()
@@ -275,7 +280,9 @@ def user_bill_pdf(request, bill_id):
     bill = get_object_or_404(Bill, id=bill_id)
 
     # only allow for bookkepper or the bills member
-    if not (request.user.has_perms(('juntagrico.is_book_keeper',)) or bill.member == member):
+    if not (
+        request.user.has_perms(('juntagrico.is_book_keeper',))
+            or bill.member == member):
         raise PermissionDenied()
 
     filename = "Rechnung %d.pdf" % bill.id
