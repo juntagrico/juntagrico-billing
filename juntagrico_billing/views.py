@@ -279,9 +279,7 @@ def user_bill(request, bill_id):
     bill = get_object_or_404(Bill, id=bill_id)
 
     # only allow for bookkepper or the bills member
-    if not (
-        request.user.has_perms(('juntagrico.is_book_keeper',)) or
-            bill.member == member):
+    if not (request.user.has_perms(('juntagrico.is_book_keeper',)) or bill.member == member):
         raise PermissionDenied()
 
     settings = Settings.objects.first()
@@ -310,9 +308,7 @@ def user_bill_pdf(request, bill_id):
     bill = get_object_or_404(Bill, id=bill_id)
 
     # only allow for bookkeeper or the bills member
-    if not (
-        request.user.has_perms(('juntagrico.is_book_keeper',)) or
-            bill.member == member):
+    if not (request.user.has_perms(('juntagrico.is_book_keeper',)) or bill.member == member):
         raise PermissionDenied()
 
     filename = "Rechnung %d.pdf" % bill.id
