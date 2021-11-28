@@ -8,7 +8,7 @@ from juntagrico_billing.util.billing import get_billable_subscription_parts,\
     create_bill, create_bills_for_items, recalc_bill, publish_bills
 from juntagrico_billing.util.billing import scale_subscriptionpart_price
 from juntagrico_billing.util.billing import get_open_bills
-from juntagrico_billing.dao.billdao import BillDao 
+from juntagrico_billing.dao.billdao import BillDao
 from test.test_base import SubscriptionTestBase
 
 
@@ -397,7 +397,6 @@ class BillsListTest(SubscriptionTestBase):
 
         # query published bills from db
         self.assertEqual(3, len(Bill.objects.filter(published=True)), "all 3 bills are published")
-
 
 
 class BillTest(SubscriptionTestBase):
