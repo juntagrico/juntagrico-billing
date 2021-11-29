@@ -5,9 +5,10 @@ from juntagrico.entity.subs import SubscriptionPart
 
 from juntagrico_billing.entity.bill import Bill, BusinessYear, BillItem, BillItemType
 from juntagrico_billing.util.billing import get_billable_subscription_parts,\
-    create_bill, create_bills_for_items, recalc_bill
+    create_bill, create_bills_for_items, recalc_bill, publish_bills
 from juntagrico_billing.util.billing import scale_subscriptionpart_price
 from juntagrico_billing.util.billing import get_open_bills
+from juntagrico_billing.dao.billdao import BillDao
 from test.test_base import SubscriptionTestBase
 
 
@@ -46,7 +47,7 @@ class ScaleSubscriptionPriceTest(SubscriptionTestBase):
         end_date = date(2018, 12, 31)
         price = scale_subscriptionpart_price(
             self.part, start_date, end_date)
-        price_expected = round(1200.0 * (31 + 31 + 30) / 365, 2)
+        price_expected = round(2 * (1200.0 * (31 + 31 + 30) / 365), 1) / 2.0
         self.assertEqual(price_expected, price,
                          "quarter subscription over a year")
 
@@ -62,9 +63,12 @@ class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
             type=self.extrasub_type
         )
 
-    expected_price = round(
-        (100.0 * (31 + 30 + 31 + 30) / (31 + 28 + 31 + 30 + 31 + 30)) + (200.0 * (31 + 31 + 30 + 31) / (31 + 31 + 30 + 31 + 30 + 31)),
-        2)
+        # calcluate expected price
+        first_part = round(
+            2.0 * (100.0 * (31 + 30 + 31 + 30) / (31 + 28 + 31 + 30 + 31 + 30)), 1) / 2.0
+        second_part = round(
+            2.0 * (200.0 * (31 + 31 + 30 + 31) / (31 + 31 + 30 + 31 + 30 + 31)), 1) / 2.0
+        self.expected_price = first_part + second_part
 
     def test_full_year(self):
         start_date = date(2018, 1, 1)
@@ -94,7 +98,7 @@ class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
         end_date = date(2018, 10, 31)
 
         price = scale_subscriptionpart_price(self.extrasubs, start_date, end_date)
-        self.assertEquals(ScaleExtraSubscriptionPriceTest.expected_price, price, "partial year")
+        self.assertEquals(self.expected_price, price, "partial year")
 
     def test_partial_active(self):
         # full year but partial active extrasubscription
@@ -105,7 +109,7 @@ class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
         self.extrasubs.deactivation_date = date(2018, 10, 31)
 
         price = scale_subscriptionpart_price(self.extrasubs, start_date, end_date)
-        self.assertEquals(ScaleExtraSubscriptionPriceTest.expected_price, price, "partial active")
+        self.assertEquals(self.expected_price, price, "partial active")
 
 
 class BillSubscriptionsTests(SubscriptionTestBase):
@@ -340,7 +344,7 @@ class BillsListTest(SubscriptionTestBase):
 
         # create some bills
         self.bill1 = Bill.objects.create(
-            business_year=self.year, member=self.member,
+            business_year=self.year, member=self.member, published=True,
             bill_date=date(2018, 2, 1), booking_date=date(2018, 2, 1),
         )
         item = BillItem.objects.create(
@@ -352,18 +356,47 @@ class BillsListTest(SubscriptionTestBase):
         self.bill1.save()
 
         self.bill2 = Bill.objects.create(
-            business_year=self.year, member=self.member,
+            business_year=self.year, member=self.member, published=True,
             bill_date=date(2018, 3, 1), booking_date=date(2018, 3, 1),
         )
         self.bill2.save()
+
+        # bill3 is not published yet
+        self.bill3 = Bill.objects.create(
+            business_year=self.year, member=self.member,
+            bill_date=date(2018, 5, 1), booking_date=date(2018, 5, 1),
+        )
+        self.bill3.save()
 
     def test_get_open_bills(self):
         """
         query open bills
         """
-        # get bills that are not fully paid
+        # get bills that are published but not fully paid
         bills = get_open_bills(self.year, 100)
         self.assertEqual(1, len(bills), '1 open bill, not counting zero bill')
+
+    def test_bills_for_member(self):
+        """
+        query bills displayed to members.
+        this should only include published bills.
+        """
+        bills = BillDao.bills_for_member(self.member)
+        self.assertEqual(2, len(bills), '2 published bills')
+
+    def test_publish_bills(self):
+        """
+        publish some bills by id.
+        bill1 and bill2 are already published, bill 3 not.
+        """
+        # first query published bills, only 2 are published
+        self.assertEqual(2, len(Bill.objects.filter(published=True)), "only 2 bills are published")
+
+        id_list = [self.bill1.id, self.bill2.id, self.bill3.id]
+        publish_bills(id_list)
+
+        # query published bills from db
+        self.assertEqual(3, len(Bill.objects.filter(published=True)), "all 3 bills are published")
 
 
 class BillTest(SubscriptionTestBase):
