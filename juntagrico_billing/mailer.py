@@ -2,7 +2,7 @@ from django.template.loader import get_template
 from django.utils.translation import gettext as _
 from juntagrico.config import Config
 from juntagrico.mailer import EmailSender, organisation_subject, base_dict
-from juntagrico.management.commands.mailtexts import get_server
+from django.contrib.sites.models import Site
 
 from juntagrico_billing.entity.settings import Settings
 
@@ -13,7 +13,8 @@ def send_bill_share(bill, share, member):
         'member': member,
         'bill': bill,
         'share': share,
-        'serverurl': get_server()
+        'protocol': 'https',
+        'serverurl': Site.objects.get_current().domain
     }
     content = plaintext.render(d)
     EmailSender.get_sender(
