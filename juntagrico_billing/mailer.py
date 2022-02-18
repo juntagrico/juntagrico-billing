@@ -13,8 +13,7 @@ def send_bill_share(bill, share, member):
         'member': member,
         'bill': bill,
         'share': share,
-        'protocol': 'https',
-        'serverurl': Site.objects.get_current().domain
+        'serverurl': 'https' + Site.objects.get_current().domain
     }
     content = plaintext.render(d)
     EmailSender.get_sender(

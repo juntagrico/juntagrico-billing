@@ -15,7 +15,7 @@ Period:              {{ period }}
 Concerning:          {{ concerning }}
 Amount:              {{ currency }} {{ amount }}{% endblocktrans %} 
 
-{% trans "Find details on the website at" %} {{ protocol }} :// {{ serverurl }}{% url 'jb:user-bill' bill.id %}
+{% trans "Find details on the website at" %} {{ serverurl }}{% url 'jb:user-bill' bill.id %}
 
 {% trans "Please pay specifying bill number to:" %}
 IBAN {{ payment_type.iban }}
