@@ -32,7 +32,7 @@ def scale_subscriptionpart_price(part, fromdate, tilldate):
                 period_prices.append(period.price * Decimal(eff_days / full_days))
 
         # round to .05
-        return round(2.0 * sum(period_prices), 1) / 2.0
+        return round(Decimal(2.0) * sum(period_prices), 1) / Decimal('2.0')
 
     # otherwise
     # calculate price without billing periods.
