@@ -1,5 +1,6 @@
 from collections import defaultdict
 from datetime import date
+from decimal import Decimal
 
 from juntagrico_billing.dao.subscription_parts import\
     subscription_parts_by_date, subscription_parts_member_date
@@ -28,7 +29,7 @@ def scale_subscriptionpart_price(part, fromdate, tilldate):
                 full_days = (period_end - period_start).days + 1
                 eff_days = (eff_end - eff_start).days + 1
 
-                period_prices.append(float(period.price) * eff_days / full_days)
+                period_prices.append(period.price * Decimal(eff_days / full_days))
 
         return round(sum(period_prices), 2)
 
@@ -40,7 +41,7 @@ def scale_subscriptionpart_price(part, fromdate, tilldate):
         part_start = max(part.activation_date or date.min, fromdate)
         part_end = min(part.deactivation_date or date.max, tilldate)
         days_part = (part_end - part_start).days + 1
-        return round(part.type.price * days_part / days_period, 2)
+        return round(part.type.price * Decimal(days_part / days_period), 2)
 
     return 0
 

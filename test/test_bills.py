@@ -1,4 +1,5 @@
 from datetime import date
+from decimal import Decimal
 
 from django.conf import settings
 from juntagrico.entity.subs import SubscriptionPart
@@ -21,7 +22,7 @@ class ScaleSubscriptionPriceTest(SubscriptionTestBase):
         end_date = date(2018, 12, 31)
         price_fullyear = scale_subscriptionpart_price(
             self.part, start_date, end_date)
-        self.assertEqual(1200.0, price_fullyear, "full year")
+        self.assertEqual(Decimal('1200.0'), price_fullyear, "full year")
 
     def test_price_by_date_shifted_business_year(self):
         settings.BUSINESS_YEAR_START = {'day': 1, 'month': 7}
@@ -30,7 +31,7 @@ class ScaleSubscriptionPriceTest(SubscriptionTestBase):
             end_date = date(2019, 6, 30)
             price_fullyear = scale_subscriptionpart_price(
                 self.part, start_date, end_date)
-            self.assertEqual(1200.0, price_fullyear, "full year")
+            self.assertEqual(Decimal('1200.0'), price_fullyear, "full year")
         finally:
             del settings.BUSINESS_YEAR_START
 
@@ -46,7 +47,7 @@ class ScaleSubscriptionPriceTest(SubscriptionTestBase):
         end_date = date(2018, 12, 31)
         price = scale_subscriptionpart_price(
             self.part, start_date, end_date)
-        price_expected = round(1200.0 * (31 + 31 + 30) / 365, 2)
+        price_expected = round(Decimal(1200.0 * (31 + 31 + 30) / 365), 2)
         self.assertEqual(price_expected, price,
                          "quarter subscription over a year")
 
@@ -63,7 +64,7 @@ class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
         )
 
     expected_price = round(
-        (100.0 * (31 + 30 + 31 + 30) / (31 + 28 + 31 + 30 + 31 + 30)) + (200.0 * (31 + 31 + 30 + 31) / (31 + 31 + 30 + 31 + 30 + 31)),
+        Decimal((100.0 * (31 + 30 + 31 + 30) / (31 + 28 + 31 + 30 + 31 + 30)) + (200.0 * (31 + 31 + 30 + 31) / (31 + 31 + 30 + 31 + 30 + 31))),
         2)
 
     def test_full_year(self):
@@ -71,7 +72,7 @@ class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
         end_date = date(2018, 12, 31)
 
         price = scale_subscriptionpart_price(self.extrasubs, start_date, end_date)
-        self.assertEqual(300.00, price, "full year")
+        self.assertEqual(Decimal('300.0'), price, "full year")
 
     def test_first_half_year(self):
         # first half year is exactly 1. extrasub period
@@ -79,7 +80,7 @@ class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
         end_date = date(2018, 6, 30)
 
         price = scale_subscriptionpart_price(self.extrasubs, start_date, end_date)
-        self.assertEqual(100.00, price, "first half year")
+        self.assertEqual(Decimal('100.00'), price, "first half year")
 
     def test_second_half_year(self):
         # second half year is exactly 2. extrasub period
@@ -87,7 +88,7 @@ class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
         end_date = date(2018, 12, 31)
 
         price = scale_subscriptionpart_price(self.extrasubs, start_date, end_date)
-        self.assertEqual(200.00, price, "second half year")
+        self.assertEqual(Decimal('200.00'), price, "second half year")
 
     def test_partial_year(self):
         start_date = date(2018, 3, 1)
