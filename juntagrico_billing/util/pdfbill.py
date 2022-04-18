@@ -82,7 +82,7 @@ class PdfBillRenderer(object):
         # in certain pdf viewers (eg firefox)
         doc = SimpleDocTemplate(
             outfile,
-            title='', 
+            title='',
             author='',
             bottomMargin=self.bottom_margin)
 
