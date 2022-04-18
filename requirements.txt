@@ -1,4 +1,4 @@
-lxml==4.6.3
+lxml==4.6.5
 python-stdnum==1.16
 qrbill==0.6.0
 svglib==1.0.1
