@@ -52,6 +52,7 @@ class Bill(JuntagricoBaseModel):
     paid = models.BooleanField(_('Paid'), null=False, blank=False, default=False)
     public_notes = models.TextField(_('Notes visible to {}').format(Config.vocabulary('member_pl')), null=True, blank=True)
     private_notes = models.TextField(_('Notes not visible to {}').format(Config.vocabulary('member_pl')), null=True, blank=True)
+    published = models.BooleanField(_('Published'), default=False)
     notification_sent = models.BooleanField(_('Notification sent'), null=False, blank=False, default=False)
 
     # derived properties
@@ -60,6 +61,12 @@ class Bill(JuntagricoBaseModel):
         return sum([p.amount for p in self.payments.all()])
 
     amount_paid.fget.short_description = _('Amount paid')
+
+    @property
+    def amount_open(self):
+        return self.amount - self.amount_paid
+
+    amount_open.fget.short_description = _('Amount open')
 
     @property
     def item_kinds(self):

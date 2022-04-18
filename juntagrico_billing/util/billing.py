@@ -31,7 +31,8 @@ def scale_subscriptionpart_price(part, fromdate, tilldate):
 
                 period_prices.append(period.price * Decimal(eff_days / full_days))
 
-        return round(sum(period_prices), 2)
+        # round to .05
+        return round(2.0 * sum(period_prices), 1) / 2.0
 
     # otherwise
     # calculate price without billing periods.
@@ -41,7 +42,7 @@ def scale_subscriptionpart_price(part, fromdate, tilldate):
         part_start = max(part.activation_date or date.min, fromdate)
         part_end = min(part.deactivation_date or date.max, tilldate)
         days_part = (part_end - part_start).days + 1
-        return round(part.type.price * Decimal(days_part / days_period), 2)
+        return round(part.type.price * Decimal(2.0 * days_part / days_period), 1) / Decimal('2.0')
 
     return 0
 
@@ -177,8 +178,25 @@ def get_open_bills(businessyear, expected_percentage_paid):
     than the given expected percentage.
     """
     # fetch unpaid bills, SQL filtered
-    unpaid_bills = businessyear.bills.filter(paid=False)
+    unpaid_bills = businessyear.bills.filter(paid=False, published=True)
 
     return [
         bill for bill in unpaid_bills
         if (bill.amount > 0) and (bill.amount_paid / bill.amount * 100.0 < expected_percentage_paid)]
+
+
+def get_unpublished_bills():
+    """
+    get bills not published yet (no visible to members).
+    """
+    return Bill.objects.filter(published=False)
+
+
+def publish_bills(id_list):
+    """
+    Publishes a set of bills given by their ids.
+    """
+    for bill_id in id_list:
+        bill = Bill.objects.get(pk=bill_id)
+        bill.published = True
+        bill.save()
