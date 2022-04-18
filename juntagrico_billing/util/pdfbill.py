@@ -78,7 +78,14 @@ class PdfBillRenderer(object):
         self.render_payslip(bill, story)
 
         # build the pdf document
-        doc = SimpleDocTemplate(outfile, bottomMargin=self.bottom_margin)
+        # setting title and author prevents "anonymous" display
+        # in certain pdf viewers (eg firefox)
+        doc = SimpleDocTemplate(
+            outfile,
+            title='', 
+            author='',
+            bottomMargin=self.bottom_margin)
+
         doc.build(
             story,
             onFirstPage=self.draw_payslip,
