@@ -1,7 +1,7 @@
 from datetime import date
 
 import django.test
-from juntagrico.entity.depot import Depot
+from juntagrico.entity.depot import Depot, Location
 from juntagrico.entity.member import Member
 from juntagrico.entity.subs import Subscription, SubscriptionPart
 from juntagrico.entity.subtypes import SubscriptionProduct, SubscriptionSize, SubscriptionType
@@ -39,10 +39,15 @@ class SubscriptionTestBase(django.test.TestCase):
             account="3001"
         )
 
+        location = Location.objects.create(
+            name="Test Location"
+        )
+
         self.depot = Depot.objects.create(
             name="Das erste Depot",
+            location=location,
             contact=self.create_member("Test", "Depot"),
-            weekday=5,
+            weekday=5
         )
 
         self.subscription = self.create_subscription_and_member(self.subs_type,
