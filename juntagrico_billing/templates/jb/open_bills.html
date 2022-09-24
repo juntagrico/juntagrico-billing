@@ -1,12 +1,14 @@
-{% extends "management_lists/man_list_base.html" %}
+{% extends "base.html" %}
 {% load i18n %}
+{% load static %}
 {% load juntagrico.config %}
+{% block body_extra_classes %}wide-layout{% endblock %}
 {% block page_title %}
     <h3>
         {% trans "Open bills" %}
     </h3>
 {% endblock %}
-{% block management_cmd %}
+{% block content %}
 <form class="row mb-3" action="{% url 'jb:bills-setyear' %}" method="POST">
     {% csrf_token %} 
     <p class="col-md-2">{% trans "Year:" %} {{ selected_year.name }}</p>
@@ -48,37 +50,47 @@
 </p>
 {% endif %}
 
-{% endblock %}
-{% block list %}
+<button class="btn btn-success" id="copy-email">
+    {% trans "Copy E-Mail addresses of selected rows" %}
+</button>
+
+<div id="email-copied-alert" class="mt-2 alert alert-success alert-dismissible show fade" style="display:none">
+    {% trans "E-mail addresses have been copied. You may paste them into an e-mail as BCC recipients." %}
+    <button id="alert-close-button" type="button" class="close">&times;</button>
+</div>
+    
 <table id="filter-table" class="table">
     <thead>
         <tr>
-            <th scope="col" class="filter">
+            <th style="text-align:center" data-orderable="false" ><input type="checkbox" /></th>
+            <th scope="col">
                 {% trans "Number" %}
             </th>
-            <th scope="col" class="filter">
+            <th scope="col">
                 {% trans "Member" %}
             </th>
-            <th scope="col" class="filter">
+            <th scope="col" data-orderable="false">
                 {% trans "Kind" %}
             </th>
-            <th scope="col" class="filter">
+            <th scope="col">
                 {% trans "Date" %}
             </th>
-            <th scope="col" class="filter text-right">
+            <th scope="col" class="text-right">
                 {% trans "Amount" %}
             </th>
             <th scope="col" class="text-right">
                 {% trans "Amount open" %}
             </th>
-            <th>
+            <th scope="col" data-orderable="false">
                 {% trans "User view" %}
             </th>
+            <th hidden="true">E-Mail</th>
         </tr>
     </thead>
     <tbody>
         {% for bill in bills_list %}
             <tr>
+                <td style="text-align:center"><input type="checkbox"/> </td>
                 <td>
                     <a href="{% url 'admin:juntagrico_billing_bill_change' bill.id %}">
                     {{ bill.id }}
@@ -102,8 +114,84 @@
                 <td>
                     <a href="{% url 'jb:user-bill' bill.id %}">{{ bill.id }}</a>
                 </td>
+                <td hidden="true" class="email">{{ bill.member.email }}</td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript" src="{% static 'juntagrico/external/datatables.min.js' %}">
+</script>
+<script type="text/javascript">
+// copy to clipboard functions
+function fallbackCopyTextToClipboard(text) {
+  var textArea = document.createElement("textarea");
+  textArea.value = text;
+  
+  // Avoid scrolling to bottom
+  textArea.style.top = "0";
+  textArea.style.left = "0";
+  textArea.style.position = "fixed";
+
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+
+  try {
+    var successful = document.execCommand('copy');
+    var msg = successful ? 'successful' : 'unsuccessful';
+    console.log('Fallback: Copying text command was ' + msg);
+  } catch (err) {
+    console.error('Fallback: Oops, unable to copy', err);
+  }
+
+  document.body.removeChild(textArea);
+}
+
+function copyTextToClipboard(text) {
+  if (!navigator.clipboard) {
+    fallbackCopyTextToClipboard(text);
+    return;
+  }
+  navigator.clipboard.writeText(text).then(function() {
+    console.log('Async: Copying to clipboard was successful!');
+  }, function(err) {
+    console.error('Async: Could not copy text: ', err);
+  });
+}
+
+// initialize datatable
+$(document).ready(function() {
+    // configure table
+    $('#filter-table').DataTable( {
+        order: [[6, "desc"]],
+        searching: true,
+        paging: false,
+        info: false
+    } );
+
+    // attach select all checkbox handler
+    $('#filter-table tr:first th:first input:checkbox').click(function() {
+        var checkboxes = $('#filter-table tbody tr td input:checkbox');
+        $(checkboxes).prop("checked", this.checked);
+    });
+
+    // copy-emails button
+    $('#copy-email').click(function() {
+        var checked_rows = $('#filter-table tbody tr:has(input:checked)');
+        var emails = $('td:hidden', checked_rows).map(function() {
+            return $(this).text();
+        }).toArray();
+
+        copyTextToClipboard(emails);
+        $("#email-copied-alert").show();
+    });
+
+    // alert-close button
+    $("#alert-close-button").click(function() {
+        $("#email-copied-alert").hide();
+    });
+});
+</script>
 {% endblock %}
