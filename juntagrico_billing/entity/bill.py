@@ -54,6 +54,7 @@ class Bill(JuntagricoBaseModel):
     private_notes = models.TextField(_('Notes not visible to {}').format(Config.vocabulary('member_pl')), null=True, blank=True)
     published = models.BooleanField(_('Published'), default=False)
     notification_sent = models.BooleanField(_('Notification sent'), null=False, blank=False, default=False)
+    vat_rate = models.FloatField(_('VAT Rate'), null=False, blank=False, default=0.0)
 
     # derived properties
     @property
@@ -67,6 +68,12 @@ class Bill(JuntagricoBaseModel):
         return self.amount - self.amount_paid
 
     amount_open.fget.short_description = _('Amount open')
+
+    @property
+    def vat_amount(self):
+        return sum([itm.vat_amount for itm in self.items.all()])
+
+    vat_amount.fget.short_description = _('VAT Amount')
 
     @property
     def item_kinds(self):
@@ -146,7 +153,7 @@ class BillItem(JuntagricoBaseModel):
     subscription_part = models.ForeignKey(
         SubscriptionPart, related_name='bill_items',
         null=True, blank=True, on_delete=models.PROTECT,
-        verbose_name=_('{} Bestandteil').format(
+        verbose_name=_('{} Part').format(
             Config.vocabulary('subscription')))
 
     custom_item_type = models.ForeignKey(
@@ -157,6 +164,8 @@ class BillItem(JuntagricoBaseModel):
     description = models.CharField(_('Description'), null=False, blank=True, max_length=100)
 
     amount = models.FloatField(_('Amount'), null=False, blank=False, default=0.0)
+
+    vat_amount = models.FloatField(_('VAT Amount'), null=False, blank=False, default=0.0)
 
     def __str__(self):
         if self.subscription_part:

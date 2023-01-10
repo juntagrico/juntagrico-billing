@@ -297,6 +297,8 @@ def user_bill(request, bill_id):
         'payments': bill.payments.all(),
         'open_amount': bill.amount - bill.amount_paid,
         'paymenttype': settings.default_paymenttype,
+        'vat_number': settings.vat_number,
+        'vat_percent': bill.vat_rate * 100,
         'qr_svg': qr_svg
     }
     return render(request, "jb/user_bill.html", renderdict)

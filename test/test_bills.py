@@ -418,7 +418,9 @@ class BillTest(SubscriptionTestBase):
             type=self.extrasub_type
         )
 
-        self.bill = create_bill(self.subscription.parts.all(), self.year, self.year.start_date)
+        self.bill = create_bill(
+            self.subscription.parts.all(),
+            self.year, self.year.start_date)
 
         # add custom item
         item = BillItem.objects.create(
@@ -451,3 +453,33 @@ class BillTest(SubscriptionTestBase):
         self.assertEqual('Zusatzabo', items[1].item_kind)
         self.assertEqual('Custom', items[2].item_kind)
         self.assertEqual('', items[3].item_kind)
+
+    def test_vat(self):
+        # create bill with 2.5% vat (inclusive)
+        bill = create_bill(
+            self.subscription.parts.all(),
+            self.year, self.year.start_date,
+            0.025)
+
+        # the first item should be the subsription item
+        # with price 1200.00
+        item = bill.items.all()[0]
+        self.assertEquals(1200.0, item.amount)
+
+        # we expect VAT (2.5%) of 29.27
+        self.assertEquals(29.27, item.vat_amount)
+
+    def test_no_vat(self):
+        # create bill with 0% vat (inclusive)
+        bill = create_bill(
+            self.subscription.parts.all(),
+            self.year, self.year.start_date,
+            0)
+
+        # the first item should be the subsription item
+        # with amount 1200.00
+        item = bill.items.all()[0]
+        self.assertEquals(1200.0, item.amount)
+
+        # we expect no VAT
+        self.assertEquals(0.0, item.vat_amount)

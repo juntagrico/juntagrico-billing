@@ -60,6 +60,8 @@ class PdfBillRenderer(object):
         self.render_header(bill, story)
         story.append(Spacer(1, 0.5 * cm))
         self.render_bill_items(bill, story)
+        self.render_vat(bill, story)
+        story.append(Spacer(1, 0.5 * cm))
 
         # public notes
         if bill.public_notes:
@@ -153,6 +155,26 @@ class PdfBillRenderer(object):
 
         bill_table = Table(lines, (None, 2 * cm), style=self.table_style)
         story.append(bill_table)
+
+    def render_vat(self, bill, story):
+        """
+        render VAT amount, rate and number
+        """
+        if bill.vat_amount == 0.0:
+            return
+
+        settings = Settings.objects.first()
+
+        story.append(
+            Paragraph(
+                "%s %.1f%% (%.2f)<br/>%s %s" % (
+                    _("Including VAT of"),
+                    bill.vat_rate * 100,
+                    bill.vat_amount,
+                    _("VAT Number:"),
+                    settings.vat_number)
+            )
+        )
 
     def render_payments(self, bill, story):
         """

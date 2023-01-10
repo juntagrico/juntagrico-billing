@@ -49,6 +49,15 @@
         <div class="col-sm-2 text-right">{{ bill.amount | floatformat:2 }}</div>
     </div>
 
+    {% if bill.vat_amount %}
+    <div class="row">
+        <p class="col">
+            {% trans "Including VAT of" %} {{ vat_percent }}% ({{ bill.vat_amount | floatformat:2 }})<br>
+            {% trans "VAT Number:" %} {{ vat_number }}
+        </p>
+    </div>
+    {% endif %}
+
     {% if notice_url %}
     <div class="row mb-4">
         <p class="col">
