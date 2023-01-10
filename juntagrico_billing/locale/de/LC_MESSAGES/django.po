@@ -516,7 +516,7 @@ msgstr "Bis bald und liebe Grüsse die %(c_organisation_name)s-Betriebsgruppe"
 #: .\juntagrico_billing\templates\mails\bill_notification.txt:9
 #, python-format
 msgid "Dear %(fn)s"
-msgstr "Lieber %(fn)s"
+msgstr "Liebe(r) %(fn)s"
 
 #: .\juntagrico_billing\templates\mails\bill_notification.txt:11
 #, python-format
