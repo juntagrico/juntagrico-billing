@@ -54,9 +54,11 @@ def create_item_booking(idx, item, debtor_account):
     booking.debit_account = debtor_account
     if item.amount >= 0:
         booking.price = item.amount
+        booking.vat_amount = item.vat_amount
     else:
         # negative amount: exchange accounts and set positive amount
         booking.price = -item.amount
+        booking.vat_amount = -item.vat_amount
         booking.debit_account = booking.credit_account
         booking.credit_account = debtor_account
 
@@ -96,5 +98,7 @@ def get_payment_bookings(fromdate, tilldate):
             booking.member_account = payment.bill.member.member_account.account
         else:
             booking.member_account = ""
+
+        booking.vat_amount = 0.0
 
     return bookings

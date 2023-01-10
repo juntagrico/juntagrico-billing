@@ -255,7 +255,8 @@ def export_bookings(bookings, filename):
         'debit_account': 'Soll',
         'credit_account': 'Haben',
         'price': 'Betrag',
-        'member_account': 'KS1 (Mitglied)'
+        'member_account': 'KS1 (Mitglied)',
+        'vat_amount': "MWST"
     }
 
     return generate_excel(fields.items(), bookings, filename)
