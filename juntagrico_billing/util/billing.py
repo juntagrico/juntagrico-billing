@@ -5,6 +5,7 @@ from decimal import Decimal
 from juntagrico_billing.dao.subscription_parts import\
     subscription_parts_by_date, subscription_parts_member_date
 from juntagrico_billing.entity.bill import Bill, BillItem
+from juntagrico_billing.entity.settings import Settings
 
 
 def scale_subscriptionpart_price(part, fromdate, tilldate):
@@ -86,10 +87,12 @@ def update_bill_parts(bill, subscription_parts):
             part,
             bill.business_year.start_date,
             bill.business_year.end_date)
+        vat_amount = round(price / Decimal((1 + bill.vat_rate)) * Decimal(bill.vat_rate), 2)
         text = str(part.type)
         bill_item = BillItem.objects.create(
             bill=bill, subscription_part=part,
-            amount=price, description=text)
+            amount=price, vat_amount=vat_amount,
+            description=text)
         bill_item.save()
 
     # set total amount on bill
@@ -97,7 +100,7 @@ def update_bill_parts(bill, subscription_parts):
     bill.save()
 
 
-def create_bill(billable_items, businessyear, bill_date):
+def create_bill(billable_items, businessyear, bill_date, vat_rate=0.0):
     booking_date = max(businessyear.start_date, bill_date)
 
     # make sure all billables belong to the same member
@@ -108,7 +111,8 @@ def create_bill(billable_items, businessyear, bill_date):
     # create bill for member
     member = list(billables_per_member.keys())[0]
     bill = Bill.objects.create(business_year=businessyear, amount=0.0, member=member,
-                               bill_date=bill_date, booking_date=booking_date)
+                               bill_date=bill_date, booking_date=booking_date,
+                               vat_rate=vat_rate)
 
     update_bill_parts(bill, billable_items)
     return bill
@@ -160,13 +164,16 @@ def create_bills_for_items(billable_items, businessyear, bill_date):
     Create bills based on a list of subscriptions and extrasubscriptions.
     Creates a bill per member and adding the subscriptions and extrasubscriptions
     """
+    # get current vat percentage from settings
+    vat_rate = Settings.objects.first().vat_percent / 100
+
     # get dictionary of billables per member
     items_per_member = group_billables_by_member(billable_items)
 
     # create a bill per member
     bills = []
     for items in items_per_member.values():
-        bills.append(create_bill(items, businessyear, bill_date))
+        bills.append(create_bill(items, businessyear, bill_date, vat_rate))
 
     return bills
 

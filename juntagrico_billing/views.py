@@ -255,7 +255,8 @@ def export_bookings(bookings, filename):
         'debit_account': 'Soll',
         'credit_account': 'Haben',
         'price': 'Betrag',
-        'member_account': 'KS1 (Mitglied)'
+        'member_account': 'KS1 (Mitglied)',
+        'vat_amount': "MWST"
     }
 
     return generate_excel(fields.items(), bookings, filename)
@@ -297,6 +298,8 @@ def user_bill(request, bill_id):
         'payments': bill.payments.all(),
         'open_amount': bill.amount - bill.amount_paid,
         'paymenttype': settings.default_paymenttype,
+        'vat_number': settings.vat_number,
+        'vat_percent': bill.vat_rate * 100,
         'qr_svg': qr_svg
     }
     return render(request, "jb/user_bill.html", renderdict)

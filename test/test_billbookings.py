@@ -29,7 +29,7 @@ class BillBookingsTest(SubscriptionTestBase):
 
         items = list(self.subscription.parts.all())
 
-        self.bill = create_bill(items, self.year, self.year.start_date)
+        self.bill = create_bill(items, self.year, self.year.start_date, 0.0)
 
         self.payment1 = Payment.objects.create(
             bill=self.bill,
@@ -95,7 +95,7 @@ class BillWithCustomItemBookingsTest(SubscriptionTestBase):
         item_type2 = BillItemType(name='Custom Item 2', booking_account='2212')
         item_type2.save()
 
-        bill = create_bill(self.subscription.parts.all(), year, year.start_date)
+        bill = create_bill(self.subscription.parts.all(), year, year.start_date, 0.0)
         item = BillItem(bill=bill, custom_item_type=item_type1, amount=100.0)
         item.save()
         item = BillItem(bill=bill, custom_item_type=item_type2, amount=200.0)
@@ -139,7 +139,7 @@ class BillWithCustomItemBookingsTest(SubscriptionTestBase):
         item_type1 = BillItemType(name='Custom Item 1', booking_account='2211')
         item_type1.save()
 
-        bill = create_bill(self.subscription.parts.all(), year, year.start_date)
+        bill = create_bill(self.subscription.parts.all(), year, year.start_date, 0.0)
         item = BillItem(bill=bill, custom_item_type=item_type1, amount=-100.0)
         item.save()
 
