@@ -87,7 +87,6 @@ def update_bill_parts(bill, subscription_parts):
             part,
             bill.business_year.start_date,
             bill.business_year.end_date)
-        vat_amount = round(price / Decimal((1 + bill.vat_rate)) * Decimal(bill.vat_rate), 2)
         text = str(part.type)
         bill_item = BillItem.objects.create(
             bill=bill, subscription_part=part,
