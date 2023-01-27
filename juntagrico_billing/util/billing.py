@@ -91,8 +91,8 @@ def update_bill_parts(bill, subscription_parts):
         text = str(part.type)
         bill_item = BillItem.objects.create(
             bill=bill, subscription_part=part,
-            amount=price, vat_amount=vat_amount,
-            description=text)
+            amount=float(price), description=text)
+        # vat amount is calculated on save
         bill_item.save()
 
     # set total amount on bill
