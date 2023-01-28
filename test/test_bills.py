@@ -455,7 +455,7 @@ class BillTest(SubscriptionTestBase):
         self.assertEqual('Custom', items[2].item_kind)
         self.assertEqual('', items[3].item_kind)
 
-    def test_vat(self):
+    def test_vat_subscription(self):
         # the first item should be the subsription item
         # with price 1200.00
         item = self.bill.items.all()[0]
@@ -463,6 +463,11 @@ class BillTest(SubscriptionTestBase):
 
         # we expect VAT (2.5%) of 29.27
         self.assertEquals(29.27, item.vat_amount)
+
+    def test_no_vat_customitem(self):
+        # custom items should have no vat
+        item = self.bill.items.all()[2]
+        self.assertEquals(0.0, item.vat_amount)
 
     def test_no_vat(self):
         # create bill with 0% vat (inclusive)
