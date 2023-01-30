@@ -420,7 +420,8 @@ class BillTest(SubscriptionTestBase):
 
         self.bill = create_bill(
             self.subscription.parts.all(),
-            self.year, self.year.start_date)
+            self.year, self.year.start_date,
+            0.025)
 
         # add custom item
         item = BillItem.objects.create(
@@ -454,20 +455,19 @@ class BillTest(SubscriptionTestBase):
         self.assertEqual('Custom', items[2].item_kind)
         self.assertEqual('', items[3].item_kind)
 
-    def test_vat(self):
-        # create bill with 2.5% vat (inclusive)
-        bill = create_bill(
-            self.subscription.parts.all(),
-            self.year, self.year.start_date,
-            0.025)
-
+    def test_vat_subscription(self):
         # the first item should be the subsription item
         # with price 1200.00
-        item = bill.items.all()[0]
+        item = self.bill.items.all()[0]
         self.assertEquals(1200.0, item.amount)
 
         # we expect VAT (2.5%) of 29.27
         self.assertEquals(29.27, item.vat_amount)
+
+    def test_no_vat_customitem(self):
+        # custom items should have no vat
+        item = self.bill.items.all()[2]
+        self.assertEquals(0.0, item.vat_amount)
 
     def test_no_vat(self):
         # create bill with 0% vat (inclusive)
@@ -483,3 +483,14 @@ class BillTest(SubscriptionTestBase):
 
         # we expect no VAT
         self.assertEquals(0.0, item.vat_amount)
+
+    def test_vat_on_changed_item(self):
+        # changing a subscription parts amount
+        # should recalc the vat amount on the item
+        item = self.bill.items.all()[0]
+
+        # change the amount from 1200 to 2000
+        item.amount = 2000.0
+        item.save()
+
+        self.assertEquals(48.78, item.vat_amount)

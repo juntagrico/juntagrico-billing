@@ -197,3 +197,16 @@ class BillItem(JuntagricoBaseModel):
     class Meta:
         verbose_name = _('Bill item')
         verbose_name_plural = _('Bill items')
+
+    def save(self, *args, **kwargs):
+        """
+        save override to automatically recalculate the vat amount
+        """
+        # calc vat only for subscription_part items
+        if self.bill and self.subscription_part:
+            vat_rate = self.bill.vat_rate
+            self.vat_amount = round(self.amount / (1 + vat_rate) * vat_rate, 2)
+        else:
+            self.vat_amount = 0.0
+
+        super().save(*args, **kwargs)
