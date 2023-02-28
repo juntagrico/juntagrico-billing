@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:camt.054.001.04">
+    <BkToCstmrDbtCdtNtfctn>
+        <GrpHdr>
+            <MsgId>2023020500192542</MsgId>
+            <CreDtTm>2023-02-05T12:04:57</CreDtTm>
+            <MsgPgntn>
+                <PgNb>1</PgNb>
+                <LastPgInd>true</LastPgInd>
+            </MsgPgntn>
+        </GrpHdr>
+        <Ntfctn>
+            <Id>2023020500192542</Id>
+            <ElctrncSeqNb>1</ElctrncSeqNb>
+            <CreDtTm>2023-02-05T12:04:57</CreDtTm>
+            <FrToDt>
+                <FrDtTm>2022-11-06T00:00:00</FrDtTm>
+                <ToDtTm>2023-02-04T23:59:59</ToDtTm>
+            </FrToDt>
+            <RptgSrc>
+                <Prtry>OTHR</Prtry>
+            </RptgSrc>
+            <Acct>
+                <Id>
+                    <IBAN>CH5008390039005810105</IBAN>
+                </Id>
+                <Ccy>CHF</Ccy>
+                <Ownr>
+                    <Nm>Huebhof GmbH</Nm>
+                    <PstlAdr>
+                        <AdrLine>Probsteistrasse 26</AdrLine>
+                        <AdrLine>8051 Zürich</AdrLine>
+                    </PstlAdr>
+                </Ownr>
+                <Svcr>
+                    <FinInstnId>
+                        <BICFI>ABSOCH22XXX</BICFI>
+                        <Nm>Alternative Bank Schweiz AG</Nm>
+                    </FinInstnId>
+                </Svcr>
+            </Acct>
+            <Ntry>
+                <NtryRef>CH9030123039005810105</NtryRef>
+                <Amt Ccy="CHF">1000</Amt>
+                <CdtDbtInd>CRDT</CdtDbtInd>
+                <RvslInd>false</RvslInd>
+                <Sts>BOOK</Sts>
+                <BookgDt>
+                    <Dt>2023-02-02</Dt>
+                </BookgDt>
+                <ValDt>
+                    <Dt>2023-02-02</Dt>
+                </ValDt>
+                <BkTxCd>
+                    <Domn>
+                        <Cd>PMNT</Cd>
+                        <Fmly>
+                            <Cd>RCDT</Cd>
+                            <SubFmlyCd>VCOM</SubFmlyCd>
+                        </Fmly>
+                    </Domn>
+                </BkTxCd>
+                <NtryDtls>
+                    <Btch>
+                        <NbOfTxs>1</NbOfTxs>
+                        <TtlAmt Ccy="CHF">1000</TtlAmt>
+                        <CdtDbtInd>CRDT</CdtDbtInd>
+                    </Btch>
+                    <TxDtls>
+                        <Refs>
+                            <AcctSvcrRef>ZV20230202/623177/1</AcctSvcrRef>
+                            <EndToEndId>NOTPROVIDED</EndToEndId>
+                            <TxId>30201715663.0001</TxId>
+                        </Refs>
+                        <Amt Ccy="CHF">1000</Amt>
+                        <CdtDbtInd>CRDT</CdtDbtInd>
+                        <AmtDtls>
+                            <InstdAmt>
+                                <Amt Ccy="CHF">1000</Amt>
+                            </InstdAmt>
+                        </AmtDtls>
+                        <BkTxCd>
+                            <Domn>
+                                <Cd>PMNT</Cd>
+                                <Fmly>
+                                    <Cd>RCDT</Cd>
+                                    <SubFmlyCd>VCOM</SubFmlyCd>
+                                </Fmly>
+                            </Domn>
+                        </BkTxCd>
+                        <RltdPties>
+                            <Dbtr>
+                                <Nm>Hans Test</Nm>
+                                <PstlAdr>
+                                    <StrtNm>Test</StrtNm>
+                                    <BldgNb>10</BldgNb>
+                                    <PstCd>8600</PstCd>
+                                    <TwnNm>Duebendorf</TwnNm>
+                                    <Ctry>CH</Ctry>
+                                </PstlAdr>
+                            </Dbtr>
+                            <DbtrAcct>
+                                <Id>
+                                    <IBAN>CH3108401016810334305</IBAN>
+                                </Id>
+                            </DbtrAcct>
+                            <UltmtDbtr>
+                                <Nm>Daniel Test</Nm>
+                                <PstlAdr>
+                                    <StrtNm>Test</StrtNm>
+                                    <BldgNb>10</BldgNb>
+                                    <PstCd>8600</PstCd>
+                                    <TwnNm>Duebendorf</TwnNm>
+                                    <Ctry>CH</Ctry>
+                                </PstlAdr>
+                            </UltmtDbtr>
+                            <Cdtr>
+                                <Nm>Huebhof GmbH</Nm>
+                                <PstlAdr>
+                                    <AdrLine>Probsteistrasse 26</AdrLine>
+                                    <AdrLine>8051 Zürich</AdrLine>
+                                </PstlAdr>
+                            </Cdtr>
+                        </RltdPties>
+                        <RltdAgts>
+                            <DbtrAgt>
+                                <FinInstnId>
+                                    <ClrSysMmbId>
+                                        <ClrSysId>
+                                            <Cd>CHSIC</Cd>
+                                        </ClrSysId>
+                                        <MmbId>084010</MmbId>
+                                    </ClrSysMmbId>
+                                </FinInstnId>
+                            </DbtrAgt>
+                        </RltdAgts>
+                        <RmtInf>
+                            <Strd>
+                                <CdtrRefInf>
+                                    <Tp>
+                                        <CdOrPrtry>
+                                            <Prtry>QRR</Prtry>
+                                        </CdOrPrtry>
+                                    </Tp>
+                                    <Ref>000000000000015000000000722</Ref>
+                                </CdtrRefInf>
+                            </Strd>
+                        </RmtInf>
+                        <AddtlTxInf>Gutschrift QR-Rechnung 000000000000015000000000722</AddtlTxInf>
+                    </TxDtls>
+                </NtryDtls>
+                <AddtlNtryInf>Gutschrift QR-Rechnung 000000000000015000000000722</AddtlNtryInf>
+            </Ntry>
+            <Ntry>
+                <NtryRef>CH9030123039005810105</NtryRef>
+                <Amt Ccy="CHF">1050</Amt>
+                <CdtDbtInd>CRDT</CdtDbtInd>
+                <RvslInd>false</RvslInd>
+                <Sts>BOOK</Sts>
+                <BookgDt>
+                    <Dt>2023-02-03</Dt>
+                </BookgDt>
+                <ValDt>
+                    <Dt>2023-02-03</Dt>
+                </ValDt>
+                <BkTxCd>
+                    <Domn>
+                        <Cd>PMNT</Cd>
+                        <Fmly>
+                            <Cd>RCDT</Cd>
+                            <SubFmlyCd>VCOM</SubFmlyCd>
+                        </Fmly>
+                    </Domn>
+                </BkTxCd>
+                <NtryDtls>
+                    <Btch>
+                        <NbOfTxs>1</NbOfTxs>
+                        <TtlAmt Ccy="CHF">1050</TtlAmt>
+                        <CdtDbtInd>CRDT</CdtDbtInd>
+                    </Btch>
+                    <TxDtls>
+                        <Refs>
+                            <AcctSvcrRef>ZV20230203/648227/1</AcctSvcrRef>
+                            <EndToEndId>NOTPROVIDED</EndToEndId>
+                            <TxId>230202CH09TIF874</TxId>
+                        </Refs>
+                        <Amt Ccy="CHF">1050</Amt>
+                        <CdtDbtInd>CRDT</CdtDbtInd>
+                        <AmtDtls>
+                            <InstdAmt>
+                                <Amt Ccy="CHF">1050</Amt>
+                            </InstdAmt>
+                        </AmtDtls>
+                        <BkTxCd>
+                            <Domn>
+                                <Cd>PMNT</Cd>
+                                <Fmly>
+                                    <Cd>RCDT</Cd>
+                                    <SubFmlyCd>VCOM</SubFmlyCd>
+                                </Fmly>
+                            </Domn>
+                        </BkTxCd>
+                        <RltdPties>
+                            <Dbtr>
+                                <Nm>Vreni Test</Nm>
+                                <PstlAdr>
+                                    <StrtNm>Teststrasse</StrtNm>
+                                    <BldgNb>3</BldgNb>
+                                    <PstCd>8051</PstCd>
+                                    <TwnNm>Zurich</TwnNm>
+                                    <Ctry>CH</Ctry>
+                                </PstlAdr>
+                            </Dbtr>
+                            <DbtrAcct>
+                                <Id>
+                                    <IBAN>CH8509000000252158846</IBAN>
+                                </Id>
+                            </DbtrAcct>
+                            <UltmtDbtr>
+                                <Nm>Test Manuel</Nm>
+                                <PstlAdr>
+                                    <StrtNm>Teststrasse 3</StrtNm>
+                                    <PstCd>8051</PstCd>
+                                    <TwnNm>Zurich</TwnNm>
+                                    <Ctry>CH</Ctry>
+                                </PstlAdr>
+                            </UltmtDbtr>
+                            <Cdtr>
+                                <Nm>Huebhof GmbH</Nm>
+                                <PstlAdr>
+                                    <AdrLine>Probsteistrasse 26</AdrLine>
+                                    <AdrLine>8051 Zürich</AdrLine>
+                                </PstlAdr>
+                            </Cdtr>
+                        </RltdPties>
+                        <RltdAgts>
+                            <DbtrAgt>
+                                <FinInstnId>
+                                    <ClrSysMmbId>
+                                        <ClrSysId>
+                                            <Cd>CHSIC</Cd>
+                                        </ClrSysId>
+                                        <MmbId>090002</MmbId>
+                                    </ClrSysMmbId>
+                                </FinInstnId>
+                            </DbtrAgt>
+                        </RltdAgts>
+                        <RmtInf>
+                            <Strd>
+                                <CdtrRefInf>
+                                    <Tp>
+                                        <CdOrPrtry>
+                                            <Prtry>QRR</Prtry>
+                                        </CdOrPrtry>
+                                    </Tp>
+                                    <Ref>000000000000013600000000688</Ref>
+                                </CdtrRefInf>
+                                <AddtlRmtInf>Rechnung 68</AddtlRmtInf>
+                            </Strd>
+                        </RmtInf>
+                        <AddtlTxInf>Gutschrift QR-Rechnung 000000000000013600000000688</AddtlTxInf>
+                    </TxDtls>
+                </NtryDtls>
+                <AddtlNtryInf>Gutschrift QR-Rechnung 000000000000013600000000688</AddtlNtryInf>
+            </Ntry>
+        </Ntfctn>
+    </BkToCstmrDbtCdtNtfctn>
+</Document>

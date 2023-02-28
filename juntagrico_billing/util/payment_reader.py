@@ -9,11 +9,15 @@ class Camt045Reader(object):
     def __init__(self):
         self.nsdict = {'ns': self.ns}
 
-    def find(self, element, path):
+    def find_optional(self, element, path):
         if element is None:
             raise PaymentReaderError("element is null")
 
-        result = element.find(path, self.nsdict)
+        # may be None, if not found
+        return element.find(path, self.nsdict)
+
+    def find(self, element, path):
+        result = self.find_optional(element, path)
         if result is None:
             raise PaymentReaderError(
                 "element %s not found" % path.replace('ns:', ''))
@@ -32,46 +36,51 @@ class Camt045Reader(object):
         return result
 
     def parse_payments(self, xml):
-        doc = et.fromstring(xml)
-
-        transaction = self.find(
-            doc, "./ns:BkToCstmrDbtCdtNtfctn/ns:Ntfctn/ns:Ntry")
-
-        # get valuta date
-        vdate_elem = self.find(transaction, "ns:ValDt/ns:Dt")
-        valuta_date = datetime.date.fromisoformat(vdate_elem.text)
-
-        # get creditor IBAN, may be in general NtryRef element
-        # sometimes its in the entry detail (see below)
-        try:
-            global_credit_iban = self.find(transaction, "ns:NtryRef").text
-        except PaymentReaderError:
-            global_credit_iban = None
-
         results = []
 
-        details = self.findall(transaction, 'ns:NtryDtls/ns:TxDtls')
-        for detail in details:
-            amt = self.find(detail, 'ns:Amt')
-            amount = float(amt.text)
+        doc = et.fromstring(xml)
+        root = self.find(doc, "./ns:BkToCstmrDbtCdtNtfctn/ns:Ntfctn")
 
-            # if there is no global creditor iban, try to find it in the detail
-            if global_credit_iban:
-                credit_iban = global_credit_iban
+        entries = self.findall(root, "ns:Ntry")
+        for entry in entries:
+            # get valuta date
+            vdate_elem = self.find(entry, "ns:ValDt/ns:Dt")
+            valuta_date = datetime.date.fromisoformat(vdate_elem.text)
+
+            entry_ref = self.find_optional(entry, "ns:NtryRef")
+            if entry_ref is not None:
+                entry_iban = entry_ref.text[:21]
             else:
-                credit_iban = self.find(
-                    detail, 'ns:RltdPties/ns:CdtrAcct/ns:Id/ns:IBAN').text
+                entry_iban = None
 
-            refinf = self.find(detail, 'ns:RmtInf/ns:Strd/ns:CdtrRefInf')
-            reftype = self.find(refinf, 'ns:Tp/ns:CdOrPrtry/ns:Prtry')
+            details = self.findall(entry, 'ns:NtryDtls/ns:TxDtls')
+            for detail in details:
+                amt = self.find(detail, 'ns:Amt')
+                amount = float(amt.text)
 
-            ref = self.find(refinf, 'ns:Ref')
+                # if there is no global creditor iban, try to find it in the detail
+                if entry_iban:
+                    credit_iban = entry_iban
+                else:
+                    credit_iban = self.find(
+                        detail, 'ns:RltdPties/ns:CdtrAcct/ns:Id/ns:IBAN').text
 
-            id = self.find(detail, 'ns:Refs/ns:InstrId')
-            results.append(
-                PaymentInfo(
-                    valuta_date, credit_iban,
-                    amount, reftype.text, ref.text, id.text))
+                refinf = self.find(detail, 'ns:RmtInf/ns:Strd/ns:CdtrRefInf')
+                reftype = self.find(refinf, 'ns:Tp/ns:CdOrPrtry/ns:Prtry')
+
+                ref = self.find(refinf, 'ns:Ref')
+
+                # we use Refs/TxId as unique id
+                id = self.find_optional(detail, 'ns:Refs/ns:InstrId')
+                if id is None:
+                    id = self.find_optional(detail, 'ns:Refs/ns:TxId')
+                if id is None:
+                    raise PaymentReaderError("couldn't find a unique id for payment. No TxId nor InstrId was found.")
+
+                results.append(
+                    PaymentInfo(
+                        valuta_date, credit_iban,
+                        amount, reftype.text, ref.text, id.text))
 
         return results
 
