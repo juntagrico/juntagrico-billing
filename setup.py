@@ -25,6 +25,7 @@ setup(
     license='LPGLv3',  # example license
     description='juntagrico-billing',
     long_description=README,
+    long_description_content_type='text/markdown',
     url='http://juntagrico.org',
     author='juntagrico',
     author_email='info@juntagrico.org',
