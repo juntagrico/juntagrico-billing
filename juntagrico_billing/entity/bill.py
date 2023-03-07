@@ -96,10 +96,10 @@ class Bill(JuntagricoBaseModel):
         """
         27 digit referencenumber containing the member id and the
         bill id.
-        is used primarily for automatic payment handling with QR IBAN. 
+        is used primarily for automatic payment handling with QR IBAN.
         """
         return calc_refnumber(self).zfill(27)
-    
+
     @property
     def ordered_items(self):
         """
