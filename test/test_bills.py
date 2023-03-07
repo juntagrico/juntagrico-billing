@@ -7,7 +7,6 @@ from juntagrico.entity.subs import SubscriptionPart
 
 from juntagrico_billing.entity.bill import Bill, BusinessYear, BillItem, BillItemType
 from juntagrico_billing.entity.payment import PaymentType
-from juntagrico_billing.entity.settings import Settings
 from juntagrico_billing.util.billing import get_billable_subscription_parts,\
     create_bill, create_bills_for_items, recalc_bill, publish_bills
 from juntagrico_billing.util.billing import scale_subscriptionpart_price
@@ -543,5 +542,3 @@ class BillTest(SubscriptionTestBase):
         reftext = 'Referenznummer:  {}'.format(self.bill.refnumber)
         print(msg)
         self.assertTrue(reftext in msg)
-
-
