@@ -21,11 +21,14 @@ It provides the following features for juntagrico:
 
 ## Installation
 
-Install juntagrico-billing via pip 
-`pip install git+https://github.com/juntagrico/juntagrico-billing.git`
+Install juntagrico-billing via pip
+`pip install juntagrico-billing`
 
 or add it to your main django projects `requirements.txt`:
-`git+https://github.com/juntagrico/juntagrico-billing.git`
+`juntagrico-billing`
+
+You may also install from github source (or add it to `requirements.txt`):
+`pip install git+https://github.com/juntagrico/juntagrico-billing.git`
 
 In your `juntagrico.settings.py` add `juntagrico_billing`:
 ```python
