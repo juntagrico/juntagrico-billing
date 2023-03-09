@@ -540,5 +540,4 @@ class BillTest(SubscriptionTestBase):
         msg = outbox[0].body
 
         reftext = 'Referenznummer:  {}'.format(self.bill.refnumber)
-        print(msg)
         self.assertTrue(reftext in msg)
