@@ -4,6 +4,7 @@ from juntagrico.config import Config
 from juntagrico.mailer import EmailSender, organisation_subject, base_dict
 
 from juntagrico_billing.entity.settings import Settings
+from juntagrico_billing.util.qrbill import is_qr_iban
 
 
 def send_bill_notification(bill):
@@ -15,6 +16,7 @@ def send_bill_notification(bill):
     member = bill.member
     start_date = business_year.start_date
     end_date = business_year.end_date
+    show_refnumber = is_qr_iban(payment_type.iban)
 
     template = get_template('mails/bill_notification.txt')
     render_dict = base_dict(locals())

@@ -105,7 +105,7 @@ class SubscriptionTestBase(django.test.TestCase):
             cancel_month=11
         )
 
-        Settings.objects.create(
+        self.settings = Settings.objects.create(
             debtor_account="1100"
         )
 

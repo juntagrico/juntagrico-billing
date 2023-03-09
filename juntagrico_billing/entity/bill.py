@@ -5,6 +5,7 @@ from juntagrico.config import Config
 from juntagrico.entity import JuntagricoBaseModel
 from juntagrico.entity.member import Member
 from juntagrico.entity.subs import SubscriptionPart
+from juntagrico_billing.util.qrbill import calc_refnumber
 
 
 class BusinessYear(JuntagricoBaseModel):
@@ -89,6 +90,15 @@ class Bill(JuntagricoBaseModel):
         Concatenation of the BillItem descriptions, joined by line breaks.
         """
         return "\n".join([str(itm) for itm in self.items.all()])
+
+    @property
+    def refnumber(self):
+        """
+        27 digit referencenumber containing the member id and the
+        bill id.
+        is used primarily for automatic payment handling with QR IBAN.
+        """
+        return calc_refnumber(self).zfill(27)
 
     @property
     def ordered_items(self):

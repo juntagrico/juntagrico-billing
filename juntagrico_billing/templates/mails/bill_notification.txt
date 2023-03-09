@@ -18,8 +18,9 @@ Amount:              {{ currency }} {{ amount }}{% endblocktrans %}
 {% trans "Find details on the website at" %} {{ serverurl }}{% url 'jb:user-bill' bill.id %}
 
 {% trans "Please pay specifying bill number to:" %}
-IBAN {{ payment_type.iban }}
 {{ payment_type.name }}
+IBAN:            {{ payment_type.iban }}
+{% if show_refnumber %}{% blocktrans with ref=bill.refnumber %}Referencenumber: {{ ref }}{% endblocktrans %}{% endif %}
 {% trans "in favor of" %}
 {{ addr.name }}, {{ addr.zip }} {{ addr.city }}
 

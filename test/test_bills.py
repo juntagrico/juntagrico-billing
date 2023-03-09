@@ -2,14 +2,18 @@ from datetime import date
 from decimal import Decimal
 
 from django.conf import settings
+import django.core.mail
 from juntagrico.entity.subs import SubscriptionPart
 
 from juntagrico_billing.entity.bill import Bill, BusinessYear, BillItem, BillItemType
+from juntagrico_billing.entity.payment import PaymentType
 from juntagrico_billing.util.billing import get_billable_subscription_parts,\
     create_bill, create_bills_for_items, recalc_bill, publish_bills
 from juntagrico_billing.util.billing import scale_subscriptionpart_price
 from juntagrico_billing.util.billing import get_open_bills
 from juntagrico_billing.dao.billdao import BillDao
+from juntagrico_billing.util.qrbill import bill_id_from_refnumber, member_id_from_refnumber
+from juntagrico_billing.mailer import send_bill_notification
 from test.test_base import SubscriptionTestBase
 
 
@@ -432,6 +436,15 @@ class BillTest(SubscriptionTestBase):
         item.save()
         self.bill.save()
 
+        # create payment type and settings
+        self.payment_type = PaymentType.objects.create(
+            name='Test payment type',
+            iban=''
+        )
+        self.payment_type.save()
+        self.settings.default_paymenttype = self.payment_type
+        self.settings.save()
+
     def test_ordered_items(self):
         """
         test ordered_items property on bill.
@@ -494,3 +507,38 @@ class BillTest(SubscriptionTestBase):
         item.save()
 
         self.assertEquals(48.78, item.vat_amount)
+
+    def test_refnumber(self):
+        refnumber = self.bill.refnumber
+        self.assertEquals(27, len(refnumber))
+        self.assertEquals(self.bill.member.id, member_id_from_refnumber(refnumber))
+        self.assertEquals(self.bill.id, bill_id_from_refnumber(refnumber))
+
+    def test_notification_email_has_no_refnumber(self):
+        """
+        send email notification with no qr iban
+        unit tests use the locmem email backend
+        which stores the mails in django.core.mail.outbox
+        """
+        send_bill_notification(self.bill)
+        outbox = django.core.mail.outbox
+        self.assertEquals(1, len(outbox))
+        msg = outbox[0].body
+        self.assertFalse('Referencenumber:' in msg)
+
+    def test_notification_email_has_refnumber(self):
+        """
+        send email notification with qr iban
+        unit tests use the locmem email backend
+        which stores the mails in django.core.mail.outbox
+        """
+        self.payment_type.iban = 'CH7730000001250094239'  # this is a qr iban
+        self.payment_type.save()
+        send_bill_notification(self.bill)
+        outbox = django.core.mail.outbox
+        self.assertEquals(1, len(outbox))
+        msg = outbox[0].body
+
+        reftext = 'Referenznummer:  {}'.format(self.bill.refnumber)
+        print(msg)
+        self.assertTrue(reftext in msg)
