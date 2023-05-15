@@ -38,6 +38,14 @@ INSTALLED_APPS = (
     'juntagrico_billing',
 ```
 
+In your urls.py you also need to add the new pattern:
+```python
+urlpatterns = [
+    ...
+    re_path(r'^',include('juntagrico_billing.urls')),
+]
+```
+
 As the billing app introduces its own database tables, you need to apply migrations after installing.
 Execute `python manage.py migrate` in your main django project.
 
