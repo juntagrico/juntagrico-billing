@@ -20,9 +20,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'impersonate',
+    'crispy_forms',
+    'adminsortable2',
+    'djrichtextfield',
+    'polymorphic',
     'juntagrico',
     'juntagrico_billing',
-    'crispy_forms'
 ]
 
 DATABASES = {

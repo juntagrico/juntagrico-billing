@@ -4,7 +4,6 @@
 [![juntagrico-ci](https://github.com/juntagrico/juntagrico-billing/actions/workflows/juntagrico-ci.yml/badge.svg?branch=main&event=push)](https://github.com/juntagrico/juntagrico-billing/actions/workflows/juntagrico-ci.yml)
 [![Maintainability](https://api.codeclimate.com/v1/badges/f1e8af41b78f052add70/maintainability)](https://codeclimate.com/github/juntagrico/juntagrico-billing/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/f1e8af41b78f052add70/test_coverage)](https://codeclimate.com/github/juntagrico/juntagrico-billing/test_coverage)
-[![Requirements Status](https://requires.io/github/juntagrico/juntagrico-billing/requirements.svg?branch=main)](https://requires.io/github/juntagrico/juntagrico-billing/requirements/?branch=main)
 [![image](https://img.shields.io/github/last-commit/juntagrico/juntagrico-billing.svg)](https://github.com/juntagrico/juntagrico-billing)
 [![image](https://img.shields.io/github/commit-activity/y/juntagrico/juntagrico-billing)](https://github.com/juntagrico/juntagrico-billing)
 
