@@ -1,4 +1,4 @@
 -r requirements.txt
 flake8
 coverage
-git+http://github.com/juntagrico/juntagrico.git
+juntagrico~=1.5.8
