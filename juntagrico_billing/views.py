@@ -92,6 +92,7 @@ def pending_bills(request):
     List pending bills (bills to generate)
     """
     business_years, selected_year = get_years_and_selected(request)
+    pending_bills = []
     if selected_year:
         billable_items = get_billable_subscription_parts(selected_year)
         members_and_parts = group_billables_by_member(billable_items).items()
@@ -360,7 +361,7 @@ def get_years_and_selected(request):
     if len(business_years) == 0:
         # add message 'no businessyear'
         messages = getattr(request, 'member_messages', []) or []
-        messages.extend(get_template('messages/no_businessyear.html').render())
+        messages.append(get_template('messages/no_businessyear.html').render())
         request.member_messages = messages
 
     # if no year set, choose most recent year
