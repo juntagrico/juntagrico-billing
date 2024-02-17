@@ -18,7 +18,7 @@ def send_bill_notification(bill):
     end_date = business_year.end_date
     show_refnumber = is_qr_iban(payment_type.iban)
 
-    template = get_template('mails/bill_notification.txt')
+    template = get_template('jb/mails/bill_notification.txt')
     render_dict = base_dict(locals())
 
     # render template

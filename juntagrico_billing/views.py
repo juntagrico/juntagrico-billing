@@ -361,7 +361,7 @@ def get_years_and_selected(request):
     if len(business_years) == 0:
         # add message 'no businessyear'
         messages = getattr(request, 'member_messages', []) or []
-        messages.append(get_template('messages/no_businessyear.html').render())
+        messages.append(get_template('jb/messages/no_businessyear.html').render())
         request.member_messages = messages
 
     # if no year set, choose most recent year

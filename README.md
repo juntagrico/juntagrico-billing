@@ -48,6 +48,20 @@ urlpatterns = [
 As the billing app introduces its own database tables, you need to apply migrations after installing.
 Execute `python manage.py migrate` in your main django project.
 
+## Configuration
+
+Set these in your `settings.py` to modify `juntagrico-billing`
+
+### BILLS_USERMENU
+  Set to True to add "bills" to the user menu.
+
+  default value: False
+
+### DUEDATE_NOTICE_URL
+  Set the url of a page that explains the due date policy of your bills, if you have any.
+
+  default value: ''
+
 ## Create settings object
 
 `juntagrico-billing` uses a singleton `Settings` object to store some setting.
