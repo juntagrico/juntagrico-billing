@@ -1,4 +1,0 @@
--r requirements.txt
-flake8
-coverage
-juntagrico~=1.5.8

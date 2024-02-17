@@ -1,12 +1,16 @@
 from django.contrib import admin
 
+from juntagrico.entity.member import Member
+from juntagrico.entity.subtypes import SubscriptionType
+from juntagrico.util import addons
+
 from juntagrico_billing.admin.bill import BillAdmin
 from juntagrico_billing.admin.businessyear import BusinessYearAdmin
 from juntagrico_billing.admin.payment import PaymentAdmin, PaymentTypeAdmin
-from juntagrico_billing.entity.account import MemberAccount, SubscriptionTypeAccount
-from juntagrico_billing.entity.bill import Bill, BillItemType, BusinessYear
-from juntagrico_billing.entity.payment import Payment, PaymentType
-from juntagrico_billing.entity.settings import Settings
+from juntagrico_billing.models.account import MemberAccount, SubscriptionTypeAccount
+from juntagrico_billing.models.bill import Bill, BillItemType, BusinessYear
+from juntagrico_billing.models.payment import Payment, PaymentType
+from juntagrico_billing.models.settings import Settings
 
 
 class MemberAccountInline(admin.TabularInline):
@@ -21,6 +25,11 @@ class SubscriptionTypeAccountInline(admin.TabularInline):
     verbose_name = 'Konto'
     verbose_name_plural = 'Konti'
     extra = 0
+
+
+# add inlines on juntagrico models
+addons.config.register_model_inline(Member, MemberAccountInline)
+addons.config.register_model_inline(SubscriptionType, SubscriptionTypeAccountInline)
 
 
 class SettingsAdmin(admin.ModelAdmin):

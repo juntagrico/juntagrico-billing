@@ -5,23 +5,18 @@ from django.conf import settings
 import django.core.mail
 from juntagrico.entity.subs import SubscriptionPart
 
-from juntagrico_billing.entity.bill import Bill, BusinessYear, BillItem, BillItemType
-from juntagrico_billing.entity.payment import PaymentType
+from juntagrico_billing.models.bill import Bill, BillItem, BillItemType
+from juntagrico_billing.models.payment import PaymentType
 from juntagrico_billing.util.billing import get_billable_subscription_parts, \
     create_bill, create_bills_for_items, recalc_bill, publish_bills
 from juntagrico_billing.util.billing import scale_subscriptionpart_price
 from juntagrico_billing.util.billing import get_open_bills
-from juntagrico_billing.dao.billdao import BillDao
 from juntagrico_billing.util.qrbill import bill_id_from_refnumber, member_id_from_refnumber
 from juntagrico_billing.mailer import send_bill_notification
-from test.test_base import SubscriptionTestBase
+from . import BillingTestCase
 
 
-class ScaleSubscriptionPriceTest(SubscriptionTestBase):
-    def setUp(self):
-        super().setUp()
-        self.part = self.subscription.parts.all()[0]
-
+class ScaleSubscriptionPriceTest(BillingTestCase):
     def test_price_by_date_fullyear(self):
         start_date = date(2018, 1, 1)
         end_date = date(2018, 12, 31)
@@ -57,15 +52,15 @@ class ScaleSubscriptionPriceTest(SubscriptionTestBase):
                          "quarter subscription over a year")
 
 
-class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
+class ScaleExtraSubscriptionPriceTest(BillingTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
 
-    def setUp(self):
-        super().setUp()
-
-        self.extrasubs = SubscriptionPart.objects.create(
-            subscription=self.subscription,
+        cls.extrasubs = SubscriptionPart.objects.create(
+            subscription=cls.subscription,
             activation_date=date(2018, 1, 1),
-            type=self.extrasub_type
+            type=cls.extrasub_type
         )
 
         # calcluate expected price
@@ -73,7 +68,7 @@ class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
             Decimal(2.0 * (100.0 * (31 + 30 + 31 + 30) / (31 + 28 + 31 + 30 + 31 + 30))), 1) / Decimal('2.0')
         second_part = round(
             Decimal(2.0 * (200.0 * (31 + 31 + 30 + 31) / (31 + 31 + 30 + 31 + 30 + 31))), 1) / Decimal('2.0')
-        self.expected_price = first_part + second_part
+        cls.expected_price = first_part + second_part
 
     def test_full_year(self):
         start_date = date(2018, 1, 1)
@@ -117,24 +112,21 @@ class ScaleExtraSubscriptionPriceTest(SubscriptionTestBase):
         self.assertEquals(self.expected_price, price, "partial active")
 
 
-class BillSubscriptionsTests(SubscriptionTestBase):
-    def setUp(self):
-        super().setUp()
+class BillSubscriptionsTests(BillingTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
 
         # create some additional subscriptions
-        self.subs2 = self.create_subscription_and_member(self.subs_type, date(2017, 1, 1), date(2017, 1, 1), None, "Test2", "17321")
-        self.subs3 = self.create_subscription_and_member(self.subs_type, date(2018, 3, 1), date(2018, 3, 1), None, "Test3", "17321")
+        cls.subs2 = cls.create_subscription_and_member(cls.sub_type, date(2017, 1, 1), None, "Test2", "17321")
+        cls.subs3 = cls.create_subscription_and_member(cls.sub_type, date(2018, 3, 1), None, "Test3", "17321")
 
         # add an extra subscription part to base subscription
-        self.extrasubs = SubscriptionPart.objects.create(
-            subscription=self.subscription,
+        cls.extrasubs = SubscriptionPart.objects.create(
+            subscription=cls.subscription,
             activation_date=date(2018, 1, 1),
-            type=self.extrasub_type
+            type=cls.extrasub_type
         )
-
-        self.year = BusinessYear.objects.create(start_date=date(2018, 1, 1),
-                                                end_date=date(2018, 12, 31),
-                                                name="2018")
 
     def test_get_billable_subscriptions_without_bills(self):
         billable_parts = get_billable_subscription_parts(self.year)
@@ -251,35 +243,22 @@ class BillSubscriptionsTests(SubscriptionTestBase):
         self.assertEqual(org_amount - 100.0, bill.amount)
 
 
-class GetBillableItemsTests(SubscriptionTestBase):
-    def setUp(self):
-        super().setUp()
-
-        self.year = BusinessYear.objects.create(start_date=date(2018, 1, 1),
-                                                end_date=date(2018, 12, 31),
-                                                name="2018")
-
+class GetBillableItemsTests(BillingTestCase):
     def test_inactive_subscription(self):
         items_before = get_billable_subscription_parts(self.year)
         # create subscription without activation date, only start_date
-        self.create_subscription_and_member(self.subs_type, date(2017, 1, 1), None, None, "Test2", "4322")
+        self.create_subscription_and_member(self.sub_type, None, None, "Test2", "4322")
         # we expect no billable items because subscription is not active in 2018
         items = get_billable_subscription_parts(self.year)
         self.assertEqual(len(items_before), len(items), "expecting no items for additional inactive subscription")
 
 
-class BillCustomItemsTest(SubscriptionTestBase):
-    def setUp(self):
-        super().setUp()
-
-        self.year = BusinessYear.objects.create(start_date=date(2018, 1, 1),
-                                                end_date=date(2018, 12, 31),
-                                                name="2018")
-
-        self.item_type1 = BillItemType(name='Custom Item 1', booking_account='2211')
-        self.item_type1.save()
-        self.item_type2 = BillItemType(name='Custom Item 2', booking_account='2212')
-        self.item_type2.save()
+class BillCustomItemsTest(BillingTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.item_type1 = BillItemType.objects.create(name='Custom Item 1', booking_account='2211')
+        cls.item_type2 = BillItemType.objects.create(name='Custom Item 2', booking_account='2212')
 
     def test_subscription_with_custom_item(self):
         # create a subscription bill
@@ -334,44 +313,36 @@ class BillCustomItemsTest(SubscriptionTestBase):
         self.assertEquals(1310.0, bill.amount, "amount after recalc")
 
 
-class BillsListTest(SubscriptionTestBase):
-    def setUp(self):
-        super().setUp()
+class BillsListTest(BillingTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
 
-        self.member = self.create_member("Test", "Bills List")
+        cls.member = cls.create_billing_member("Test", "Bills List")
 
-        self.year = BusinessYear.objects.create(start_date=date(2018, 1, 1),
-                                                end_date=date(2018, 12, 31),
-                                                name="2018")
-
-        self.item_type1 = BillItemType(name='Test Item Type', booking_account='2211')
-        self.item_type1.save()
+        cls.item_type1 = BillItemType.objects.create(name='Test Item Type', booking_account='2211')
 
         # create some bills
-        self.bill1 = Bill.objects.create(
-            business_year=self.year, member=self.member, published=True,
+        cls.bill1 = Bill.objects.create(
+            business_year=cls.year, member=cls.member, published=True,
             bill_date=date(2018, 2, 1), booking_date=date(2018, 2, 1),
         )
-        item = BillItem.objects.create(
-            bill=self.bill1,
-            custom_item_type=self.item_type1,
+        BillItem.objects.create(
+            bill=cls.bill1,
+            custom_item_type=cls.item_type1,
             amount=200.0
         )
-        item.save()
-        self.bill1.save()
 
-        self.bill2 = Bill.objects.create(
-            business_year=self.year, member=self.member, published=True,
+        cls.bill2 = Bill.objects.create(
+            business_year=cls.year, member=cls.member, published=True,
             bill_date=date(2018, 3, 1), booking_date=date(2018, 3, 1),
         )
-        self.bill2.save()
 
         # bill3 is not published yet
-        self.bill3 = Bill.objects.create(
-            business_year=self.year, member=self.member,
+        cls.bill3 = Bill.objects.create(
+            business_year=cls.year, member=cls.member,
             bill_date=date(2018, 5, 1), booking_date=date(2018, 5, 1),
         )
-        self.bill3.save()
 
     def test_get_open_bills(self):
         """
@@ -386,7 +357,7 @@ class BillsListTest(SubscriptionTestBase):
         query bills displayed to members.
         this should only include published bills.
         """
-        bills = BillDao.bills_for_member(self.member)
+        bills = Bill.objects.of_member(self.member).published()
         self.assertEqual(2, len(bills), '2 published bills')
 
     def test_publish_bills(self):
@@ -404,46 +375,44 @@ class BillsListTest(SubscriptionTestBase):
         self.assertEqual(3, len(Bill.objects.filter(published=True)), "all 3 bills are published")
 
 
-class BillTest(SubscriptionTestBase):
-    def setUp(self):
-        super().setUp()
-
-        self.year = BusinessYear.objects.create(start_date=date(2018, 1, 1),
-                                                end_date=date(2018, 12, 31),
-                                                name="2018")
-
-        self.item_type = BillItemType(name='Custom', booking_account='2211')
-        self.item_type.save()
+class BillTest(BillingTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.item_type = BillItemType(name='Custom', booking_account='2211')
+        cls.item_type.save()
 
         # add an extra subscription part to base subscription
-        self.extrasubs = SubscriptionPart.objects.create(
-            subscription=self.subscription,
+        cls.extrasubs = SubscriptionPart.objects.create(
+            subscription=cls.subscription,
             activation_date=date(2018, 1, 1),
-            type=self.extrasub_type
+            type=cls.extrasub_type
         )
 
-        self.bill = create_bill(
-            self.subscription.parts.all(),
-            self.year, self.year.start_date,
-            0.025)
+        cls.bill = create_bill(
+            cls.subscription.parts.all(),
+            cls.year,
+            cls.year.start_date,
+            0.025
+        )
 
         # add custom item
         item = BillItem.objects.create(
-            bill=self.bill,
-            custom_item_type=self.item_type,
+            bill=cls.bill,
+            custom_item_type=cls.item_type,
             amount=200.0
         )
         item.save()
-        self.bill.save()
+        cls.bill.save()
 
         # create payment type and settings
-        self.payment_type = PaymentType.objects.create(
+        cls.payment_type = PaymentType.objects.create(
             name='Test payment type',
             iban=''
         )
-        self.payment_type.save()
-        self.settings.default_paymenttype = self.payment_type
-        self.settings.save()
+        cls.payment_type.save()
+        cls.settings.default_paymenttype = cls.payment_type
+        cls.settings.save()
 
     def test_ordered_items(self):
         """

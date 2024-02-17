@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import escape, mark_safe
 from django.utils.translation import gettext as _
-from juntagrico_billing.entity.bill import BillItem
+from juntagrico_billing.models.bill import BillItem
 
 
 class BillItemInline(admin.TabularInline):
