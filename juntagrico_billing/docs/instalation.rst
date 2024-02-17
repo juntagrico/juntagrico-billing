@@ -15,7 +15,7 @@ You have to add the app to your installed apps in your Django settings
 
     INSTALLED_APPS = [
         ...
-        'juntagrico',
         'juntagrico_billing',
+        'juntagrico',
     ]
     

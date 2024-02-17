@@ -29,19 +29,19 @@ or add it to your main django projects `requirements.txt`:
 You may also install from github source (or add it to `requirements.txt`):
 `pip install git+https://github.com/juntagrico/juntagrico-billing.git`
 
-In your `juntagrico.settings.py` add `juntagrico_billing`:
+In your `juntagrico.settings.py` add `juntagrico_billing` somewhere **above** `juntagrico`:
 ```python
 INSTALLED_APPS = (
+    'juntagrico_billing',
     'juntagrico',
     ...
-    'juntagrico_billing',
 ```
 
 In your urls.py you also need to add the new pattern:
 ```python
 urlpatterns = [
     ...
-    re_path(r'^',include('juntagrico_billing.urls')),
+    path('',include('juntagrico_billing.urls')),
 ]
 ```
 

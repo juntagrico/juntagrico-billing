@@ -1,0 +1,32 @@
+{% extends "juntagrico/menu/admin.html" %}
+{% load i18n %}
+{% block extend %}
+    {% if perms.juntagrico.is_book_keeper %}
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#jb">{% trans "Bills and Bookkeeping" %}<i class="fas fa-angle-right"></i></a>
+            <div class="collapse" id="jb">
+            <ul class="nav flex-column admin-menu subadmin-menu">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'jb:pending-bills-list' %}">{% trans "Pending bills" %}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'jb:unpublished-bills-list' %}">{% trans "Unpublished bills" %}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'jb:open-bills-list' %}">{% trans "Open bills" %}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'jb:bills-notify' %}">{% trans "Send billing notifications" %}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'jb:payments-upload' %}">{% trans "Import payments" %}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/jb/bookings_export">{% trans "Export bookings" %}</a>
+                </li>
+            </ul>
+            </div>
+        </li>
+    {% endif %}
+    {{ block.super }}
+{% endblock %}
