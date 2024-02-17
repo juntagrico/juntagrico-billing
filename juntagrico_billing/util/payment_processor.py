@@ -142,7 +142,6 @@ class PaymentProcessor(object):
                         amount=pinfo.amount,
                         unique_id=pinfo.unique_id)
                     payment.save()
-                except IntegrityError:
+                except IntegrityError as err:
                     msg = 'Payment with unique id %s has already been imported.'
-                    raise PaymentProcessorError(
-                        self._(msg) % pinfo.unique_id)
+                    raise PaymentProcessorError(self._(msg) % pinfo.unique_id) from err

@@ -46,6 +46,6 @@ include = ["juntagrico_billing*"]
 [tool.setuptools.dynamic]
 version = {attr = "juntagrico_billing.__version__"}
 
-[tool.ruff]
+[tool.ruff.lint]
 select = ["E", "F", "B"]
 ignore = ["E501"]
