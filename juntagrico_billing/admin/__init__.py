@@ -7,10 +7,10 @@ from juntagrico.util import addons
 from juntagrico_billing.admin.bill import BillAdmin
 from juntagrico_billing.admin.businessyear import BusinessYearAdmin
 from juntagrico_billing.admin.payment import PaymentAdmin, PaymentTypeAdmin
-from juntagrico_billing.entity.account import MemberAccount, SubscriptionTypeAccount
-from juntagrico_billing.entity.bill import Bill, BillItemType, BusinessYear
-from juntagrico_billing.entity.payment import Payment, PaymentType
-from juntagrico_billing.entity.settings import Settings
+from juntagrico_billing.models.account import MemberAccount, SubscriptionTypeAccount
+from juntagrico_billing.models.bill import Bill, BillItemType, BusinessYear
+from juntagrico_billing.models.payment import Payment, PaymentType
+from juntagrico_billing.models.settings import Settings
 
 
 class MemberAccountInline(admin.TabularInline):

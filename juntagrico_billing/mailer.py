@@ -3,7 +3,7 @@ from django.utils.translation import gettext as _
 from juntagrico.config import Config
 from juntagrico.mailer import EmailSender, organisation_subject, base_dict
 
-from juntagrico_billing.entity.settings import Settings
+from juntagrico_billing.models.settings import Settings
 from juntagrico_billing.util.qrbill import is_qr_iban
 
 

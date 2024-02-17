@@ -2,7 +2,7 @@ from django.utils.translation import gettext as _
 
 from juntagrico_billing.dao.billdao import BillDao
 from juntagrico_billing.dao.paymentdao import PaymentDao
-from juntagrico_billing.entity.settings import Settings
+from juntagrico_billing.models.settings import Settings
 
 # Offset for generating Document numbers for bookings
 DOCNUMBER_OFFSET_BILL = 500000

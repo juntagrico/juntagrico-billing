@@ -4,8 +4,8 @@ from decimal import Decimal
 
 from juntagrico_billing.dao.subscription_parts import\
     subscription_parts_by_date, subscription_parts_member_date
-from juntagrico_billing.entity.bill import Bill, BillItem
-from juntagrico_billing.entity.settings import Settings
+from juntagrico_billing.models.bill import Bill, BillItem
+from juntagrico_billing.models.settings import Settings
 
 
 def scale_subscriptionpart_price(part, fromdate, tilldate):

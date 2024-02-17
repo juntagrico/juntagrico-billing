@@ -1,5 +1,5 @@
 from django.contrib import admin
-from juntagrico_billing.entity.payment import Payment
+from juntagrico_billing.models.payment import Payment
 
 
 class PaymentInline(admin.TabularInline):

@@ -1,8 +1,8 @@
 from django.db import IntegrityError, transaction
 from django.utils.translation import gettext
 from juntagrico.entity.member import Member
-from juntagrico_billing.entity.bill import Bill
-from juntagrico_billing.entity.payment import Payment, PaymentType
+from juntagrico_billing.models.bill import Bill
+from juntagrico_billing.models.payment import Payment, PaymentType
 from juntagrico_billing.util.qrbill import bill_id_from_refnumber
 from juntagrico_billing.util.qrbill import member_id_from_refnumber
 

@@ -5,8 +5,8 @@ from django.conf import settings
 import django.core.mail
 from juntagrico.entity.subs import SubscriptionPart
 
-from juntagrico_billing.entity.bill import Bill, BusinessYear, BillItem, BillItemType
-from juntagrico_billing.entity.payment import PaymentType
+from juntagrico_billing.models.bill import Bill, BusinessYear, BillItem, BillItemType
+from juntagrico_billing.models.payment import PaymentType
 from juntagrico_billing.util.billing import get_billable_subscription_parts, \
     create_bill, create_bills_for_items, recalc_bill, publish_bills
 from juntagrico_billing.util.billing import scale_subscriptionpart_price

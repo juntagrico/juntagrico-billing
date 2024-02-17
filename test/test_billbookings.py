@@ -1,8 +1,8 @@
 from datetime import date
 
 from juntagrico.entity.subs import SubscriptionPart
-from juntagrico_billing.entity.bill import BusinessYear, BillItem, BillItemType
-from juntagrico_billing.entity.payment import Payment, PaymentType
+from juntagrico_billing.models.bill import BusinessYear, BillItem, BillItemType
+from juntagrico_billing.models.payment import Payment, PaymentType
 from juntagrico_billing.util.billing import create_bill
 from juntagrico_billing.util.bookings import get_bill_bookings, get_payment_bookings
 from test.test_base import SubscriptionTestBase

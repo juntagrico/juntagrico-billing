@@ -1,7 +1,7 @@
 import unittest
 from datetime import date
-from juntagrico_billing.entity.bill import Bill, BusinessYear
-from juntagrico_billing.entity.payment import Payment, PaymentType
+from juntagrico_billing.models.bill import Bill, BusinessYear
+from juntagrico_billing.models.payment import Payment, PaymentType
 from juntagrico_billing.util.qrbill import bill_id_from_refnumber, member_id_from_refnumber
 from juntagrico_billing.util.payment_processor import PaymentProcessor, PaymentInfo, PaymentProcessorError
 from test.test_base import SubscriptionTestBase

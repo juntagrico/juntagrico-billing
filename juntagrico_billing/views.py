@@ -13,8 +13,8 @@ from juntagrico.util.temporal import start_of_business_year, \
     start_of_next_business_year
 from juntagrico.util.xls import generate_excel
 from juntagrico_billing.dao.billdao import BillDao
-from juntagrico_billing.entity.bill import BusinessYear, Bill
-from juntagrico_billing.entity.settings import Settings
+from juntagrico_billing.models.bill import BusinessYear, Bill
+from juntagrico_billing.models.settings import Settings
 from juntagrico_billing.mailer import send_bill_notification
 from juntagrico_billing.util.billing import get_billable_subscription_parts, \
     group_billables_by_member, create_bills_for_items, get_open_bills, \

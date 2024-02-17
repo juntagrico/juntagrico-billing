@@ -1,4 +1,4 @@
-from juntagrico_billing.entity.bill import Bill, BusinessYear
+from juntagrico_billing.models.bill import Bill, BusinessYear
 
 
 class BillDao:

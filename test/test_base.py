@@ -7,8 +7,8 @@ from juntagrico.entity.subs import Subscription, SubscriptionPart
 from juntagrico.entity.subtypes import SubscriptionProduct, SubscriptionSize, SubscriptionType
 from juntagrico.entity.billing import BillingPeriod
 
-from juntagrico_billing.entity.account import MemberAccount, SubscriptionTypeAccount
-from juntagrico_billing.entity.settings import Settings
+from juntagrico_billing.models.account import MemberAccount, SubscriptionTypeAccount
+from juntagrico_billing.models.settings import Settings
 
 
 class SubscriptionTestBase(django.test.TestCase):
