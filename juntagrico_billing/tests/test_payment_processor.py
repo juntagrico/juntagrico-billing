@@ -3,7 +3,7 @@ from datetime import date
 
 from django import test
 
-from juntagrico_billing.models.bill import Bill, BusinessYear
+from juntagrico_billing.models.bill import Bill
 from juntagrico_billing.models.payment import Payment, PaymentType
 from juntagrico_billing.util.qrbill import bill_id_from_refnumber, member_id_from_refnumber
 from juntagrico_billing.util.payment_processor import PaymentProcessor, PaymentInfo, PaymentProcessorError
