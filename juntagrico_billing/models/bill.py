@@ -5,6 +5,8 @@ from juntagrico.config import Config
 from juntagrico.entity import JuntagricoBaseModel
 from juntagrico.entity.member import Member
 from juntagrico.entity.subs import SubscriptionPart
+
+from juntagrico_billing.querysets.bill import BillQuerySet, BusinessYearQuerySet
 from juntagrico_billing.util.qrbill import calc_refnumber
 
 
@@ -15,6 +17,8 @@ class BusinessYear(JuntagricoBaseModel):
     start_date = models.DateField(_('start date'), unique=True)
     end_date = models.DateField(_('end date'))
     name = models.CharField(_('name'), max_length=20, null=True, blank=True, unique=True)
+
+    objects = BusinessYearQuerySet.as_manager()
 
     def __str__(self):
         return self.name or str(self.start_date)
@@ -56,6 +60,8 @@ class Bill(JuntagricoBaseModel):
     published = models.BooleanField(_('Published'), default=False)
     notification_sent = models.BooleanField(_('Notification sent'), null=False, blank=False, default=False)
     vat_rate = models.FloatField(_('VAT Rate'), null=False, blank=False, default=0.0)
+
+    objects = BillQuerySet.as_manager()
 
     # derived properties
     @property

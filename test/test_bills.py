@@ -11,7 +11,6 @@ from juntagrico_billing.util.billing import get_billable_subscription_parts, \
     create_bill, create_bills_for_items, recalc_bill, publish_bills
 from juntagrico_billing.util.billing import scale_subscriptionpart_price
 from juntagrico_billing.util.billing import get_open_bills
-from juntagrico_billing.dao.billdao import BillDao
 from juntagrico_billing.util.qrbill import bill_id_from_refnumber, member_id_from_refnumber
 from juntagrico_billing.mailer import send_bill_notification
 from test.test_base import SubscriptionTestBase
@@ -386,7 +385,7 @@ class BillsListTest(SubscriptionTestBase):
         query bills displayed to members.
         this should only include published bills.
         """
-        bills = BillDao.bills_for_member(self.member)
+        bills = Bill.objects.of_member(self.member).published()
         self.assertEqual(2, len(bills), '2 published bills')
 
     def test_publish_bills(self):

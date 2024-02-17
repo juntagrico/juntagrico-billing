@@ -2,8 +2,8 @@ from collections import defaultdict
 from datetime import date
 from decimal import Decimal
 
-from juntagrico_billing.dao.subscription_parts import\
-    subscription_parts_by_date, subscription_parts_member_date
+from juntagrico.entity.subs import SubscriptionPart
+
 from juntagrico_billing.models.bill import Bill, BillItem
 from juntagrico_billing.models.settings import Settings
 
@@ -13,7 +13,7 @@ def scale_subscriptionpart_price(part, fromdate, tilldate):
     scale subscription part price for a certain date interval.
     """
 
-    if len(part.type.periods.all()):
+    if part.type.periods.count():
         # calculate price based on billing periods.
         # takes into account periods that overlap with the requested interval.
         period_prices = []
@@ -62,7 +62,7 @@ def get_billable_subscription_parts(business_year):
     bill_parts = [itm.subscription_part for itm in bill_items if itm.subscription_part]
 
     # get all active subscription parts for billing period
-    active_parts = subscription_parts_by_date(from_date, till_date)
+    active_parts = SubscriptionPart.objects.in_daterange(from_date, till_date)
 
     # get parts that are not billed yet
     billed_dict = dict([(part, None) for part in bill_parts])
@@ -125,8 +125,7 @@ def recalc_bill(bill):
     # get all subscription parts for member and businessyear
     year = bill.business_year
     member = bill.member
-    parts_in_year = subscription_parts_member_date(
-        member, year.start_date, year.end_date)
+    parts_in_year = SubscriptionPart.objects.by_primary_member(member).in_daterange(year.start_date, year.end_date)
 
     # determine if part is on another bill in the same year
     def is_on_other_bill(part):

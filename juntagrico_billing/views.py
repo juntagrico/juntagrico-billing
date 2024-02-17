@@ -12,7 +12,6 @@ from juntagrico.util import return_to_previous_location
 from juntagrico.util.temporal import start_of_business_year, \
     start_of_next_business_year
 from juntagrico.util.xls import generate_excel
-from juntagrico_billing.dao.billdao import BillDao
 from juntagrico_billing.models.bill import BusinessYear, Bill
 from juntagrico_billing.models.settings import Settings
 from juntagrico_billing.mailer import send_bill_notification
@@ -77,7 +76,7 @@ def bills_setyear(request):
 def bills_generate(request):
     # generate bills for current business year
     year_name = request.session['bills_businessyear']
-    year = BusinessYear.objects.filter(name=year_name).first()
+    year = BusinessYear.objects.by_name(year_name)
 
     billable_items = get_billable_subscription_parts(year)
 
@@ -268,7 +267,7 @@ def user_bills(request):
     member = request.user.member
     settings = Settings.objects.first()
     renderdict = {
-        'bills': BillDao.bills_for_member(member),
+        'bills': Bill.objects.of_member(member).published(),
         'paymenttype': settings.default_paymenttype,
         'menu': {'bills': 'active'},
     }

@@ -3,6 +3,8 @@ from juntagrico.entity import JuntagricoBaseModel
 from django.utils.translation import gettext as _
 from juntagrico.config import Config
 
+from juntagrico_billing.querysets.payment import PaymentQuerySet
+
 
 class Payment(JuntagricoBaseModel):
     """
@@ -25,6 +27,8 @@ class Payment(JuntagricoBaseModel):
     unique_id = models.CharField(
         _('Unique Id'), max_length=50,
         null=True, blank=True, unique=True)
+
+    objects = PaymentQuerySet.as_manager()
 
     def __str__(self):
         return '{}'.format(self.bill.id)

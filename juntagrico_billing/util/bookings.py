@@ -1,7 +1,7 @@
 from django.utils.translation import gettext as _
 
-from juntagrico_billing.dao.billdao import BillDao
-from juntagrico_billing.dao.paymentdao import PaymentDao
+from juntagrico_billing.models import Payment
+from juntagrico_billing.models.bill import Bill
 from juntagrico_billing.models.settings import Settings
 
 # Offset for generating Document numbers for bookings
@@ -16,7 +16,7 @@ class Booking(object):
 def get_bill_bookings(fromdate, tilldate):
     # get all bills by business-year start, end
 
-    bills = BillDao.bills_for_daterange(fromdate, tilldate)
+    bills = Bill.objects.in_daterange(fromdate, tilldate)
 
     # global debtor account on settings object
     debtor_account = Settings.objects.first().debtor_account
@@ -71,7 +71,7 @@ def create_item_booking(idx, item, debtor_account):
 
 
 def get_payment_bookings(fromdate, tilldate):
-    payments = PaymentDao.payments_for_daterange(fromdate, tilldate)
+    payments = Payment.objects.in_daterange(fromdate, tilldate)
 
     # global debtor account on settings object
     debtor_account = Settings.objects.first().debtor_account
