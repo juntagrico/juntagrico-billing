@@ -1,3 +1,4 @@
+from decimal import Decimal
 from qrbill.bill import QRBill
 from stdnum.ch.esr import calc_check_digit, validate, compact
 import stdnum.iban
@@ -70,14 +71,20 @@ def get_qrbill_svg(bill, paymenttype):
     """
     Get the QR-Bill payment part as SVG
     """
-    if not is_qr_iban(paymenttype.iban):
-        raise Exception('iban is no qr iban: %s' % paymenttype.iban)
-
     addr = Config.organisation_address()
+    if is_qr_iban(paymenttype.iban):
+        refnr = calc_refnumber(bill)
+        info = ''
+    else:
+        refnr = None
+        info = str(bill.id)
+
     qr = QRBill(
         language='de',
         account=stdnum.iban.compact(paymenttype.iban),
-        ref_number=calc_refnumber(bill),
+        ref_number=refnr,
+        extra_infos=info,
+        amount=Decimal(bill.amount),
         creditor={
             'name': addr['name'],
             'line1': '%s %s' % (addr['street'], addr['number']),

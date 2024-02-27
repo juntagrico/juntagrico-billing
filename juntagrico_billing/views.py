@@ -286,11 +286,8 @@ def user_bill(request, bill_id):
 
     settings = Settings.objects.first()
 
-    # add QR-Bill part if QR-IBAN
-    if is_qr_iban(settings.default_paymenttype.iban):
-        qr_svg = get_qrbill_svg(bill, settings.default_paymenttype)
-    else:
-        qr_svg = None
+    # add QR-Bill part
+    qr_svg = get_qrbill_svg(bill, settings.default_paymenttype)
 
     renderdict = {
         'member': bill.member,
