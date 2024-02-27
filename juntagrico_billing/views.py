@@ -268,7 +268,7 @@ def user_bills(request):
     member = request.user.member
     settings = Settings.objects.first()
     renderdict = {
-        'bills': BillDao.bills_for_member(member),
+        'bills': BillDao.bills_for_member(member).order_by("-bill_date"),
         'paymenttype': settings.default_paymenttype,
         'menu': {'bills': 'active'},
     }
