@@ -82,8 +82,8 @@ def get_qrbill_svg(bill, paymenttype):
     qr = QRBill(
         language='de',
         account=stdnum.iban.compact(paymenttype.iban),
-        ref_number=refnr,
-        extra_infos=info,
+        reference_number=refnr,
+        additional_information=info,
         amount=Decimal(bill.amount_open),
         creditor={
             'name': addr['name'],
