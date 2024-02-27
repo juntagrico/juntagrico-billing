@@ -8,7 +8,7 @@ from django.utils.translation import gettext as _
 from juntagrico.config import Config
 from juntagrico_billing.config import Config as BillingConfig
 from juntagrico_billing.entity.settings import Settings
-from juntagrico_billing.util.qrbill import get_qrbill_svg, is_qr_iban
+from juntagrico_billing.util.qrbill import get_qrbill_svg
 from svglib.svglib import SvgRenderer
 from lxml import etree
 
