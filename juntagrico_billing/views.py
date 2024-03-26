@@ -20,7 +20,7 @@ from juntagrico_billing.util.billing import get_billable_subscription_parts, \
     group_billables_by_member, create_bills_for_items, get_open_bills, \
     scale_subscriptionpart_price, recalc_bill, get_unpublished_bills, \
     publish_bills
-from juntagrico_billing.util.qrbill import is_qr_iban, get_qrbill_svg
+from juntagrico_billing.util.qrbill import get_qrbill_svg
 from juntagrico_billing.util.pdfbill import PdfBillRenderer
 from juntagrico_billing.util.bookings import get_bill_bookings, \
     get_payment_bookings
@@ -268,7 +268,7 @@ def user_bills(request):
     member = request.user.member
     settings = Settings.objects.first()
     renderdict = {
-        'bills': BillDao.bills_for_member(member),
+        'bills': BillDao.bills_for_member(member).order_by("-bill_date"),
         'paymenttype': settings.default_paymenttype,
         'menu': {'bills': 'active'},
     }
@@ -286,11 +286,8 @@ def user_bill(request, bill_id):
 
     settings = Settings.objects.first()
 
-    # add QR-Bill part if QR-IBAN
-    if is_qr_iban(settings.default_paymenttype.iban):
-        qr_svg = get_qrbill_svg(bill, settings.default_paymenttype)
-    else:
-        qr_svg = None
+    # add QR-Bill part
+    qr_svg = get_qrbill_svg(bill, settings.default_paymenttype)
 
     renderdict = {
         'member': bill.member,
