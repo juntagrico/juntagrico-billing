@@ -8,7 +8,7 @@ from django.utils.translation import gettext as _
 from juntagrico.config import Config
 from juntagrico_billing.config import Config as BillingConfig
 from juntagrico_billing.models.settings import Settings
-from juntagrico_billing.util.qrbill import get_qrbill_svg, is_qr_iban
+from juntagrico_billing.util.qrbill import get_qrbill_svg
 from svglib.svglib import SvgRenderer
 from lxml import etree
 
@@ -224,44 +224,17 @@ class PdfBillRenderer(object):
         the page render function draw_payslip.
         """
         settings = Settings.objects.first()
-        addr = Config.organisation_address()
 
         payment_type = settings.default_paymenttype
-        if is_qr_iban(payment_type.iban):
-            qr_svg = get_qrbill_svg(bill, payment_type)
-            svg_element = etree.fromstring(qr_svg)
+        qr_svg = get_qrbill_svg(bill, payment_type)
+        svg_element = etree.fromstring(qr_svg)
 
-            renderer = SvgRenderer("")
+        renderer = SvgRenderer("")
 
-            # save payslip drawing and
-            # offset bottom margin
-            self.qrpayslip_drawing = renderer.render(svg_element)
-            self.bottom_margin = self.qrpayslip_drawing.height
-        else:
-            self.qrpayslip_drawing = None
-            self.bottom_margin = 2 * cm
-
-            story.append(Spacer(1, 2 * cm))
-
-            # if no qr payslip, display account info for payment
-            story.append(
-                Paragraph(
-                    _('Please pay specifying bill number to:'),
-                    self.text))
-            story.append(
-                Paragraph(
-                    '%s<br/>%s<br/>' % (
-                        payment_type.iban,
-                        payment_type.name),
-                    self.text))
-            story.append(
-                Paragraph(
-                    '%s<br/>%s, %s %s' % (
-                        _('in favor of'),
-                        addr['name'],
-                        addr['zip'],
-                        addr['city']),
-                    self.text))
+        # save payslip drawing and
+        # offset bottom margin
+        self.qrpayslip_drawing = renderer.render(svg_element)
+        self.bottom_margin = self.qrpayslip_drawing.height
 
     def draw_payslip(self, canvas, document):
         """

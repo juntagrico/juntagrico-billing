@@ -5,6 +5,7 @@ from juntagrico_billing.models.bill import Bill
 from juntagrico_billing.models.payment import Payment, PaymentType
 from juntagrico_billing.util.qrbill import bill_id_from_refnumber
 from juntagrico_billing.util.qrbill import member_id_from_refnumber
+from stdnum import iban
 
 
 class PaymentInfo(object):
@@ -31,8 +32,13 @@ class PaymentProcessor(object):
         self.testing = testing
         # initialize a dictionary of iban numbers and
         # corresponding payment types
-        self.payment_types = dict(
-            [(pt.iban, pt) for pt in PaymentType.objects.all()])
+        self.payment_types = {}
+        for pt in PaymentType.objects.all():
+            try:
+                ibn = iban.compact(pt.iban)
+                self.payment_types[ibn] = pt
+            except Exception:
+                pass
 
     def _(self, text):
         """
@@ -108,7 +114,7 @@ class PaymentProcessor(object):
             return None
 
     def find_paymenttype(self, paymentinfo):
-        return self.payment_types.get(paymentinfo.credit_iban, None)
+        return self.payment_types.get(iban.compact(paymentinfo.credit_iban), None)
 
     def process_payments(self, payments):
         """

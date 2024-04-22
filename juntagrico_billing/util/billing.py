@@ -152,7 +152,8 @@ def group_billables_by_member(billable_items):
     parts_per_member = defaultdict(list)
 
     for part in billable_items:
-        parts_per_member[part.subscription.primary_member].append(part)
+        if part.subscription.primary_member:
+            parts_per_member[part.subscription.primary_member].append(part)
 
     return parts_per_member
 
