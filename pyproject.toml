@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=61.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "juntagrico-billing"
+description = "Send and manage bills in juntagrico."
+authors = [
+    {name = "juntagrico", email = "python@juntagrico.org"},
+]
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.8"
+dependencies = [
+    "juntagrico>=1.6.0",
+    "lxml>=4.9.3",
+    "python-stdnum>=1.16",
+    "qrbill>=1.1.0",
+    "svglib>=1.2.1",
+]
+classifiers = [
+    'Development Status :: 5 - Production/Stable',
+    'Environment :: Web Environment',
+    'Framework :: Django',
+    'Framework :: Django :: 4.2',
+    'Intended Audience :: Developers',
+    'Intended Audience :: Other Audience',
+    'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Topic :: Internet :: WWW/HTTP :: Site Management',
+]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://www.juntagrico.org"
+Issues = "https://github.com/juntagrico/juntagrico-billing/issues"
+
+[tool.setuptools.packages.find]
+include = ["juntagrico_billing*"]
+
+[tool.setuptools.dynamic]
+version = {attr = "juntagrico_billing.__version__"}
+
+[tool.ruff.lint]
+select = ["E", "F", "B"]
+ignore = ["E501"]

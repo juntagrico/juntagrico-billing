@@ -21,11 +21,13 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'impersonate',
     'crispy_forms',
+    'fontawesomefree',
+    'import_export',
     'adminsortable2',
     'djrichtextfield',
     'polymorphic',
-    'juntagrico',
     'juntagrico_billing',
+    'juntagrico',
 ]
 
 DATABASES = {
@@ -117,7 +119,7 @@ TEMPLATES = [
     },
 ]
 
-LOGIN_REDIRECT_URL = "/my/home"
+LOGIN_REDIRECT_URL = "/"
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
@@ -129,5 +131,6 @@ LOCALE_PATHS = (
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 CRISPY_FAIL_SILENTLY = not DEBUG
 
+IMPORT_EXPORT_EXPORT_PERMISSION_CODE = 'view'
 
 BILLS_USERMENU = True

@@ -1,8 +1,8 @@
 from django.db import IntegrityError, transaction
 from django.utils.translation import gettext
 from juntagrico.entity.member import Member
-from juntagrico_billing.entity.bill import Bill
-from juntagrico_billing.entity.payment import Payment, PaymentType
+from juntagrico_billing.models.bill import Bill
+from juntagrico_billing.models.payment import Payment, PaymentType
 from juntagrico_billing.util.qrbill import bill_id_from_refnumber
 from juntagrico_billing.util.qrbill import member_id_from_refnumber
 from stdnum import iban
@@ -148,7 +148,6 @@ class PaymentProcessor(object):
                         amount=pinfo.amount,
                         unique_id=pinfo.unique_id)
                     payment.save()
-                except IntegrityError:
+                except IntegrityError as err:
                     msg = 'Payment with unique id %s has already been imported.'
-                    raise PaymentProcessorError(
-                        self._(msg) % pinfo.unique_id)
+                    raise PaymentProcessorError(self._(msg) % pinfo.unique_id) from err

@@ -12,9 +12,8 @@ from juntagrico.util import return_to_previous_location
 from juntagrico.util.temporal import start_of_business_year, \
     start_of_next_business_year
 from juntagrico.util.xls import generate_excel
-from juntagrico_billing.dao.billdao import BillDao
-from juntagrico_billing.entity.bill import BusinessYear, Bill
-from juntagrico_billing.entity.settings import Settings
+from juntagrico_billing.models.bill import BusinessYear, Bill
+from juntagrico_billing.models.settings import Settings
 from juntagrico_billing.mailer import send_bill_notification
 from juntagrico_billing.util.billing import get_billable_subscription_parts, \
     group_billables_by_member, create_bills_for_items, get_open_bills, \
@@ -77,7 +76,7 @@ def bills_setyear(request):
 def bills_generate(request):
     # generate bills for current business year
     year_name = request.session['bills_businessyear']
-    year = BusinessYear.objects.filter(name=year_name).first()
+    year = BusinessYear.objects.by_name(year_name)
 
     billable_items = get_billable_subscription_parts(year)
 
@@ -268,7 +267,7 @@ def user_bills(request):
     member = request.user.member
     settings = Settings.objects.first()
     renderdict = {
-        'bills': BillDao.bills_for_member(member).order_by("-bill_date"),
+        'bills': Bill.objects.of_member(member).published().order_by("-bill_date"),
         'paymenttype': settings.default_paymenttype,
         'menu': {'bills': 'active'},
     }
@@ -358,7 +357,7 @@ def get_years_and_selected(request):
     if len(business_years) == 0:
         # add message 'no businessyear'
         messages = getattr(request, 'member_messages', []) or []
-        messages.append(get_template('messages/no_businessyear.html').render())
+        messages.append(get_template('jb/messages/no_businessyear.html').render())
         request.member_messages = messages
 
     # if no year set, choose most recent year

@@ -1,0 +1,14 @@
+{% extends "juntagrico/menu/user.html" %}
+{% load i18n %}
+{% load juntagrico.config %}
+{% block extend %}
+    {% config "bills_usermenu" as c_bills_usermenu %}
+    {% if c_bills_usermenu %}
+    <li class="nav-item">
+        <a class="nav-link {{ menu.bills }}" href="{% url 'jb:user-bills' %}">
+            {% trans "Bills" %}
+        </a>
+    </li>
+    {% endif %}
+    {{ block.super }}
+{% endblock %}

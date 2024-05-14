@@ -1,10 +1,13 @@
 import unittest
 from datetime import date
-from juntagrico_billing.entity.bill import Bill, BusinessYear
-from juntagrico_billing.entity.payment import Payment, PaymentType
+
+from django import test
+
+from juntagrico_billing.models.bill import Bill
+from juntagrico_billing.models.payment import Payment, PaymentType
 from juntagrico_billing.util.qrbill import bill_id_from_refnumber, member_id_from_refnumber
 from juntagrico_billing.util.payment_processor import PaymentProcessor, PaymentInfo, PaymentProcessorError
-from test.test_base import SubscriptionTestBase
+from . import BillingTestCase
 
 
 class ReferenceNumberTest(unittest.TestCase):
@@ -25,42 +28,38 @@ class ReferenceNumberTest(unittest.TestCase):
             member_id_from_refnumber('000001234567890112345678902'))
 
 
-class PaymentProcessorTest(SubscriptionTestBase):
-    def setUp(self):
+class PaymentProcessorTest(test.TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.businessyear = BillingTestCase.create_business_year()
         # create member and businessyear
-        self.member = self.create_member('Peter', 'Tester')
-
-        self.businessyear = BusinessYear.objects.create(
-            start_date=date(2018, 1, 1),
-            end_date=date(2018, 12, 31),
-            name="2018")
-        self.businessyear.save()
+        cls.member = BillingTestCase.create_billing_member('Peter', 'Tester')
 
         # create 2 paymenttypes
-        self.paymenttype1 = PaymentType.objects.create(
+        cls.paymenttype1 = PaymentType.objects.create(
             name="QR Account",
-            iban="CH7730000001250094239")
-        self.paymenttype1.save()
-        self.paymenttype2 = PaymentType.objects.create(
+            iban="CH7730000001250094239"
+        )
+        cls.paymenttype2 = PaymentType.objects.create(
             name="Other Account",
-            iban="CH2909000000250094239")
-        self.paymenttype2.save()
+            iban="CH2909000000250094239"
+        )
 
         # create 2 bills for member
-        bill_date1 = self.businessyear.start_date
-        self.bill1 = Bill.objects.create(
-            business_year=self.businessyear, amount=0.0,
-            member=self.member,
-            bill_date=bill_date1, booking_date=bill_date1)
-        self.bill1.save()
+        bill_date1 = cls.businessyear.start_date
+        cls.bill1 = Bill.objects.create(
+            business_year=cls.businessyear, amount=0.0,
+            member=cls.member,
+            bill_date=bill_date1, booking_date=bill_date1
+        )
         bill_date2 = date(2018, 4, 25)
-        self.bill2 = Bill.objects.create(
-            business_year=self.businessyear,
-            amount=0.0, member=self.member,
-            bill_date=bill_date2, booking_date=bill_date2)
-        self.bill2.save()
+        cls.bill2 = Bill.objects.create(
+            business_year=cls.businessyear,
+            amount=0.0, member=cls.member,
+            bill_date=bill_date2, booking_date=bill_date2
+        )
 
-        self.processor = PaymentProcessor(testing=True)
+        cls.processor = PaymentProcessor(testing=True)
 
     def test_check_payment_ok(self):
         """

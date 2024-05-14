@@ -29,24 +29,38 @@ or add it to your main django projects `requirements.txt`:
 You may also install from github source (or add it to `requirements.txt`):
 `pip install git+https://github.com/juntagrico/juntagrico-billing.git`
 
-In your `juntagrico.settings.py` add `juntagrico_billing`:
+In your `juntagrico.settings.py` add `juntagrico_billing` somewhere **above** `juntagrico`:
 ```python
 INSTALLED_APPS = (
+    'juntagrico_billing',
     'juntagrico',
     ...
-    'juntagrico_billing',
 ```
 
 In your urls.py you also need to add the new pattern:
 ```python
 urlpatterns = [
     ...
-    re_path(r'^',include('juntagrico_billing.urls')),
+    path('',include('juntagrico_billing.urls')),
 ]
 ```
 
 As the billing app introduces its own database tables, you need to apply migrations after installing.
 Execute `python manage.py migrate` in your main django project.
+
+## Configuration
+
+Set these in your `settings.py` to modify `juntagrico-billing`
+
+### BILLS_USERMENU
+  Set to True to add "bills" to the user menu.
+
+  default value: False
+
+### DUEDATE_NOTICE_URL
+  Set the url of a page that explains the due date policy of your bills, if you have any.
+
+  default value: ''
 
 ## Create settings object
 
