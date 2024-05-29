@@ -69,24 +69,29 @@ class PdfBillRenderer(object):
 
         self.render_payments(bill, story)
 
-        # payment notice
-        url = BillingConfig.duedate_notice_url()
-        if url:
-            text = _('The billed amount is due for payment according to ' + 'the due date notice found here:')
-            story.append(Paragraph(
-                f'{text} <link href="{url}">{url}</link>.',
-                self.text))
+        if bill.amount_open > 0:
+            # payment notice
+            url = BillingConfig.duedate_notice_url()
+            if url:
+                text = _('The billed amount is due for payment according to ' + 'the due date notice found here:')
+                story.append(Paragraph(
+                    f'{text} <link href="{url}">{url}</link>.',
+                    self.text))
 
-        self.render_payslip(bill, story)
+            self.render_payslip(bill, story)
+        else:
+            self.qrpayslip_drawing = None
 
         # build the pdf document
         # setting title and author prevents "anonymous" display
         # in certain pdf viewers (eg firefox)
-        doc = SimpleDocTemplate(
-            outfile,
-            title='',
-            author='',
-            bottomMargin=self.bottom_margin)
+        kwargs = {
+            'title': '',
+            'author': ''}
+        if self.qrpayslip_drawing:
+            kwargs['bottomMargin'] = self.bottom_margin
+
+        doc = SimpleDocTemplate(outfile, **kwargs)
 
         doc.build(
             story,
@@ -199,13 +204,14 @@ class PdfBillRenderer(object):
                 '',
                 Paragraph('%10.2f' % sum, self.normalright)))
 
-            if sum < bill.amount:
+            # total line
+            if sum != bill.amount:
                 lines.append((
                     Paragraph(_('Amount open yet'), self.normal),
                     '',
                     Paragraph(
                         '<b>%10.2f</b>' % (bill.amount - sum),
-                        self.normalright)))
+                        self.normalright)))            
 
             payments_table = Table(
                 lines, (4 * cm, None, 2 * cm),
@@ -213,7 +219,7 @@ class PdfBillRenderer(object):
 
             story.append(payments_table)
 
-            if sum >= bill.amount:
+            if bill.paid:
                 story.append(Paragraph(_('Bill paid completely'), self.normal))
 
     def render_payslip(self, bill, story):

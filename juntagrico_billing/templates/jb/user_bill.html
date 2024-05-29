@@ -78,24 +78,29 @@
         <div class="col-sm-2 text-right">{{ payment.amount | floatformat:2 }}</div>
     </div>    
     {% endfor %}
+    {% if open_amount != 0 %}
     <div class="row font-weight-bold mt-3">
-        {% if bill.paid %}
-        <div class="col">{% trans "Bill paid completely" %}</div>
-        {% else %}
         <div class="col-sm-5">{% trans "Amount open yet" %}:</div>
         <div class="col-sm-5"></div>
         <div class="col-sm-2 text-right">{{ open_amount | floatformat:2 }}</div>
         {% endif %}
     </div>
     {% endif %}
-    
+
+    {% if bill.paid %}
+    <div class="row">
+        <div class="col">{% trans "Bill paid completely" %}</div>
+    </div>
+    {% endif %}
+
     <div class="row my-3">
         <div class="col"><a href="{% url 'jb:user-bill-pdf' bill.pk  %}">{% trans "Download as PDF" %}</a></div>
     </div>
 
-    {% if qr_svg %}
+    {% if bill.amount_open > 0 %}
+        {% if qr_svg %}
 {{ qr_svg | safe }}
-    {% else %}
+        {% else %}
     <p class="mt-5">
         {% config "organisation_address" as addr %}
         {% trans "Please pay specifying bill number to:" %}<br>
@@ -104,6 +109,7 @@
         {% trans "in favor of" %}<br> 
         {{ addr.name }}, {{ addr.zip }} {{ addr.city }}
     </p>
+        {% endif %}
     {% endif %}   
 </div>
 
