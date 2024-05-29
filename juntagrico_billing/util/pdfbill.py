@@ -211,7 +211,7 @@ class PdfBillRenderer(object):
                     '',
                     Paragraph(
                         '<b>%10.2f</b>' % (bill.amount - sum),
-                        self.normalright)))            
+                        self.normalright)))
 
             payments_table = Table(
                 lines, (4 * cm, None, 2 * cm),
