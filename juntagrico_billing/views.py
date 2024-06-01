@@ -286,7 +286,10 @@ def user_bill(request, bill_id):
     settings = Settings.objects.first()
 
     # add QR-Bill part
-    qr_svg = get_qrbill_svg(bill, settings.default_paymenttype)
+    if bill.amount_open > 0:
+        qr_svg = get_qrbill_svg(bill, settings.default_paymenttype)
+    else:
+        qr_svg = None
 
     renderdict = {
         'member': bill.member,
