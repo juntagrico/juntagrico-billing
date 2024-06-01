@@ -185,13 +185,13 @@ class PdfBillRenderer(object):
         """
         render list of payments.
         """
+        sum = 0.0
+        lines = []
         if bill.payments.all():
             story.append(Paragraph('<b>%s %s</b>' % (
                 _('Payments per'),
                 self.date_format(datetime.date.today())), self.heading2))
 
-            lines = []
-            sum = 0.0
             for payment in bill.payments.all():
                 lines.append((
                     self.date_format(payment.paid_date),
@@ -204,23 +204,23 @@ class PdfBillRenderer(object):
                 '',
                 Paragraph('%10.2f' % sum, self.normalright)))
 
-            # total line
-            if sum != bill.amount:
-                lines.append((
-                    Paragraph(_('Amount open yet'), self.normal),
-                    '',
-                    Paragraph(
-                        '<b>%10.2f</b>' % (bill.amount - sum),
-                        self.normalright)))
+        # total line
+        if sum != bill.amount:
+            lines.append((
+                Paragraph(_('Amount open yet'), self.normal),
+                '',
+                Paragraph(
+                    '<b>%10.2f</b>' % (bill.amount - sum),
+                    self.normalright)))
 
-            payments_table = Table(
-                lines, (4 * cm, None, 2 * cm),
-                style=self.table_style)
+        payments_table = Table(
+            lines, (4 * cm, None, 2 * cm),
+            style=self.table_style)
 
-            story.append(payments_table)
+        story.append(payments_table)
 
-            if bill.paid:
-                story.append(Paragraph(_('Bill paid completely'), self.normal))
+        if bill.paid:
+            story.append(Paragraph(_('Bill paid completely'), self.normal))
 
     def render_payslip(self, bill, story):
         """
