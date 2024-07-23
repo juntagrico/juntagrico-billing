@@ -84,7 +84,7 @@ def get_qrbill_svg(bill, paymenttype):
         account=stdnum.iban.compact(paymenttype.iban),
         reference_number=refnr,
         additional_information=info,
-        amount=Decimal(bill.amount_open),
+        amount=Decimal(str(bill.amount_open)),
         creditor={
             'name': addr['name'],
             'line1': '%s %s' % (addr['street'], addr['number']),
