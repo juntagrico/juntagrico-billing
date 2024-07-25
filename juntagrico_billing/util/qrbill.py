@@ -1,4 +1,4 @@
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 from qrbill.bill import QRBill
 from stdnum.ch.esr import calc_check_digit, validate, compact
 import stdnum.iban
@@ -84,7 +84,7 @@ def get_qrbill_svg(bill, paymenttype):
         account=stdnum.iban.compact(paymenttype.iban),
         reference_number=refnr,
         additional_information=info,
-        amount=Decimal(str(bill.amount_open)),
+        amount=Decimal(bill.amount_open).quantize(Decimal('.01'), ROUND_HALF_UP),
         creditor={
             'name': addr['name'],
             'line1': '%s %s' % (addr['street'], addr['number']),
