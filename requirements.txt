@@ -1,3 +1,4 @@
 -e .
 coverage>=7.4.0
 ruff>=0.2.0
+python-bidi<0.5.0
