@@ -109,6 +109,7 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
+                'juntagrico.context_processors.vocabulary',
             ],
             'loaders': [
                 'django.template.loaders.filesystem.Loader',
@@ -132,5 +133,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 CRISPY_FAIL_SILENTLY = not DEBUG
 
 IMPORT_EXPORT_EXPORT_PERMISSION_CODE = 'view'
+
+ENABLE_SHARES = True
 
 BILLS_USERMENU = True
