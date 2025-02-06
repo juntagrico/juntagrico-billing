@@ -44,6 +44,7 @@ class BillAdmin(BaseAdmin):
     list_display = [
         'id', 'business_year', 'member', 'bill_date', 'item_kinds',
         'amount_f', 'amount_open_f', 'paid', 'published', 'user_bill_link']
+    list_filter = ['paid', 'published', 'notification_sent', 'business_year']
     inlines = [BillItemInline, PaymentInline, ]
     actions = [
         do_recalc_bill, do_publish_bills, set_notification_sent,
