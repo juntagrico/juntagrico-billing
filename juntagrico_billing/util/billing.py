@@ -164,7 +164,7 @@ def create_bills_for_items(billable_items, businessyear, bill_date):
     Creates a bill per member and adding the subscriptions and extrasubscriptions
     """
     # get current vat percentage from settings
-    vat_rate = Settings.objects.first().vat_percent / 100
+    vat_rate = round(Settings.objects.first().vat_percent / 100, 4)
 
     # get dictionary of billables per member
     items_per_member = group_billables_by_member(billable_items)
@@ -206,3 +206,16 @@ def publish_bills(id_list):
         bill = Bill.objects.get(pk=bill_id)
         bill.published = True
         bill.save()
+
+
+def update_vat(bill):
+    """
+    update the vat amount on a bill.
+    """
+    # get the current vat rate from settings
+    bill.vat_rate = round(Settings.objects.first().vat_percent / 100, 4)
+    bill.save()
+
+    # update the vat amount on all items
+    for itm in bill.items.all():
+        itm.save()

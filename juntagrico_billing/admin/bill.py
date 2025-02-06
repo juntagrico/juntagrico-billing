@@ -6,7 +6,7 @@ from juntagrico.admins import BaseAdmin
 
 from juntagrico_billing.admin.billitem_inline import BillItemInline
 from juntagrico_billing.admin.payment_inline import PaymentInline
-from juntagrico_billing.util.billing import recalc_bill, publish_bills
+from juntagrico_billing.util.billing import recalc_bill, publish_bills, update_vat
 
 
 def set_notification_sent(modeladmin, request, queryset):
@@ -39,15 +39,25 @@ def do_publish_bills(modeladmin, request, queryset):
 do_publish_bills.short_description = _("Publish bills")
 
 
+def do_update_vat(modeladmin, request, queryset):
+    for bill in queryset.all():
+        update_vat(bill)
+
+
+do_update_vat.short_description = _("Update VAT (from settings)")
+
+
 class BillAdmin(BaseAdmin):
     search_fields = ['id', 'member__first_name', 'member__last_name']
     list_display = [
         'id', 'business_year', 'member', 'bill_date', 'item_kinds',
         'amount_f', 'amount_open_f', 'paid', 'published', 'user_bill_link']
+    list_filter = ['paid', 'published', 'notification_sent', 'business_year']
+    readonly_fields = ['vat_rate', 'vat_amount', 'amount_paid', 'amount_open']
     inlines = [BillItemInline, PaymentInline, ]
     actions = [
         do_recalc_bill, do_publish_bills, set_notification_sent,
-        reset_notification_sent]
+        reset_notification_sent, do_update_vat]
 
     @display(description=_('Amount'))
     def amount_f(self, bill):
