@@ -212,7 +212,7 @@ def update_vat(bill):
     """
     update the vat amount on a bill.
     """
-    # get the current vat rate from settings 
+    # get the current vat rate from settings
     bill.vat_rate = round(Settings.objects.first().vat_percent / 100, 4)
     bill.save()
 
