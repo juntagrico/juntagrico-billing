@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-07 14:46+0100\n"
+"POT-Creation-Date: 2025-02-06 11:37+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,9 +34,13 @@ msgstr "Rechnungen neu berechnen"
 msgid "Publish bills"
 msgstr "Rechnungen veröffentlichen"
 
-#: .\juntagrico_billing\admin\bill.py:53 .\juntagrico_billing\entity\bill.py:52
-#: .\juntagrico_billing\entity\bill.py:176
-#: .\juntagrico_billing\entity\payment.py:20
+#: .\juntagrico_billing\admin\bill.py:47
+msgid "Update VAT (from settings)"
+msgstr "MWST aktualisieren (aus Einstellungen)"
+
+#: .\juntagrico_billing\admin\bill.py:62 .\juntagrico_billing\models\bill.py:56
+#: .\juntagrico_billing\models\bill.py:182
+#: .\juntagrico_billing\models\payment.py:22
 #: .\juntagrico_billing\templates\jb\bills_notify.html:38
 #: .\juntagrico_billing\templates\jb\open_bills.html:79
 #: .\juntagrico_billing\templates\jb\pending_bills.html:48
@@ -45,12 +49,12 @@ msgstr "Rechnungen veröffentlichen"
 msgid "Amount"
 msgstr "Betrag"
 
-#: .\juntagrico_billing\admin\bill.py:57 .\juntagrico_billing\entity\bill.py:71
+#: .\juntagrico_billing\admin\bill.py:66 .\juntagrico_billing\models\bill.py:77
 #: .\juntagrico_billing\templates\jb\open_bills.html:82
 msgid "Amount open"
 msgstr "Betrag offen"
 
-#: .\juntagrico_billing\admin\bill.py:68
+#: .\juntagrico_billing\admin\bill.py:77
 #: .\juntagrico_billing\templates\jb\open_bills.html:85
 #: .\juntagrico_billing\templates\jb\unpublished_bills.html:40
 msgid "User view"
@@ -60,32 +64,37 @@ msgstr "Benutzer Ansicht"
 msgid "item_kind"
 msgstr "Art"
 
-#: .\juntagrico_billing\entity\bill.py:15
+#: .\juntagrico_billing\mailer.py:27
+#, python-brace-format
+msgid "{0} Bill"
+msgstr "{0} Rechnung"
+
+#: .\juntagrico_billing\models\bill.py:17
 msgid "start date"
 msgstr "Startdatum"
 
-#: .\juntagrico_billing\entity\bill.py:16
+#: .\juntagrico_billing\models\bill.py:18
 msgid "end date"
 msgstr "Enddatum"
 
-#: .\juntagrico_billing\entity\bill.py:17
+#: .\juntagrico_billing\models\bill.py:19
 msgid "name"
 msgstr "Name"
 
-#: .\juntagrico_billing\entity\bill.py:23
-#: .\juntagrico_billing\entity\bill.py:40
+#: .\juntagrico_billing\models\bill.py:27
+#: .\juntagrico_billing\models\bill.py:44
 msgid "Business Year"
 msgstr "Geschäftsjahr"
 
-#: .\juntagrico_billing\entity\bill.py:24
+#: .\juntagrico_billing\models\bill.py:28
 msgid "Business Years"
 msgstr "Geschäftsjahre"
 
-#: .\juntagrico_billing\entity\bill.py:29
+#: .\juntagrico_billing\models\bill.py:33
 msgid "Businessyear end_date must be after start_date."
 msgstr "Geschäftsjahr Enddatum muss nach dem Startdatum sein."
 
-#: .\juntagrico_billing\entity\bill.py:45
+#: .\juntagrico_billing\models\bill.py:49
 #: .\juntagrico_billing\templates\jb\bills_notify.html:29
 #: .\juntagrico_billing\templates\jb\open_bills.html:70
 #: .\juntagrico_billing\templates\jb\pending_bills.html:42
@@ -93,152 +102,147 @@ msgstr "Geschäftsjahr Enddatum muss nach dem Startdatum sein."
 msgid "Member"
 msgstr "Mitglied"
 
-#: .\juntagrico_billing\entity\bill.py:48
+#: .\juntagrico_billing\models\bill.py:52
 msgid "Billing date"
 msgstr "Rechungsdatum"
 
-#: .\juntagrico_billing\entity\bill.py:50
+#: .\juntagrico_billing\models\bill.py:54
 msgid "Booking date"
 msgstr "Buchungsdatum"
 
-#: .\juntagrico_billing\entity\bill.py:53
+#: .\juntagrico_billing\models\bill.py:57
 #: .\juntagrico_billing\templates\jb\bills_notify.html:44
 #: .\juntagrico_billing\templates\jb\user_bills.html:27
 msgid "Paid"
 msgstr "Bezahlt"
 
-#: .\juntagrico_billing\entity\bill.py:54
+#: .\juntagrico_billing\models\bill.py:58
 msgid "Notes visible to {}"
 msgstr "Notizen sichtbar für {}"
 
-#: .\juntagrico_billing\entity\bill.py:55
-#: .\juntagrico_billing\entity\payment.py:23
+#: .\juntagrico_billing\models\bill.py:59
+#: .\juntagrico_billing\models\payment.py:25
 msgid "Notes not visible to {}"
 msgstr "Notizen nicht sichtbar für {}"
 
-#: .\juntagrico_billing\entity\bill.py:56
+#: .\juntagrico_billing\models\bill.py:60
 msgid "Published"
 msgstr "Veröffentlicht"
 
-#: .\juntagrico_billing\entity\bill.py:57
+#: .\juntagrico_billing\models\bill.py:61
 msgid "Notification sent"
 msgstr "Benachrichtigung versandt"
 
-#: .\juntagrico_billing\entity\bill.py:58
+#: .\juntagrico_billing\models\bill.py:62
 msgid "VAT Rate"
 msgstr "MWST Satz"
 
-#: .\juntagrico_billing\entity\bill.py:65
+#: .\juntagrico_billing\models\bill.py:71
 msgid "Amount paid"
 msgstr "Betrag bezahlt"
 
-#: .\juntagrico_billing\entity\bill.py:77
-#: .\juntagrico_billing\entity\bill.py:178
+#: .\juntagrico_billing\models\bill.py:83
+#: .\juntagrico_billing\models\bill.py:184
 msgid "VAT Amount"
 msgstr "MWST Betrag"
 
-#: .\juntagrico_billing\entity\bill.py:129
-#: .\juntagrico_billing\entity\bill.py:159
-#: .\juntagrico_billing\entity\payment.py:13
+#: .\juntagrico_billing\models\bill.py:135
+#: .\juntagrico_billing\models\bill.py:165
+#: .\juntagrico_billing\models\payment.py:15
 #: .\juntagrico_billing\templates\jb\user_bill.html:6
 #: .\juntagrico_billing\templates\jb\user_bill.html:29
-#: .\juntagrico_billing\util\pdfbill.py:129
+#: .\juntagrico_billing\util\pdfbill.py:134
 msgid "Bill"
 msgstr "Rechnung"
 
-#: .\juntagrico_billing\entity\bill.py:130
-#: .\juntagrico_billing\templates\jb\billing_user_menu.html:7
+#: .\juntagrico_billing\models\bill.py:136
 #: .\juntagrico_billing\templates\jb\user_bills.html:6
+#: .\juntagrico_billing\templates\juntagrico\menu\user.html:9
 msgid "Bills"
 msgstr "Rechnungen"
 
-#: .\juntagrico_billing\entity\bill.py:138
-#: .\juntagrico_billing\entity\payment.py:42
+#: .\juntagrico_billing\models\bill.py:144
+#: .\juntagrico_billing\models\payment.py:46
 msgid "Name"
 msgstr "Name"
 
-#: .\juntagrico_billing\entity\bill.py:139
-#: .\juntagrico_billing\entity\payment.py:44
+#: .\juntagrico_billing\models\bill.py:145
+#: .\juntagrico_billing\models\payment.py:48
 msgid "Booking account"
 msgstr "Buchungskonto"
 
-#: .\juntagrico_billing\entity\bill.py:145
+#: .\juntagrico_billing\models\bill.py:151
 msgid "Custom Bill-Item Type"
 msgstr "Rechnungsextra Typ"
 
-#: .\juntagrico_billing\entity\bill.py:146
+#: .\juntagrico_billing\models\bill.py:152
 msgid "Custom Bill-Item Types"
 msgstr "Rechnungsextra Typen"
 
-#: .\juntagrico_billing\entity\bill.py:166
+#: .\juntagrico_billing\models\bill.py:172
 msgid "{} Part"
 msgstr "{} Bestandteil"
 
-#: .\juntagrico_billing\entity\bill.py:172
+#: .\juntagrico_billing\models\bill.py:178
 msgid "Custom item type"
 msgstr "Extra Typ"
 
-#: .\juntagrico_billing\entity\bill.py:174
+#: .\juntagrico_billing\models\bill.py:180
 msgid "Description"
 msgstr "Beschreibung"
 
-#: .\juntagrico_billing\entity\bill.py:197 .\juntagrico_billing\views.py:132
+#: .\juntagrico_billing\models\bill.py:203 .\juntagrico_billing\views.py:132
 msgid "Extrasubscription"
 msgstr "Zusatzabo"
 
-#: .\juntagrico_billing\entity\bill.py:199 .\juntagrico_billing\views.py:134
+#: .\juntagrico_billing\models\bill.py:205 .\juntagrico_billing\views.py:134
 msgid "Subscription"
 msgstr "Abo"
 
-#: .\juntagrico_billing\entity\bill.py:205
+#: .\juntagrico_billing\models\bill.py:211
 msgid "Item kind"
 msgstr "Art"
 
-#: .\juntagrico_billing\entity\bill.py:208
+#: .\juntagrico_billing\models\bill.py:214
 msgid "Bill item"
 msgstr "Rechungsbestandteil"
 
-#: .\juntagrico_billing\entity\bill.py:209
+#: .\juntagrico_billing\models\bill.py:215
 msgid "Bill items"
 msgstr "Rechungsbestandteile"
 
-#: .\juntagrico_billing\entity\payment.py:17
-#: .\juntagrico_billing\entity\payment.py:50
+#: .\juntagrico_billing\models\payment.py:19
+#: .\juntagrico_billing\models\payment.py:54
 msgid "Payment type"
 msgstr "Zahlungstyp"
 
-#: .\juntagrico_billing\entity\payment.py:18
+#: .\juntagrico_billing\models\payment.py:20
 msgid "Payment date"
 msgstr "Zahlungsdatum"
 
-#: .\juntagrico_billing\entity\payment.py:26
+#: .\juntagrico_billing\models\payment.py:28
 msgid "Unique Id"
 msgstr "Eindeutige Id"
 
-#: .\juntagrico_billing\entity\payment.py:33
+#: .\juntagrico_billing\models\payment.py:37
 msgid "Payment"
 msgstr "Zahlung"
 
-#: .\juntagrico_billing\entity\payment.py:34
+#: .\juntagrico_billing\models\payment.py:38
 msgid "Payments"
 msgstr "Zahlungen"
 
-#: .\juntagrico_billing\entity\payment.py:51
+#: .\juntagrico_billing\models\payment.py:55
 msgid "Payment types"
 msgstr "Zahlungstypen"
 
-#: .\juntagrico_billing\entity\settings.py:16
+#: .\juntagrico_billing\models\settings.py:16
 msgid "VAT Number"
 msgstr "MWST Nummer"
 
-#: .\juntagrico_billing\entity\settings.py:17
+#: .\juntagrico_billing\models\settings.py:17
 msgid "VAT Percent"
 msgstr "MWST Prozent"
-
-#: .\juntagrico_billing\mailer.py:27
-#, python-brace-format
-msgid "{0} Bill"
-msgstr "{0} Rechnung"
 
 #: .\juntagrico_billing\templates\admin\juntagrico_billing\bill\change_form.html:7
 msgid "Recalculate bill"
@@ -248,38 +252,10 @@ msgstr "Rechnung neu berechnen"
 msgid "History"
 msgstr ""
 
-#: .\juntagrico_billing\templates\jb\billing_admin_menu.html:4
-msgid "Bills and Bookkeeping"
-msgstr "Rechnungen und Buchhaltung"
-
-#: .\juntagrico_billing\templates\jb\billing_admin_menu.html:8
-#: .\juntagrico_billing\templates\jb\pending_bills.html:6
-msgid "Pending bills"
-msgstr "Anstehende Rechnungen"
-
-#: .\juntagrico_billing\templates\jb\billing_admin_menu.html:11
-msgid "Unpublished bills"
-msgstr "Unveröffentlichte Rechnungen"
-
-#: .\juntagrico_billing\templates\jb\billing_admin_menu.html:14
-#: .\juntagrico_billing\templates\jb\open_bills.html:8
-msgid "Open bills"
-msgstr "Offene Rechnungen"
-
-#: .\juntagrico_billing\templates\jb\billing_admin_menu.html:17
 #: .\juntagrico_billing\templates\jb\bills_notify.html:7
+#: .\juntagrico_billing\templates\juntagrico\menu\admin.html:19
 msgid "Send billing notifications"
 msgstr "E-Mails für Rechnungen senden"
-
-#: .\juntagrico_billing\templates\jb\billing_admin_menu.html:20
-#: .\juntagrico_billing\templates\jb\payments_upload.html:5
-msgid "Import payments"
-msgstr "Zahlungen importieren"
-
-#: .\juntagrico_billing\templates\jb\billing_admin_menu.html:23
-#: .\juntagrico_billing\templates\jb\bookings_export.html:5
-msgid "Export bookings"
-msgstr "Buchungen exportieren"
 
 #: .\juntagrico_billing\templates\jb\bills_notify.html:13
 msgid "billing notifications to be sent"
@@ -314,6 +290,11 @@ msgstr "Datum"
 msgid "Paid Amount"
 msgstr "Bezahlter Betrag"
 
+#: .\juntagrico_billing\templates\jb\bookings_export.html:5
+#: .\juntagrico_billing\templates\juntagrico\menu\admin.html:25
+msgid "Export bookings"
+msgstr "Buchungen exportieren"
+
 #: .\juntagrico_billing\templates\jb\bookings_export.html:9
 msgid "Bookings Period"
 msgstr "Buchungs Zeitraum"
@@ -329,6 +310,86 @@ msgstr "Rechnungsbuchungen"
 #: .\juntagrico_billing\templates\jb\bookings_export.html:29
 msgid "Payment bookings"
 msgstr "Zahlungsbuchungen"
+
+#: .\juntagrico_billing\templates\jb\mails\bill_notification.txt:9
+#, python-format
+msgid "Dear %(fn)s"
+msgstr "Liebe(r) %(fn)s"
+
+#: .\juntagrico_billing\templates\jb\mails\bill_notification.txt:11
+#, python-format
+msgid "Your current %(organisation_name)s Bill is ready."
+msgstr "Deine aktuelle %(organisation_name)s Rechnung ist bereit."
+
+#: .\juntagrico_billing\templates\jb\mails\bill_notification.txt:12
+#, python-format
+msgid ""
+"\n"
+"Bill-Number:         %(number)s\n"
+"Period:              %(period)s\n"
+"Concerning:          %(concerning)s\n"
+"Amount:              %(currency)s %(amount)s"
+msgstr ""
+"\n"
+"Rechnungsnummer:     %(number)s\n"
+"Periode:             %(period)s\n"
+"Betreffend:          %(concerning)s\n"
+"Betrag:              %(currency)s %(amount)s "
+
+#: .\juntagrico_billing\templates\jb\mails\bill_notification.txt:18
+msgid "Find details on the website at"
+msgstr "Details dazu findest Du auf der Webseite unter"
+
+#: .\juntagrico_billing\templates\jb\mails\bill_notification.txt:20
+#: .\juntagrico_billing\templates\jb\user_bill.html:106
+msgid "Please pay specifying bill number to:"
+msgstr "Bitte einzahlen mit Angabe von Rechnungsnummer auf:"
+
+#: .\juntagrico_billing\templates\jb\mails\bill_notification.txt:23
+#, python-format
+msgid "Referencenumber: %(ref)s"
+msgstr "Referenznummer:  %(ref)s"
+
+#: .\juntagrico_billing\templates\jb\mails\bill_notification.txt:24
+#: .\juntagrico_billing\templates\jb\user_bill.html:109
+msgid "in favor of"
+msgstr "zugunsten von"
+
+#: .\juntagrico_billing\templates\jb\mails\bill_notification.txt:29
+#: .\juntagrico_billing\templates\jb\user_bill.html:64
+#: .\juntagrico_billing\util\pdfbill.py:76
+msgid ""
+"The billed amount is due for payment according to the due date notice found "
+"here:"
+msgstr ""
+"Die Fälligkeiten richten sich nach den Angaben im Fälligkeitshinweis, den du "
+"hier findest:"
+
+#: .\juntagrico_billing\templates\jb\mails\bill_notification.txt:32
+msgid ""
+"Please always specify the bill number with your payments to allow correct "
+"attribution."
+msgstr ""
+"Bitte bei Zahlungen immer die Rechnungsnummer angegeben, damit eine "
+"Zuordnung möglich ist."
+
+#: .\juntagrico_billing\templates\jb\mails\bill_notification.txt:34
+#, python-format
+msgid "Best regards, your %(organisation_name)s-Operations-Group."
+msgstr "Bis bald und liebe Grüsse, die %(organisation_name)s-Betriebsgruppe."
+
+#: .\juntagrico_billing\templates\jb\messages\no_businessyear.html:4
+msgid "There is no businessyear for bills defined."
+msgstr "Es ist kein Geschäftsjahr für Rechnungen definiert"
+
+#: .\juntagrico_billing\templates\jb\messages\no_businessyear.html:6
+msgid "Please create one in the data administration."
+msgstr "Bitte erstelle eines in der Datenadministration"
+
+#: .\juntagrico_billing\templates\jb\open_bills.html:8
+#: .\juntagrico_billing\templates\juntagrico\menu\admin.html:16
+msgid "Open bills"
+msgstr "Offene Rechnungen"
 
 #: .\juntagrico_billing\templates\jb\open_bills.html:14
 #: .\juntagrico_billing\templates\jb\pending_bills.html:12
@@ -367,6 +428,16 @@ msgstr ""
 "E-Mail Adressen wurden kopiert. Du kannst sie nun in einer E-Mail als BCC "
 "einsetzen."
 
+#: .\juntagrico_billing\templates\jb\payments_upload.html:5
+#: .\juntagrico_billing\templates\juntagrico\menu\admin.html:22
+msgid "Import payments"
+msgstr "Zahlungen importieren"
+
+#: .\juntagrico_billing\templates\jb\pending_bills.html:6
+#: .\juntagrico_billing\templates\juntagrico\menu\admin.html:10
+msgid "Pending bills"
+msgstr "Anstehende Rechnungen"
+
 #: .\juntagrico_billing\templates\jb\pending_bills.html:29
 msgid "pending bills for"
 msgstr "anstehende Rechnungen für"
@@ -396,60 +467,38 @@ msgid "Publish"
 msgstr "Veröffentlichen"
 
 #: .\juntagrico_billing\templates\jb\user_bill.html:37
-#: .\juntagrico_billing\util\pdfbill.py:137
+#: .\juntagrico_billing\util\pdfbill.py:142
 msgid "Period"
 msgstr "Periode"
 
 #: .\juntagrico_billing\templates\jb\user_bill.html:55
-#: .\juntagrico_billing\util\pdfbill.py:171
+#: .\juntagrico_billing\util\pdfbill.py:176
 msgid "Including VAT of"
 msgstr "Inklusive MWST von"
 
 #: .\juntagrico_billing\templates\jb\user_bill.html:56
-#: .\juntagrico_billing\util\pdfbill.py:174
+#: .\juntagrico_billing\util\pdfbill.py:179
 msgid "VAT Number:"
 msgstr "MWST Nummer:"
 
-#: .\juntagrico_billing\templates\jb\user_bill.html:64
-#: .\juntagrico_billing\templates\mails\bill_notification.txt:30
-#: .\juntagrico_billing\util\pdfbill.py:75
-msgid ""
-"The billed amount is due for payment according to the due date notice found "
-"here:"
-msgstr ""
-"Die Fälligkeiten richten sich nach den Angaben im Fälligkeitshinweis, den du "
-"hier findest:"
-
 #: .\juntagrico_billing\templates\jb\user_bill.html:73
-#: .\juntagrico_billing\util\pdfbill.py:185
+#: .\juntagrico_billing\util\pdfbill.py:192
 msgid "Payments per"
 msgstr "Zahlungen per"
 
-#: .\juntagrico_billing\templates\jb\user_bill.html:83
-#: .\juntagrico_billing\util\pdfbill.py:217
-msgid "Bill paid completely"
-msgstr "Rechnung komplett bezahlt"
-
-#: .\juntagrico_billing\templates\jb\user_bill.html:85
-#: .\juntagrico_billing\util\pdfbill.py:204
+#: .\juntagrico_billing\templates\jb\user_bill.html:84
+#: .\juntagrico_billing\util\pdfbill.py:210
 msgid "Amount open yet"
 msgstr "Betrag noch offen"
 
-#: .\juntagrico_billing\templates\jb\user_bill.html:93
+#: .\juntagrico_billing\templates\jb\user_bill.html:92
+#: .\juntagrico_billing\util\pdfbill.py:223
+msgid "Bill paid completely"
+msgstr "Rechnung komplett bezahlt"
+
+#: .\juntagrico_billing\templates\jb\user_bill.html:97
 msgid "Download as PDF"
 msgstr "Download als PDF"
-
-#: .\juntagrico_billing\templates\jb\user_bill.html:101
-#: .\juntagrico_billing\templates\mails\bill_notification.txt:20
-#: .\juntagrico_billing\util\pdfbill.py:249
-msgid "Please pay specifying bill number to:"
-msgstr "Bitte einzahlen mit Angabe von Rechnungsnummer auf:"
-
-#: .\juntagrico_billing\templates\jb\user_bill.html:104
-#: .\juntagrico_billing\templates\mails\bill_notification.txt:25
-#: .\juntagrico_billing\util\pdfbill.py:260
-msgid "in favor of"
-msgstr "zugunsten von"
 
 #: .\juntagrico_billing\templates\jb\user_bills.html:49
 msgid "Yes"
@@ -459,128 +508,13 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-#: .\juntagrico_billing\templates\mails\bill_extrasub.txt:7
-#: .\juntagrico_billing\templates\mails\bill_share.txt:10
-#, python-format
-msgid " Lieber %(fn)s"
-msgstr "Lieber %(fn)s"
+#: .\juntagrico_billing\templates\juntagrico\menu\admin.html:6
+msgid "Bills and Bookkeeping"
+msgstr "Rechnungen und Buchhaltung"
 
-#: .\juntagrico_billing\templates\mails\bill_extrasub.txt:9
-msgid "Hier die aktuelle Rechnung für dein Zusatzabo"
-msgstr "Hier die aktuelle Rechnung für dein Zusatzabo"
-
-#: .\juntagrico_billing\templates\mails\bill_extrasub.txt:11
-msgid "Typ"
-msgstr "Typ"
-
-#: .\juntagrico_billing\templates\mails\bill_extrasub.txt:12
-msgid "Start"
-msgstr "Start"
-
-#: .\juntagrico_billing\templates\mails\bill_extrasub.txt:13
-msgid "Ende"
-msgstr "Ende"
-
-#: .\juntagrico_billing\templates\mails\bill_extrasub.txt:14
-#: .\juntagrico_billing\templates\mails\bill_share.txt:14
-msgid "Betrag"
-msgstr "Betrag"
-
-#: .\juntagrico_billing\templates\mails\bill_extrasub.txt:15
-#: .\juntagrico_billing\templates\mails\bill_share.txt:15
-msgid "Referenznummer"
-msgstr "Referenznummer"
-
-#: .\juntagrico_billing\templates\mails\bill_extrasub.txt:16
-#: .\juntagrico_billing\templates\mails\bill_share.txt:16
-msgid "Kontonummer"
-msgstr "Kontonummer"
-
-#: .\juntagrico_billing\templates\mails\bill_extrasub.txt:18
-#, python-format
-msgid ""
-"Der Betrag ist Zahlbar bis %(end)s und kann in Teilzahlungen bezahlt werden. "
-"Bei Teilzahlungen bitte beachten immer die Referenznummer anzugeben, damit "
-"das System genau abrechnen kann."
-msgstr ""
-"Der Betrag ist Zahlbar bis %(end)s und kann in Teilzahlungen bezahlt werden. "
-"Bei Teilzahlungen bitte beachten immer die Referenznummer anzugeben, damit "
-"das System genau abrechnen kann."
-
-#: .\juntagrico_billing\templates\mails\bill_extrasub.txt:22
-#: .\juntagrico_billing\templates\mails\bill_share.txt:21
-#, python-format
-msgid "Bis bald und liebe Grüsse die %(c_organisation_name)s-Betriebsgruppe"
-msgstr "Bis bald und liebe Grüsse die %(c_organisation_name)s-Betriebsgruppe"
-
-#: .\juntagrico_billing\templates\mails\bill_notification.txt:9
-#, python-format
-msgid "Dear %(fn)s"
-msgstr "Liebe(r) %(fn)s"
-
-#: .\juntagrico_billing\templates\mails\bill_notification.txt:11
-#, python-format
-msgid "Your current %(organisation_name)s Bill is ready."
-msgstr "Deine aktuelle %(organisation_name)s Rechnung ist bereit."
-
-#: .\juntagrico_billing\templates\mails\bill_notification.txt:12
-#, python-format
-msgid ""
-"\n"
-"Bill-Number:         %(number)s\n"
-"Period:              %(period)s\n"
-"Concerning:          %(concerning)s\n"
-"Amount:              %(currency)s %(amount)s"
-msgstr ""
-"\n"
-"Rechnungsnummer:     %(number)s\n"
-"Periode:             %(period)s\n"
-"Betreffend:          %(concerning)s\n"
-"Betrag:              %(currency)s %(amount)s "
-
-#: .\juntagrico_billing\templates\mails\bill_notification.txt:18
-msgid "Find details on the website at"
-msgstr "Details dazu findest Du auf der Webseite unter"
-
-#: .\juntagrico_billing\templates\mails\bill_notification.txt:23
-msgid "Referencenumber: %(ref)s"
-msgstr "Referenznummer:  %(ref)s"
-
-#: .\juntagrico_billing\templates\mails\bill_notification.txt:33
-msgid ""
-"Please always specify the bill number with your payments to allow correct "
-"attribution."
-msgstr ""
-"Bitte bei Zahlungen immer die Rechnungsnummer angegeben, damit eine "
-"Zuordnung möglich ist."
-
-#: .\juntagrico_billing\templates\mails\bill_notification.txt:35
-#, python-format
-msgid "Best regards, your %(organisation_name)s-Operations-Group."
-msgstr "Bis bald und liebe Grüsse, die %(organisation_name)s-Betriebsgruppe."
-
-#: .\juntagrico_billing\templates\mails\bill_share.txt:12
-#, python-format
-msgid "Hier die Rechnung für 1 %(v_share)s"
-msgstr ""
-
-#: .\juntagrico_billing\templates\mails\bill_share.txt:18
-#, python-format
-msgid ""
-"Solange dein/e %(v_share)s nicht bezahlt wurde bist du nicht "
-"%(v_member_type)s bei %(v_d_enriched_organisation)s. Der Betrag kann in "
-"Teilzahlungen bezahlt werden.\n"
-"Bei Teilzahlungen bitte beachten immer die Referenznummer anzugeben, damit "
-"das System genau abrechnen kann."
-msgstr ""
-
-#: .\juntagrico_billing\templates\messages\no_businessyear.html:4
-msgid "There is no businessyear for bills defined."
-msgstr "Es ist kein Geschäftsjahr für Rechnungen definiert"
-
-#: .\juntagrico_billing\templates\messages\no_businessyear.html:6
-msgid "Please create one in the data administration."
-msgstr "Bitte erstelle eines in der Datenadministration"
+#: .\juntagrico_billing\templates\juntagrico\menu\admin.html:13
+msgid "Unpublished bills"
+msgstr "Unveröffentlichte Rechnungen"
 
 #: .\juntagrico_billing\util\bookings.py:53
 #: .\juntagrico_billing\util\bookings.py:93
@@ -591,7 +525,7 @@ msgstr "Rg"
 msgid "Pmt"
 msgstr "Zlg"
 
-#: .\juntagrico_billing\util\pdfbill.py:198
+#: .\juntagrico_billing\util\pdfbill.py:203
 msgid "Total payments"
 msgstr "Total Zahlungen"
 
@@ -621,3 +555,43 @@ msgid ""
 msgstr ""
 "Zahlungen erfolgreich importiert.\n"
 "%d Zahlungen wurden verarbeitet."
+
+#, python-format
+#~ msgid " Lieber %(fn)s"
+#~ msgstr "Lieber %(fn)s"
+
+#~ msgid "Hier die aktuelle Rechnung für dein Zusatzabo"
+#~ msgstr "Hier die aktuelle Rechnung für dein Zusatzabo"
+
+#~ msgid "Typ"
+#~ msgstr "Typ"
+
+#~ msgid "Start"
+#~ msgstr "Start"
+
+#~ msgid "Ende"
+#~ msgstr "Ende"
+
+#~ msgid "Betrag"
+#~ msgstr "Betrag"
+
+#~ msgid "Referenznummer"
+#~ msgstr "Referenznummer"
+
+#~ msgid "Kontonummer"
+#~ msgstr "Kontonummer"
+
+#, python-format
+#~ msgid ""
+#~ "Der Betrag ist Zahlbar bis %(end)s und kann in Teilzahlungen bezahlt "
+#~ "werden. Bei Teilzahlungen bitte beachten immer die Referenznummer "
+#~ "anzugeben, damit das System genau abrechnen kann."
+#~ msgstr ""
+#~ "Der Betrag ist Zahlbar bis %(end)s und kann in Teilzahlungen bezahlt "
+#~ "werden. Bei Teilzahlungen bitte beachten immer die Referenznummer "
+#~ "anzugeben, damit das System genau abrechnen kann."
+
+#, python-format
+#~ msgid "Bis bald und liebe Grüsse die %(c_organisation_name)s-Betriebsgruppe"
+#~ msgstr ""
+#~ "Bis bald und liebe Grüsse die %(c_organisation_name)s-Betriebsgruppe"
