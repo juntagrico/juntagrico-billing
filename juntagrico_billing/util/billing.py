@@ -2,9 +2,12 @@ from collections import defaultdict
 from datetime import date
 from decimal import Decimal
 
+from django.utils.translation import gettext as _
 from juntagrico.entity.subs import SubscriptionPart
+from django.contrib.messages import error
 
 from juntagrico_billing.models.bill import Bill, BillItem
+from juntagrico_billing.models.payment import Payment
 from juntagrico_billing.models.settings import Settings
 
 
@@ -219,3 +222,23 @@ def update_vat(bill):
     # update the vat amount on all items
     for itm in bill.items.all():
         itm.save()
+
+
+def add_balancing_payment(request, bill):
+    """
+    balance bill by adding a compensation payment (usually solidarity fund contribution)
+    """
+    # get the payment type from settings
+    balancing_paymenttype = Settings.objects.first().balancing_paymenttype
+    if not balancing_paymenttype:
+        error(request, _("No balancing payment type configured."))
+        return
+
+    # add a payment to balance the bill
+    if bill.amount_open:
+        payment = Payment.objects.create(bill=bill, amount=bill.amount_open,
+                                         paid_date=date.today(),
+                                         type=balancing_paymenttype)
+        payment.save()
+        bill.paid = True
+        bill.save()

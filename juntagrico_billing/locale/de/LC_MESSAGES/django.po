@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-26 22:56+0100\n"
+"POT-Creation-Date: 2025-02-27 00:09+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,19 +38,23 @@ msgstr "Rechnungen veröffentlichen"
 msgid "Update VAT (from settings)"
 msgstr "MWST aktualisieren (aus Einstellungen)"
 
-#: .\juntagrico_billing\admin\bill.py:51
-msgid "Open amount"
-msgstr ""
+#: .\juntagrico_billing\admin\bill.py:55
+msgid "Balance bill with compensation payment"
+msgstr "Rechnung mit Ausgleichszahlung ausgleichen"
 
-#: .\juntagrico_billing\admin\bill.py:56
+#: .\juntagrico_billing\admin\bill.py:59
+msgid "Open amount"
+msgstr "Offener Betrag"
+
+#: .\juntagrico_billing\admin\bill.py:64
 msgid "Open amount > 0"
 msgstr "Offener Betrag > 0"
 
-#: .\juntagrico_billing\admin\bill.py:57
+#: .\juntagrico_billing\admin\bill.py:65
 msgid "Open amount < 0 (overpaid)"
 msgstr "Offener Betrag < 0 (überbezahlt)"
 
-#: .\juntagrico_billing\admin\bill.py:81 .\juntagrico_billing\models\bill.py:56
+#: .\juntagrico_billing\admin\bill.py:89 .\juntagrico_billing\models\bill.py:56
 #: .\juntagrico_billing\models\bill.py:182
 #: .\juntagrico_billing\models\payment.py:22
 #: .\juntagrico_billing\templates\jb\bills_notify.html:38
@@ -61,12 +65,12 @@ msgstr "Offener Betrag < 0 (überbezahlt)"
 msgid "Amount"
 msgstr "Betrag"
 
-#: .\juntagrico_billing\admin\bill.py:85 .\juntagrico_billing\models\bill.py:77
+#: .\juntagrico_billing\admin\bill.py:93 .\juntagrico_billing\models\bill.py:77
 #: .\juntagrico_billing\templates\jb\open_bills.html:82
 msgid "Amount open"
 msgstr "Betrag offen"
 
-#: .\juntagrico_billing\admin\bill.py:96
+#: .\juntagrico_billing\admin\bill.py:104
 #: .\juntagrico_billing\templates\jb\open_bills.html:85
 #: .\juntagrico_billing\templates\jb\unpublished_bills.html:40
 msgid "User view"
@@ -248,11 +252,19 @@ msgstr "Zahlungen"
 msgid "Payment types"
 msgstr "Zahlungstypen"
 
-#: .\juntagrico_billing\models\settings.py:16
+#: .\juntagrico_billing\models\settings.py:13
+msgid "Default Payment Type"
+msgstr "Standard Zahlungstyp"
+
+#: .\juntagrico_billing\models\settings.py:17
+msgid "Balancing Payment Type"
+msgstr "Zahlungstyp für Rechnungsausgleich"
+
+#: .\juntagrico_billing\models\settings.py:20
 msgid "VAT Number"
 msgstr "MWST Nummer"
 
-#: .\juntagrico_billing\models\settings.py:17
+#: .\juntagrico_billing\models\settings.py:21
 msgid "VAT Percent"
 msgstr "MWST Prozent"
 
@@ -527,6 +539,10 @@ msgstr "Rechnungen und Buchhaltung"
 #: .\juntagrico_billing\templates\juntagrico\menu\admin.html:13
 msgid "Unpublished bills"
 msgstr "Unveröffentlichte Rechnungen"
+
+#: .\juntagrico_billing\util\billing.py:234
+msgid "No balancing payment type configured."
+msgstr ""
 
 #: .\juntagrico_billing\util\bookings.py:53
 #: .\juntagrico_billing\util\bookings.py:93

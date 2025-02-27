@@ -6,7 +6,7 @@ from juntagrico.admins import BaseAdmin
 
 from juntagrico_billing.admin.billitem_inline import BillItemInline
 from juntagrico_billing.admin.payment_inline import PaymentInline
-from juntagrico_billing.util.billing import recalc_bill, publish_bills, update_vat
+from juntagrico_billing.util.billing import recalc_bill, publish_bills, update_vat, add_balancing_payment
 
 
 def set_notification_sent(modeladmin, request, queryset):
@@ -47,6 +47,14 @@ def do_update_vat(modeladmin, request, queryset):
 do_update_vat.short_description = _("Update VAT (from settings)")
 
 
+def do_add_balancing_payment(modeladmin, request, queryset):
+    for bill in queryset.all():
+        add_balancing_payment(request, bill)
+
+
+do_add_balancing_payment.short_description = _("Balance bill with compensation payment")
+
+
 class OpenAmountFilter(SimpleListFilter):
     title = _('Open amount')
     parameter_name = 'open_amount_filter'
@@ -76,7 +84,7 @@ class BillAdmin(BaseAdmin):
     inlines = [BillItemInline, PaymentInline, ]
     actions = [
         do_recalc_bill, do_publish_bills, set_notification_sent,
-        reset_notification_sent, do_update_vat]
+        reset_notification_sent, do_update_vat, do_add_balancing_payment]
 
     @display(description=_('Amount'))
     def amount_f(self, bill):
