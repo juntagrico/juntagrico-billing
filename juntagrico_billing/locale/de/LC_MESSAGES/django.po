@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-27 00:09+0100\n"
+"POT-Creation-Date: 2025-02-27 16:11+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -402,6 +402,14 @@ msgstr ""
 msgid "Best regards, your %(organisation_name)s-Operations-Group."
 msgstr "Bis bald und liebe Grüsse, die %(organisation_name)s-Betriebsgruppe."
 
+#: .\juntagrico_billing\templates\jb\memberbalance_export.html:5
+msgid "Export member billing balances"
+msgstr "Saldoliste Mitglieder exportieren"
+
+#: .\juntagrico_billing\templates\jb\memberbalance_export.html:9
+msgid "Key date"
+msgstr "Stichdatum"
+
 #: .\juntagrico_billing\templates\jb\messages\no_businessyear.html:4
 msgid "There is no businessyear for bills defined."
 msgstr "Es ist kein Geschäftsjahr für Rechnungen definiert"
@@ -540,7 +548,11 @@ msgstr "Rechnungen und Buchhaltung"
 msgid "Unpublished bills"
 msgstr "Unveröffentlichte Rechnungen"
 
-#: .\juntagrico_billing\util\billing.py:234
+#: .\juntagrico_billing\templates\juntagrico\menu\admin.html:28
+msgid "Export member balances"
+msgstr "Saldoliste Mitglieder exportieren"
+
+#: .\juntagrico_billing\util\billing.py:237
 msgid "No balancing payment type configured."
 msgstr ""
 

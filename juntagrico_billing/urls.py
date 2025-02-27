@@ -17,6 +17,9 @@ urlpatterns = [
     # bookings export
     path('jb/bookings_export', views.bookings_export, name='bookings-export'),
 
+    # member balance export
+    path('jb/memberbalance_export', views.memberbalance_export, name='memberbalance-export'),
+
     # bills (user)
     path('jb/user_bills', views.user_bills, name='user-bills'),
     path('jb/user_bill/<int:bill_id>', views.user_bill, name='user-bill'),

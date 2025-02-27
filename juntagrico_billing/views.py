@@ -18,7 +18,7 @@ from juntagrico_billing.mailer import send_bill_notification
 from juntagrico_billing.util.billing import get_billable_subscription_parts, \
     group_billables_by_member, create_bills_for_items, get_open_bills, \
     scale_subscriptionpart_price, recalc_bill, get_unpublished_bills, \
-    publish_bills
+    publish_bills, export_memberbalance_sheet
 from juntagrico_billing.util.qrbill import get_qrbill_svg
 from juntagrico_billing.util.pdfbill import PdfBillRenderer
 from juntagrico_billing.util.bookings import get_bill_bookings, \
@@ -260,6 +260,44 @@ def export_bookings(bookings, filename):
     }
 
     return generate_excel(fields.items(), bookings, filename)
+
+
+class KeyDateForm(forms.Form):
+    keydate = forms.DateField(
+        widget=forms.DateInput(
+            attrs={'class': 'col-md-2 form-control',
+                   'id': 'id_keydate'}))
+
+
+@permission_required('juntagrico.is_book_keeper')
+def memberbalance_export(request):
+    """
+    Export member balances as excel file, specifying the key date
+    """
+    # determine end of last year as default key date
+    last_year = date.today() - timedelta(days=365)
+    end_of_last_year = date(last_year.year, 12, 31)
+    default_date = {
+        'keydate': end_of_last_year
+    }
+
+    if 'keydate' in request.GET:
+        # request with query parameter
+        keydate_form = KeyDateForm(request.GET)
+    else:
+        keydate_form = KeyDateForm(default_date)
+
+    # export button pressed and date fields OK -> do excel export
+    if ('export' in request.GET) and keydate_form.is_valid():
+        keydate = keydate_form.cleaned_data['keydate']
+        return export_memberbalance_sheet(request, keydate)
+
+    # otherwise return page
+    renderdict = {
+        'keydate_form': keydate_form,
+    }
+
+    return render(request, 'jb/memberbalance_export.html', renderdict)
 
 
 @login_required

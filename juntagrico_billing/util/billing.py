@@ -5,7 +5,10 @@ from decimal import Decimal
 from django.utils.translation import gettext as _
 from juntagrico.entity.subs import SubscriptionPart
 from django.contrib.messages import error
+from django.db.models import Sum, Q
 
+from juntagrico.util.xls import generate_excel
+from juntagrico.entity.member import Member
 from juntagrico_billing.models.bill import Bill, BillItem
 from juntagrico_billing.models.payment import Payment
 from juntagrico_billing.models.settings import Settings
@@ -242,3 +245,46 @@ def add_balancing_payment(request, bill):
         payment.save()
         bill.paid = True
         bill.save()
+
+
+def get_memberbalances(keydate):
+    """
+    get member balances for a given date.
+    """
+    members_billed_amount = Member.objects.annotate(
+        billed_amount=Sum('bills__amount', filter=Q(bills__booking_date__lte=keydate)),
+        ).filter(billed_amount__gt=0).values('id', 'first_name', 'last_name', 'billed_amount')
+    members_paid_amount = Member.objects.annotate(
+        paid_amount=Sum('bills__payments__amount', filter=Q(bills__payments__paid_date__lte=keydate)),
+        ).filter(paid_amount__gt=0).values('id', 'first_name', 'last_name', 'paid_amount')
+
+    member_dict = {}
+    for member in members_billed_amount:
+        member_dict[member['id']] = member
+
+    for member in members_paid_amount:
+        if member['id'] in member_dict:
+            member_dict[member['id']].update(member)
+
+    for member in member_dict.values():
+        member['balance'] = member.get('billed_amount', 0) - member.get('paid_amount', 0)
+
+    return sorted(member_dict.values(), key=lambda x: x['last_name'])
+
+
+def export_memberbalance_sheet(request, keydate):
+    """
+    Export a member balance sheet for a given date.
+    """
+    fields = {
+        'last_name': 'Nachname',
+        'first_name': 'Vorname',
+        'billed_amount': 'Rechnungen',
+        'paid_amount': 'Zahlungen',
+        'balance': 'Saldo'
+    }
+
+    filename = 'memberbalances_{}.xlsx'.format(keydate)
+    lines = get_memberbalances(keydate)
+
+    return generate_excel(fields.items(), lines, filename)
