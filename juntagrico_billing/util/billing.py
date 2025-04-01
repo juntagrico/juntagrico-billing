@@ -2,9 +2,15 @@ from collections import defaultdict
 from datetime import date
 from decimal import Decimal
 
+from django.utils.translation import gettext as _
 from juntagrico.entity.subs import SubscriptionPart
+from django.contrib.messages import error
+from django.db.models import Sum, Q
 
+from juntagrico.util.xls import generate_excel
+from juntagrico.entity.member import Member
 from juntagrico_billing.models.bill import Bill, BillItem
+from juntagrico_billing.models.payment import Payment
 from juntagrico_billing.models.settings import Settings
 
 
@@ -164,7 +170,7 @@ def create_bills_for_items(billable_items, businessyear, bill_date):
     Creates a bill per member and adding the subscriptions and extrasubscriptions
     """
     # get current vat percentage from settings
-    vat_rate = Settings.objects.first().vat_percent / 100
+    vat_rate = round(Settings.objects.first().vat_percent / 100, 4)
 
     # get dictionary of billables per member
     items_per_member = group_billables_by_member(billable_items)
@@ -206,3 +212,79 @@ def publish_bills(id_list):
         bill = Bill.objects.get(pk=bill_id)
         bill.published = True
         bill.save()
+
+
+def update_vat(bill):
+    """
+    update the vat amount on a bill.
+    """
+    # get the current vat rate from settings
+    bill.vat_rate = round(Settings.objects.first().vat_percent / 100, 4)
+    bill.save()
+
+    # update the vat amount on all items
+    for itm in bill.items.all():
+        itm.save()
+
+
+def add_balancing_payment(request, bill):
+    """
+    balance bill by adding a compensation payment (usually solidarity fund contribution)
+    """
+    # get the payment type from settings
+    balancing_paymenttype = Settings.objects.first().balancing_paymenttype
+    if not balancing_paymenttype:
+        error(request, _("No balancing payment type configured."))
+        return
+
+    # add a payment to balance the bill
+    if bill.amount_open:
+        payment = Payment.objects.create(bill=bill, amount=bill.amount_open,
+                                         paid_date=date.today(),
+                                         type=balancing_paymenttype)
+        payment.save()
+        bill.paid = True
+        bill.save()
+
+
+def get_memberbalances(keydate):
+    """
+    get member balances for a given date.
+    """
+    members_billed_amount = Member.objects.annotate(
+        billed_amount=Sum('bills__amount', filter=Q(bills__booking_date__lte=keydate)),
+        ).filter(billed_amount__gt=0).values('id', 'first_name', 'last_name', 'billed_amount')
+    members_paid_amount = Member.objects.annotate(
+        paid_amount=Sum('bills__payments__amount', filter=Q(bills__payments__paid_date__lte=keydate)),
+        ).filter(paid_amount__gt=0).values('id', 'first_name', 'last_name', 'paid_amount')
+
+    member_dict = {}
+    for member in members_billed_amount:
+        member_dict[member['id']] = member
+
+    for member in members_paid_amount:
+        if member['id'] in member_dict:
+            member_dict[member['id']].update(member)
+
+    for member in member_dict.values():
+        member['balance'] = member.get('billed_amount', 0) - member.get('paid_amount', 0)
+
+    return sorted(member_dict.values(), key=lambda x: x['last_name'])
+
+
+def export_memberbalance_sheet(request, keydate):
+    """
+    Export a member balance sheet for a given date.
+    """
+    fields = {
+        'last_name': 'Nachname',
+        'first_name': 'Vorname',
+        'billed_amount': 'Rechnungen',
+        'paid_amount': 'Zahlungen',
+        'balance': 'Saldo'
+    }
+
+    filename = 'memberbalances_{}.xlsx'.format(keydate)
+    lines = get_memberbalances(keydate)
+
+    return generate_excel(fields.items(), lines, filename)

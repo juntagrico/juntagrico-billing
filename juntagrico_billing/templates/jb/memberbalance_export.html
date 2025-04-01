@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load juntagrico.config %}
+{% block page_title %}
+    <h3>{% trans "Export member billing balances" %}</h3>
+{% endblock %}
+
+{% block content %}
+    <h4>{% trans "Key date" %}</h4>
+    <form class="form" method="GET">
+        <div class="form-row align-items-center">
+            <label class="col-md-1 col-form-label" for="id_keydate">Date</label>
+            {{ keydate_form.keydate }}
+            <button type="submit" name="export" class="col-md-2 form-control ml-2 btn btn-success">Export Excel</button>
+        </div>
+        {% if keydate_form.errors %}
+        <div class="alert alert-danger">{{ keydate_form.errors }}</div>
+        {% endif %}
+    </form>
+{% endblock %}

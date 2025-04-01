@@ -10,8 +10,12 @@ class Settings(models.Model):
         verbose_name_plural = "Settings"
 
     debtor_account = models.CharField('Debitor-Konto', max_length=10)
-    default_paymenttype = models.ForeignKey('PaymentType', null=True,
+    default_paymenttype = models.ForeignKey('PaymentType', null=True, verbose_name=_('Default Payment Type'),
                                             on_delete=models.SET_NULL)
+
+    balancing_paymenttype = models.ForeignKey('PaymentType', null=True, related_name='settings_balancing_paymenttype',
+                                              verbose_name=_('Balancing Payment Type'),
+                                              on_delete=models.SET_NULL)
 
     vat_number = models.CharField(_('VAT Number'), max_length=20, null=True, blank=True)
     vat_percent = models.FloatField(_('VAT Percent'), null=False, blank=False, default=0.0)
