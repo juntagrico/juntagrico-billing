@@ -1,0 +1,22 @@
+[
+{
+    "model": "juntagrico_billing.settings",
+    "pk": 1,
+    "fields": {
+        "debtor_account": "1100",
+        "default_paymenttype": 1,
+        "balancing_paymenttype": 1,
+        "vat_number": null,
+        "vat_percent": 8.1
+    }
+},
+{
+    "model": "juntagrico_billing.paymenttype",
+    "pk": 1,
+    "fields": {
+        "name": "Bankkonto",
+        "iban": "CH9689144645236232274",
+        "booking_account": "1010"
+    }
+}
+]
