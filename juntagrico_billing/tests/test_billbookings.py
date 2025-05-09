@@ -80,6 +80,28 @@ class BillBookingsTest(BillingTestCase):
         self.assertEquals('1010', booking.debit_account)
         self.assertEquals('4321', booking.member_account)
 
+    def test_negative_payment_bookings(self):
+        """
+        test negative payment bookings
+
+        booking amount should always be positive
+        and credit and debit account should be exchanged
+        """
+        self.payment1.amount = -500.0
+        self.payment1.save()
+
+        bookings = get_payment_bookings(self.year.start_date, self.year.end_date)
+
+        self.assertEquals(2, len(bookings))
+        booking = bookings[0]
+        self.assertEquals(date(2018, 2, 1), booking.date)
+        self.assertEquals('600001', booking.docnumber)
+        self.assertEquals("Zlg Rg 1: Abo, Zusatzabo Michael Test", booking.text)
+        self.assertEquals(500.0, booking.price)
+        self.assertEquals('1100', booking.debit_account)
+        self.assertEquals('1010', booking.credit_account)
+        self.assertEquals('4321', booking.member_account)
+
 
 class BillWithCustomItemBookingsTest(BillingTestCase):
     def test_get_bill_bookings(self):

@@ -83,7 +83,6 @@ def get_payment_bookings(fromdate, tilldate):
         bookings.append(booking)
 
         booking.date = payment.paid_date
-        booking.credit_account = debtor_account
 
         # docnumber is DOCNUMBER_OFFSET_PAYMENT + of bill*10 + sequence number of bill item
         booking.docnumber = str(DOCNUMBER_OFFSET_PAYMENT + payment.id)
@@ -91,9 +90,17 @@ def get_payment_bookings(fromdate, tilldate):
         bill = payment.bill
         # 'Pmt' and 'Bl' are short forms for payment and bill
         booking.text = "%s %s %d: %s %s" % (_('Pmt'), _('Bl'), bill.id, bill.item_kinds, bill.member)
-        # todo where to get bank account from?
-        booking.debit_account = payment.type.booking_account
-        booking.price = payment.amount
+
+        if payment.amount >= 0:
+            booking.price = payment.amount
+            booking.debit_account = payment.type.booking_account
+            booking.credit_account = debtor_account
+        else:
+            # negative amount: exchange accounts and set positive amount
+            booking.price = -payment.amount
+            booking.debit_account = debtor_account
+            booking.credit_account = payment.type.booking_account
+
         if hasattr(payment.bill.member, "member_account"):
             booking.member_account = payment.bill.member.member_account.account
         else:
