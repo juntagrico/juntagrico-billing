@@ -102,6 +102,7 @@ class BillBookingsTest(BillingTestCase):
         self.assertEquals('1010', booking.credit_account)
         self.assertEquals('4321', booking.member_account)
 
+
 class BillWithCustomItemBookingsTest(BillingTestCase):
     def test_get_bill_bookings(self):
         item_type1 = BillItemType(name='Custom Item 1', booking_account='2211')
