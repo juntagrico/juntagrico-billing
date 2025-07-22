@@ -10,7 +10,27 @@ DOCNUMBER_OFFSET_PAYMENT = 600000
 
 
 class Booking(object):
-    pass
+    def __init__(self, date=None, docnumber=None, text=None, debit_account=None,
+                 credit_account=None, price=0.0, vat_amount=0.0):
+        self.date = date
+        self.docnumber = docnumber
+        self.text = text
+        self.debit_account = debit_account
+        self.credit_account = credit_account
+        self.price = price
+        self.vat_amount = vat_amount
+
+    def to_dict(self):
+        return {
+            "date": self.date,
+            "docnumber": self.docnumber,
+            "text": self.text,
+            "debit_account": self.debit_account,
+            "credit_account": self.credit_account,
+            "member_account": self.member_account,
+            "price": self.price,
+            "vat_amount": self.vat_amount
+        }
 
 
 def get_bill_bookings(fromdate, tilldate):
