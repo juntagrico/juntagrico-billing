@@ -1,6 +1,3 @@
-from requests import Session
-from juntagrico_billing.util.bookings import Booking
-
 
 class BexioExporter:
     """
@@ -85,57 +82,3 @@ class BexioExporter:
                 booking1.text == booking2.text)
 
 
-class BexioApiClient:
-    """
-    A client to interact with the Bexio API.
-    """
-
-    def __init__(self, api_key):
-        """
-        Initializes the BexioApiClient with an API key.
-
-        :param api_key: The API key to authenticate with Bexio.
-        """
-        self.api_key = api_key
-        self.session = Session()
-        self.session.headers.update({"Authorization": f"Bearer {self.api_key}"})
-
-    def get_existing_bookings(self, from_date, till_date):
-        """
-        Fetches existing bookings from Bexio within the specified date range.
-
-        :param from_date: The start date for the bookings to fetch.
-        :param till_date: The end date for the bookings to fetch.
-        :return: A list of existing bookings.
-        """
-        response = self.session.get(f"https://api.bexio.com/2.0/bookings?from={from_date}&to={till_date}")
-        response.raise_for_status()
-        return [Booking(**data) for data in response.json()]
-
-    def create_booking(self, booking):
-        """
-        Creates a new booking in Bexio.
-
-        :param booking: The booking to create.
-        """
-        response = self.session.post("https://api.bexio.com/2.0/bookings", json=booking.to_dict())
-        response.raise_for_status()
-
-    def update_booking(self, existing_booking, new_booking):
-        """
-        Updates an existing booking in Bexio.
-
-        :param existing_booking: The existing booking to update.
-        :param new_booking: The new booking data.
-        """
-        response = self.session.put(f"https://api.bexio.com/2.0/bookings/{existing_booking.id}", json=new_booking.to_dict())
-        response.raise_for_status()
-
-    def delete_booking(self, booking):
-        """
-        Deletes a booking from Bexio.
-
-        :param booking: The booking to delete.
-        """
-        response = self.session.delete(f"https://api.bexio.com/2.0/bookings/{booking.id}")
-        response.raise_for_status()
