@@ -6,8 +6,20 @@
 {% endblock %}
 
 {% block content %}
+    {% for message in messages %}
+        {%if message.tags == "error" %}
+        <div class="alert alert-danger alert-dismissible fade show">
+        {% else %}
+        <div class="alert alert-success alert-dismissible fade show">
+        {% endif %}
+            {{ message | linebreaks }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+    {% endfor %}
+
     <h4>{% trans "Bookings Period" %}</h4>
-    <form class="form" method="GET">
+    <form class="form" method="POST">
+        {% csrf_token %}
         <div class="form-row align-items-center">
             <label class="col-md-1 col-form-label" for="id_fromdate">Von</label>
             {{ daterange_form.fromdate }}
@@ -28,8 +40,13 @@
             <div class="col-md-1">{{ payment_bookings_count }}</div>
             <div class="col-md-10">{% trans "Payment bookings" %}</div>  
         </div>
-            <div class="form-group">
+        <div class="form-row">
             <button type="submit" name="export" class="col-md-2 mt-3 btn btn-success">Download Excel</button>
+        </div>
+        <div class="form-row align-items-center mt-3" >
+            <button type="submit" name="export_bexio" class="col-md-2 btn btn-success">Export to Bexio</button>
+            <div class="col-md-2 ml-4 col-form-label">Access token</div>
+            <input class="col" name="bexio_token"/>
         </div>
     </form>
 {% endblock %}

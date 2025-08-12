@@ -2,6 +2,7 @@ from datetime import date, timedelta
 
 from django import forms
 from django.contrib.auth.decorators import permission_required, login_required
+from django.contrib.messages import success, error
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import get_template
@@ -23,6 +24,8 @@ from juntagrico_billing.util.qrbill import get_qrbill_svg
 from juntagrico_billing.util.pdfbill import PdfBillRenderer
 from juntagrico_billing.util.bookings import get_bill_bookings, \
     get_payment_bookings
+from juntagrico_billing.util.bexio_exporter import BexioExporter
+from juntagrico_billing.util.bexio_api import BexioApiClient
 from django.utils.translation import gettext as _
 
 
@@ -212,30 +215,36 @@ def bookings_export(request):
     }
 
     # daterange for bookings export
-    if 'fromdate' in request.GET and 'tilldate' in request.GET:
+    if 'fromdate' in request.POST and 'tilldate' in request.POST:
         # request with query parameter
-        daterange_form = DateRangeForm(request.GET)
+        daterange_form = DateRangeForm(request.POST)
     else:
         daterange_form = DateRangeForm(default_range)
 
     if daterange_form.is_valid():
         fromdate = daterange_form.cleaned_data['fromdate']
         tilldate = daterange_form.cleaned_data['tilldate']
-        bill_bookings = get_bill_bookings(fromdate, tilldate)
-        payment_bookings = get_payment_bookings(fromdate, tilldate)
+        bill_bookings = sorted(get_bill_bookings(fromdate, tilldate),
+                               key=lambda bk: (bk.date, bk.docnumber))
+        payment_bookings = sorted(get_payment_bookings(fromdate, tilldate),
+                                  key=lambda bk: (bk.date, bk.docnumber))
     else:
         bill_bookings = []
         payment_bookings = []
 
     # export button pressed and date fields OK -> do excel export
-    if ('export' in request.GET) and daterange_form.is_valid():
-        # sort bookings on date and docnumber
-        bill_bookings_sorted = sorted(
-            bill_bookings, key=lambda bk: (bk.date, bk.docnumber))
-        payment_bookings_sorted = sorted(
-            payment_bookings, key=lambda bk: (bk.date, bk.docnumber))
+    if ('export' in request.POST) and daterange_form.is_valid():
         return export_bookings(
-            bill_bookings_sorted + payment_bookings_sorted, "bookings")
+            bill_bookings + payment_bookings, "bookings")
+    
+    # export to bexio
+    if ('export_bexio' in request.POST) and daterange_form.is_valid():
+        token = request.POST['bexio_token']
+        if token:
+            success(request, f"Bexio Export with Token {token}")
+        else:
+            error(request, f"Please specify a Bexio access token")
+        return redirect("jb:bookings-export")
 
     # otherwise return page
     renderdict = {
@@ -260,6 +269,12 @@ def export_bookings(bookings, filename):
     }
 
     return generate_excel(fields.items(), bookings, filename)
+
+
+def export_bookings_bexio(bookings, access_token):
+    api = BexioApiClient(access_token)
+    exporter = BexioExporter(api)
+    exporter.export_bookings(bookings)
 
 
 class KeyDateForm(forms.Form):
