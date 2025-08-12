@@ -4,7 +4,7 @@ class BexioExporter:
     A class to handle exporting bookings to Bexio (https://www.bexio.com).
     """
 
-    def __init__(self, api_client, from_date=None, till_date=None):
+    def __init__(self, api_client, from_date=None, till_date=None, filter_account=None):
         """
         Initializes the BexioExporter with an API client.
 
@@ -13,6 +13,7 @@ class BexioExporter:
         self.api_client = api_client
         self.from_date = from_date
         self.till_date = till_date
+        self.filter_account = filter_account
 
     def export_bookings(self, bookings):
         """
@@ -26,9 +27,12 @@ class BexioExporter:
         :param bookings: The list of bookings to be exported.
         :return: Response from the Bexio API.
         """
-        existing_bookings = self.api_client.get_existing_bookings(self.from_date, self.till_date)
+        try:
+            existing_bookings = self.api_client.get_existing_bookings(self.from_date, self.till_date, self.filter_account)
 
-        return self.sync_bookings(existing_bookings, bookings)
+            return (self.sync_bookings(existing_bookings, bookings), "OK")
+        except Exception as e:
+            return (None, str(e))
 
     def sync_bookings(self, existing_bookings, new_bookings):
         """
@@ -68,6 +72,7 @@ class BexioExporter:
     def bookings_are_equal(self, booking1, booking2):
         """
         Compares two bookings to determine if they are equal.
+        VAT amount is not considered for comparison.
 
         :param booking1: The first booking to compare.
         :param booking2: The second booking to compare.
@@ -75,7 +80,6 @@ class BexioExporter:
         """
         return (booking1.docnumber == booking2.docnumber and
                 booking1.price == booking2.price and
-                booking1.vat_amount == booking2.vat_amount and
                 booking1.date == booking2.date and
                 booking1.debit_account == booking2.debit_account and
                 booking1.credit_account == booking2.credit_account and

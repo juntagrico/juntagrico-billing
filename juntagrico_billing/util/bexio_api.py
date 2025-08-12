@@ -55,25 +55,45 @@ class BexioApiClient:
             "entries": [
                 {
                     "description": booking.text,
-                    "debit_account_id": self.account_ids_by_number[booking.debit_account],
-                    "credit_account_id": self.account_ids_by_number[booking.credit_account],
+                    "debit_account_id": self.get_account_id(booking.debit_account),
+                    "credit_account_id": self.get_account_id(booking.credit_account),
                     "amount": booking.price,
                     "tax_amount": booking.vat_amount,
-                    "currency_id": self.currency_ids["CHF"],  
+                    "currency_id": self.get_currency_id("CHF"),  
                 }
             ]
         }
     
-    def get_existing_bookings(self, from_date, till_date):
+    def get_account_id(self, account_nr):
+        try:
+            return self.account_ids_by_number[account_nr]
+        except KeyError:
+            raise Exception(f"Unknown account number {account_nr}")
+        
+    def get_account_nummber(self, account_id):
+        if not account_id:
+            raise Exception( "entry has empty account_id" )
+        return self.accounts_by_id[account_id]
+            
+    
+    def get_currency_id(self, currency_name):
+        try:
+            return self.currency_ids[currency_name]
+        except KeyError:
+            raise Exception(f"Unknown currency {currency_name}")
+
+    def get_existing_bookings(self, from_date, till_date, filter_account):
         """
         Fetches existing bookings from Bexio within the specified date range.
 
         :param from_date: The start date for the bookings to fetch.
         :param till_date: The end date for the bookings to fetch.
+        :param account: acount for filtering, must appear on either side of booking.
         :return: A list of existing bookings.
         """
         self.load_base_data()
 
+        # todo: support more than 2000 manual entries
         response = self.session.get("https://api.bexio.com/3.0/accounting/manual_entries",
                                     params={"limit": 2000})
         response.raise_for_status()
@@ -84,16 +104,24 @@ class BexioApiClient:
 
             # only consider first entry in envelope
             entry = entries[0]
+
+            # filter by date range
             entry_date = date.fromisoformat(entry['date'])
             if not (from_date <= entry_date <= till_date):
+                continue
+
+            # only load entries affecting the given account
+            debit_account = self.accounts_by_id.get(entry['debit_account_id'])
+            credit_account = self.accounts_by_id.get(entry['credit_account_id'])
+            if filter_account and (filter_account not in (debit_account, credit_account)):
                 continue
 
             booking = Booking(
                 entry_date,
                 envelope['reference_nr'],
                 entry['description'],
-                self.accounts_by_id.get(entry['debit_account_id']),
-                self.accounts_by_id.get(entry['credit_account_id']),
+                debit_account,
+                credit_account,
                 entry['amount'],
                 entry.get('tax_amount', 0.0)
             )
