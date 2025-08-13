@@ -214,8 +214,6 @@ def bookings_export(request):
         'tilldate': start_of_next_business_year() - timedelta(1)
     }
 
-    settings = Settings.objects.first()
-
     # daterange for bookings export
     if 'fromdate' in request.POST and 'tilldate' in request.POST:
         # request with query parameter
@@ -244,7 +242,7 @@ def bookings_export(request):
         token = request.POST['bexio_token']
         if token:
             api_client = BexioApiClient(token)
-            exporter = BexioExporter(api_client, fromdate, tilldate, settings.debtor_account)
+            exporter = BexioExporter(api_client, fromdate, tilldate)
             result, message = exporter.export_bookings(bill_bookings + payment_bookings)
             if result:
                 success(request, f"Export to Bexio successful.\n{result['created']} created\n{result['updated']} updated\n{result['deleted']} deleted")

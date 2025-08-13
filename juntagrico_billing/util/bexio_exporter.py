@@ -4,7 +4,7 @@ class BexioExporter:
     A class to handle exporting bookings to Bexio (https://www.bexio.com).
     """
 
-    def __init__(self, api_client, from_date=None, till_date=None, filter_account=None):
+    def __init__(self, api_client, from_date=None, till_date=None):
         """
         Initializes the BexioExporter with an API client.
 
@@ -13,7 +13,6 @@ class BexioExporter:
         self.api_client = api_client
         self.from_date = from_date
         self.till_date = till_date
-        self.filter_account = filter_account
 
     def export_bookings(self, bookings):
         """
@@ -28,7 +27,7 @@ class BexioExporter:
         :return: Response from the Bexio API.
         """
         try:
-            existing_bookings = self.api_client.get_existing_bookings(self.from_date, self.till_date, self.filter_account)
+            existing_bookings = self.api_client.get_existing_bookings(self.from_date, self.till_date)
 
             return (self.sync_bookings(existing_bookings, bookings), "OK")
         except Exception as e:

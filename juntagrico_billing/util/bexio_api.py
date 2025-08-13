@@ -1,3 +1,4 @@
+import re
 from requests import Session
 from datetime import date
 
@@ -51,10 +52,9 @@ class BexioApiClient:
         return {
             "type": "manual_single_entry",
             "date": booking.date.isoformat(),
-            "reference_nr": booking.docnumber,
             "entries": [
                 {
-                    "description": booking.text,
+                    "description": f"{booking.text} jb:{booking.docnumber}",  # add juntagrico billing docnumber to text
                     "debit_account_id": self.get_account_id(booking.debit_account),
                     "credit_account_id": self.get_account_id(booking.credit_account),
                     "amount": booking.price,
@@ -82,7 +82,7 @@ class BexioApiClient:
         except KeyError:
             raise Exception(f"Unknown currency {currency_name}")
 
-    def get_existing_bookings(self, from_date, till_date, filter_account):
+    def get_existing_bookings(self, from_date, till_date):
         """
         Fetches existing bookings from Bexio within the specified date range.
 
@@ -98,6 +98,9 @@ class BexioApiClient:
                                     params={"limit": 2000})
         response.raise_for_status()
 
+        # prepare regex for docnumber matching
+        docnum_regex = re.compile(r'(.+) jb:(\d+)$')
+
         result = []
         for envelope in response.json():
             entries = envelope.get('entries', [])
@@ -110,16 +113,22 @@ class BexioApiClient:
             if not (from_date <= entry_date <= till_date):
                 continue
 
-            # only load entries affecting the given account
+            # parse docnumber from entry description
+            m = docnum_regex.match(entry['description'])
+
+            # only consider entries where the description ends with jb:<docnumber>
+            if not m:
+                continue
+
+            text = m.group(1)
+            docnum = m.group(2)
             debit_account = self.accounts_by_id.get(entry['debit_account_id'])
             credit_account = self.accounts_by_id.get(entry['credit_account_id'])
-            if filter_account and (filter_account not in (debit_account, credit_account)):
-                continue
 
             booking = Booking(
                 entry_date,
-                envelope['reference_nr'],
-                entry['description'],
+                docnum,
+                text,
                 debit_account,
                 credit_account,
                 entry['amount'],
