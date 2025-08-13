@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-27 16:11+0100\n"
+"POT-Creation-Date: 2025-08-13 13:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -133,11 +133,13 @@ msgid "Paid"
 msgstr "Bezahlt"
 
 #: .\juntagrico_billing\models\bill.py:58
+#, python-brace-format
 msgid "Notes visible to {}"
 msgstr "Notizen sichtbar für {}"
 
 #: .\juntagrico_billing\models\bill.py:59
 #: .\juntagrico_billing\models\payment.py:25
+#, python-brace-format
 msgid "Notes not visible to {}"
 msgstr "Notizen nicht sichtbar für {}"
 
@@ -196,6 +198,7 @@ msgid "Custom Bill-Item Types"
 msgstr "Rechnungsextra Typen"
 
 #: .\juntagrico_billing\models\bill.py:172
+#, python-brace-format
 msgid "{} Part"
 msgstr "{} Bestandteil"
 
@@ -207,11 +210,11 @@ msgstr "Extra Typ"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: .\juntagrico_billing\models\bill.py:203 .\juntagrico_billing\views.py:132
+#: .\juntagrico_billing\models\bill.py:203 .\juntagrico_billing\views.py:135
 msgid "Extrasubscription"
 msgstr "Zusatzabo"
 
-#: .\juntagrico_billing\models\bill.py:205 .\juntagrico_billing\views.py:134
+#: .\juntagrico_billing\models\bill.py:205 .\juntagrico_billing\views.py:137
 msgid "Subscription"
 msgstr "Abo"
 
@@ -319,21 +322,29 @@ msgstr "Bezahlter Betrag"
 msgid "Export bookings"
 msgstr "Buchungen exportieren"
 
-#: .\juntagrico_billing\templates\jb\bookings_export.html:9
+#: .\juntagrico_billing\templates\jb\bookings_export.html:20
 msgid "Bookings Period"
 msgstr "Buchungs Zeitraum"
 
-#: .\juntagrico_billing\templates\jb\bookings_export.html:22
+#: .\juntagrico_billing\templates\jb\bookings_export.html:34
 msgid "Preview"
 msgstr "Vorschau"
 
-#: .\juntagrico_billing\templates\jb\bookings_export.html:25
+#: .\juntagrico_billing\templates\jb\bookings_export.html:37
 msgid "Bill bookings"
 msgstr "Rechnungsbuchungen"
 
-#: .\juntagrico_billing\templates\jb\bookings_export.html:29
+#: .\juntagrico_billing\templates\jb\bookings_export.html:41
 msgid "Payment bookings"
 msgstr "Zahlungsbuchungen"
+
+#: .\juntagrico_billing\templates\jb\bookings_export.html:49
+msgid "Export to Bexio"
+msgstr "Export zu Bexio"
+
+#: .\juntagrico_billing\templates\jb\bookings_export.html:50
+msgid "Access token"
+msgstr "Zugriffs-Token"
 
 #: .\juntagrico_billing\templates\jb\mails\bill_notification.txt:9
 #, python-format
@@ -556,18 +567,30 @@ msgstr "Saldoliste Mitglieder exportieren"
 msgid "No balancing payment type configured."
 msgstr ""
 
-#: .\juntagrico_billing\util\bookings.py:53
-#: .\juntagrico_billing\util\bookings.py:93
+#: .\juntagrico_billing\util\bookings.py:73
+#: .\juntagrico_billing\util\bookings.py:112
 msgid "Bl"
 msgstr "Rg"
 
-#: .\juntagrico_billing\util\bookings.py:93
+#: .\juntagrico_billing\util\bookings.py:112
 msgid "Pmt"
 msgstr "Zlg"
 
 #: .\juntagrico_billing\util\pdfbill.py:203
 msgid "Total payments"
 msgstr "Total Zahlungen"
+
+#: .\juntagrico_billing\views.py:248
+msgid "Export to Bexio successful"
+msgstr "Export zu Bexio erfolgreich"
+
+#: .\juntagrico_billing\views.py:250
+msgid "Export to Bexio failed"
+msgstr "Export zu Bexio fehlgeschlagen"
+
+#: .\juntagrico_billing\views.py:252
+msgid "Please specify a Bexio access token"
+msgstr "Bitte ein Bexio Zugriffs-Token angeben"
 
 #: .\juntagrico_billing\views_payment.py:43
 #, python-format

@@ -46,8 +46,8 @@
         {% config "bexio_export" as c_bexio_export %}
         {% if c_bexio_export %}
         <div class="form-row align-items-center mt-3" >
-            <button type="submit" name="export_bexio" class="col-md-2 btn btn-success">Export to Bexio</button>
-            <div class="col-md-2 ml-4 col-form-label">Access token</div>
+            <button type="submit" name="export_bexio" class="col-md-2 btn btn-success">{% trans "Export to Bexio" %}</button>
+            <div class="col-md-2 ml-4 col-form-label">{% trans "Access token" %}</div>
             <input class="col" name="bexio_token"/>
         </div>
         {% endif %}

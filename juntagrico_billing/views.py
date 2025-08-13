@@ -245,11 +245,11 @@ def bookings_export(request):
             exporter = BexioExporter(api_client, fromdate, tilldate)
             result, message = exporter.export_bookings(bill_bookings + payment_bookings)
             if result:
-                success(request, f"Export to Bexio successful.\n{result['created']} created\n{result['updated']} updated\n{result['deleted']} deleted")
+                success(request, f"{_('Export to Bexio successful')}.\n{result['created']} created\n{result['updated']} updated\n{result['deleted']} deleted")
             else:
-                error(request, f"Export to Bexio failed.\n {message}")
+                error(request, f"{_('Export to Bexio failed')}.\n {message}")
         else:
-            error(request, f"Please specify a Bexio access token")
+            error(request, _("Please specify a Bexio access token"))
         return redirect("jb:bookings-export")
 
     # otherwise return page
@@ -275,12 +275,6 @@ def export_bookings(bookings, filename):
     }
 
     return generate_excel(fields.items(), bookings, filename)
-
-
-def export_bookings_bexio(bookings, access_token):
-    api = BexioApiClient(access_token)
-    exporter = BexioExporter(api)
-    exporter.export_bookings(bookings)
 
 
 class KeyDateForm(forms.Form):
