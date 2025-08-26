@@ -9,7 +9,10 @@ from juntagrico_billing.util.payment_reader import Camt045Reader, PaymentReaderE
 
 class UploadFileForm(forms.Form):
     file = forms.FileField()
-    file.widget.attrs.update({'class': 'form-control-file'})
+    file.widget.attrs.update({
+        'class': 'form-control-file',
+        'multiple': True
+    })
 
 
 @permission_required('juntagrico.is_book_keeper')
@@ -20,11 +23,12 @@ def payments_upload(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            ok, message = handle_payments_upload(request.FILES['file'])
-            if ok:
-                success(request, message)
-            else:
-                error(request, message)
+            for f in request.FILES.getlist('file'):
+                ok, message = handle_payments_upload(f)
+                if ok:
+                    success(request, message)
+                else:
+                    error(request, message)
             return redirect('jb:payments-upload')
     else:
         form = UploadFileForm()
@@ -40,12 +44,13 @@ def handle_payments_upload(f):
         payments = reader.parse_payments(f.read())
         processor.process_payments(payments)
     except PaymentReaderError as e:
-        message = _("Failed to read payments file:\n%s") % e
+        message = _("Failed to read payments file %s:\n%s") % (f.name, e)
         return (False, message)
     except PaymentProcessorError as e:
-        message = _("Failed to process payments:\n%s") % e
+        message = _("Failed to process payments in file %s:\n%s") % (f.name, e)
         return (False, message)
 
     return (
         True,
-        _("Payments file successfully imported.\n%d payments have been processed.") % len(payments))
+        _("Payments file %s successfully imported.") % f.name
+    )

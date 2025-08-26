@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-27 16:11+0100\n"
+"POT-Creation-Date: 2025-08-26 15:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -133,11 +133,13 @@ msgid "Paid"
 msgstr "Bezahlt"
 
 #: .\juntagrico_billing\models\bill.py:58
+#, python-brace-format
 msgid "Notes visible to {}"
 msgstr "Notizen sichtbar für {}"
 
 #: .\juntagrico_billing\models\bill.py:59
 #: .\juntagrico_billing\models\payment.py:25
+#, python-brace-format
 msgid "Notes not visible to {}"
 msgstr "Notizen nicht sichtbar für {}"
 
@@ -196,6 +198,7 @@ msgid "Custom Bill-Item Types"
 msgstr "Rechnungsextra Typen"
 
 #: .\juntagrico_billing\models\bill.py:172
+#, python-brace-format
 msgid "{} Part"
 msgstr "{} Bestandteil"
 
@@ -557,11 +560,11 @@ msgid "No balancing payment type configured."
 msgstr ""
 
 #: .\juntagrico_billing\util\bookings.py:53
-#: .\juntagrico_billing\util\bookings.py:93
+#: .\juntagrico_billing\util\bookings.py:92
 msgid "Bl"
 msgstr "Rg"
 
-#: .\juntagrico_billing\util\bookings.py:93
+#: .\juntagrico_billing\util\bookings.py:92
 msgid "Pmt"
 msgstr "Zlg"
 
@@ -569,32 +572,28 @@ msgstr "Zlg"
 msgid "Total payments"
 msgstr "Total Zahlungen"
 
-#: .\juntagrico_billing\views_payment.py:43
+#: .\juntagrico_billing\views_payment.py:47
 #, python-format
 msgid ""
-"Failed to read payments file:\n"
+"Failed to read payments file %s:\n"
 "%s"
 msgstr ""
-"Zahlungsfile konnte nicht gelesen werden:\n"
+"Zahlungsfile %s konnte nicht gelesen werden:\n"
 "%s"
 
-#: .\juntagrico_billing\views_payment.py:46
-#, python-format
+#: .\juntagrico_billing\views_payment.py:50
+#, fpython-format
 msgid ""
-"Failed to process payments:\n"
+"Failed to process payments in file %s:\n"
 "%s"
 msgstr ""
-"Fehler bei der Verarbeitung der Zahlungen:\n"
+"Fehler bei der Verarbeitung der Zahlungen in %s:\n"
 "%s"
 
-#: .\juntagrico_billing\views_payment.py:51
+#: .\juntagrico_billing\views_payment.py:55
 #, python-format
-msgid ""
-"Payments file successfully imported.\n"
-"%d payments have been processed."
-msgstr ""
-"Zahlungen erfolgreich importiert.\n"
-"%d Zahlungen wurden verarbeitet."
+msgid "Payments file %s successfully imported."
+msgstr "Zahlungsfile %s erfolgreich importiert."
 
 #, python-format
 #~ msgid " Lieber %(fn)s"
