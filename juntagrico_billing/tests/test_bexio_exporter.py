@@ -40,7 +40,7 @@ class BexioExporterTest(TestCase):
                     debit_account="1100", credit_account="3001", price=300.0, vat_amount=60.0)
         ]
 
-        result = self.exporter.export_bookings(bookings)
+        result, msg = self.exporter.export_bookings(bookings)
 
         # Assert
         self.assertEquals(len(self.api_client.created_bookings), 0)
@@ -69,7 +69,7 @@ class BexioExporterTest(TestCase):
         ]
 
         # Act
-        result = self.exporter.export_bookings(bookings)
+        result, msg = self.exporter.export_bookings(bookings)
 
         # Assert
         self.assertEquals(len(self.api_client.created_bookings), 0)
@@ -98,7 +98,7 @@ class BexioExporterTest(TestCase):
                     debit_account="1100", credit_account="3001", price=400.0, vat_amount=80.0)
         ]
 
-        result = self.exporter.export_bookings(bookings)
+        result, msg = self.exporter.export_bookings(bookings)
 
         self.assertEquals(len(self.api_client.created_bookings), 1)  # One new booking was added
         self.assertEquals(len(self.api_client.updated_bookings), 0)
@@ -121,7 +121,7 @@ class BexioExporterTest(TestCase):
             # The third booking is intentionally omitted to simulate deletion
         ]
 
-        result = self.exporter.export_bookings(bookings)
+        result, msg = self.exporter.export_bookings(bookings)
 
         self.assertEquals(len(self.api_client.created_bookings), 0)
         self.assertEquals(len(self.api_client.updated_bookings), 0)

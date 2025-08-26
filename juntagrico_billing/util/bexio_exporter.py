@@ -31,7 +31,7 @@ class BexioExporter:
 
             return (self.sync_bookings(existing_bookings, bookings), "OK")
         except Exception as e:
-            return (None, str(e))
+            return ({}, str(e))
 
     def sync_bookings(self, existing_bookings, new_bookings):
         """
