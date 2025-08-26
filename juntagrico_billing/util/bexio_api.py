@@ -21,7 +21,7 @@ class BexioApiClient:
             "Content-Type": "application/json",
             "Accept": "application/json"
             })
-        
+
         self.accounts_by_id = {}
         self.account_ids_by_number = {}
         self.currency_ids = {}
@@ -36,7 +36,7 @@ class BexioApiClient:
         # Fetch accounts from Bexio
         response = self.session.get("https://api.bexio.com/2.0/accounts")
         response.raise_for_status()
-        
+
         for account in response.json():
             self.accounts_by_id[account['id']] = account['account_no']
             self.account_ids_by_number[account['account_no']] = account['id']
@@ -59,23 +59,22 @@ class BexioApiClient:
                     "credit_account_id": self.get_account_id(booking.credit_account),
                     "amount": booking.price,
                     "tax_amount": booking.vat_amount,
-                    "currency_id": self.get_currency_id("CHF"),  
+                    "currency_id": self.get_currency_id("CHF"),
                 }
             ]
         }
-    
+
     def get_account_id(self, account_nr):
         try:
             return self.account_ids_by_number[account_nr]
         except KeyError:
             raise Exception(f"Unknown account number {account_nr}")
-        
+
     def get_account_nummber(self, account_id):
         if not account_id:
-            raise Exception( "entry has empty account_id" )
+            raise Exception("entry has empty account_id")
         return self.accounts_by_id[account_id]
-            
-    
+
     def get_currency_id(self, currency_name):
         try:
             return self.currency_ids[currency_name]
@@ -193,5 +192,3 @@ class Booking(object):
         self.price = price
         self.vat_amount = vat_amount
         self.id = id
-
-

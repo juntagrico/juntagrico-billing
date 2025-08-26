@@ -236,7 +236,7 @@ def bookings_export(request):
     if ('export' in request.POST) and daterange_form.is_valid():
         return export_bookings(
             bill_bookings + payment_bookings, "bookings")
-    
+
     # export to bexio
     if ('export_bexio' in request.POST) and daterange_form.is_valid():
         token = request.POST['bexio_token']

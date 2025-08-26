@@ -49,15 +49,25 @@ class BexioExporter:
             'updated': 0,
             'deleted': 0
         }
-        
+
         for booking in new_bookings:
             if booking.docnumber in existing_by_docnumber:
                 existing_booking = existing_by_docnumber[booking.docnumber]
                 # Check if the existing booking is equal to the new booking
                 if not self.bookings_are_equal(existing_booking, booking):
-                    self.api_client.update_booking(existing_booking, booking)
-                    result['updated'] += 1
+                    # bexio only accepts bookings with different debit and credit accounts
+                    # so we need to update or delete the existing booking accordingly
+                    if booking.debit_account != booking.credit_account:
+                        self.api_client.update_booking(existing_booking, booking)
+                        result['updated'] += 1
+                    else:
+                        self.api_client.delete_booking(existing_booking)
+                        result['deleted'] += 1
+
             else:
+                if booking.debit_account == booking.credit_account:
+                    # bexio does not allow bookings with the same debit and credit account
+                    continue
                 self.api_client.create_booking(booking)
                 result['created'] += 1
 
@@ -83,5 +93,3 @@ class BexioExporter:
                 booking1.debit_account == booking2.debit_account and
                 booking1.credit_account == booking2.credit_account and
                 booking1.text == booking2.text)
-
-
