@@ -210,11 +210,11 @@ msgstr "Extra Typ"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: .\juntagrico_billing\models\bill.py:203 .\juntagrico_billing\views.py:132
+#: .\juntagrico_billing\models\bill.py:203 .\juntagrico_billing\views.py:135
 msgid "Extrasubscription"
 msgstr "Zusatzabo"
 
-#: .\juntagrico_billing\models\bill.py:205 .\juntagrico_billing\views.py:134
+#: .\juntagrico_billing\models\bill.py:205 .\juntagrico_billing\views.py:137
 msgid "Subscription"
 msgstr "Abo"
 
@@ -322,21 +322,29 @@ msgstr "Bezahlter Betrag"
 msgid "Export bookings"
 msgstr "Buchungen exportieren"
 
-#: .\juntagrico_billing\templates\jb\bookings_export.html:9
+#: .\juntagrico_billing\templates\jb\bookings_export.html:20
 msgid "Bookings Period"
 msgstr "Buchungs Zeitraum"
 
-#: .\juntagrico_billing\templates\jb\bookings_export.html:22
+#: .\juntagrico_billing\templates\jb\bookings_export.html:34
 msgid "Preview"
 msgstr "Vorschau"
 
-#: .\juntagrico_billing\templates\jb\bookings_export.html:25
+#: .\juntagrico_billing\templates\jb\bookings_export.html:37
 msgid "Bill bookings"
 msgstr "Rechnungsbuchungen"
 
-#: .\juntagrico_billing\templates\jb\bookings_export.html:29
+#: .\juntagrico_billing\templates\jb\bookings_export.html:41
 msgid "Payment bookings"
 msgstr "Zahlungsbuchungen"
+
+#: .\juntagrico_billing\templates\jb\bookings_export.html:49
+msgid "Export to Bexio"
+msgstr "Export zu Bexio"
+
+#: .\juntagrico_billing\templates\jb\bookings_export.html:50
+msgid "Access token"
+msgstr "Zugriffs-Token"
 
 #: .\juntagrico_billing\templates\jb\mails\bill_notification.txt:9
 #, python-format
@@ -559,12 +567,12 @@ msgstr "Saldoliste Mitglieder exportieren"
 msgid "No balancing payment type configured."
 msgstr ""
 
-#: .\juntagrico_billing\util\bookings.py:53
-#: .\juntagrico_billing\util\bookings.py:92
+#: .\juntagrico_billing\util\bookings.py:73
+#: .\juntagrico_billing\util\bookings.py:112
 msgid "Bl"
 msgstr "Rg"
 
-#: .\juntagrico_billing\util\bookings.py:92
+#: .\juntagrico_billing\util\bookings.py:112
 msgid "Pmt"
 msgstr "Zlg"
 
@@ -572,7 +580,19 @@ msgstr "Zlg"
 msgid "Total payments"
 msgstr "Total Zahlungen"
 
-#: .\juntagrico_billing\views_payment.py:47
+#: .\juntagrico_billing\views.py:248
+msgid "Export to Bexio successful"
+msgstr "Export zu Bexio erfolgreich"
+
+#: .\juntagrico_billing\views.py:250
+msgid "Export to Bexio failed"
+msgstr "Export zu Bexio fehlgeschlagen"
+
+#: .\juntagrico_billing\views.py:252
+msgid "Please specify a Bexio access token"
+msgstr "Bitte ein Bexio Zugriffs-Token angeben"
+
+#: .\juntagrico_billing\views_payment.py:43
 #, python-format
 msgid ""
 "Failed to read payments file %s:\n"
