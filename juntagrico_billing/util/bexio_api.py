@@ -68,7 +68,7 @@ class BexioApiClient:
         try:
             return self.account_ids_by_number[account_nr]
         except KeyError:
-            raise Exception(f"Unknown account number {account_nr}")
+            raise Exception(f"Unknown account number {account_nr}") from None
 
     def get_account_nummber(self, account_id):
         if not account_id:
@@ -79,7 +79,7 @@ class BexioApiClient:
         try:
             return self.currency_ids[currency_name]
         except KeyError:
-            raise Exception(f"Unknown currency {currency_name}")
+            raise Exception(f"Unknown currency {currency_name}") from None
 
     def get_existing_bookings(self, from_date, till_date):
         """
