@@ -6,7 +6,6 @@ import django.core.mail
 from juntagrico.entity.subs import SubscriptionPart
 
 from juntagrico_billing.models.bill import Bill, BillItem, BillItemType
-from juntagrico_billing.models.payment import PaymentType
 from juntagrico_billing.util.billing import get_billable_subscription_parts, \
     create_bill, create_bills_for_items, recalc_bill, publish_bills
 from juntagrico_billing.util.billing import scale_subscriptionpart_price
@@ -404,15 +403,6 @@ class BillTest(BillingTestCase):
         )
         item.save()
         cls.bill.save()
-
-        # create payment type and settings
-        cls.payment_type = PaymentType.objects.create(
-            name='Test payment type',
-            iban=''
-        )
-        cls.payment_type.save()
-        cls.settings.default_paymenttype = cls.payment_type
-        cls.settings.save()
 
     def test_ordered_items(self):
         """

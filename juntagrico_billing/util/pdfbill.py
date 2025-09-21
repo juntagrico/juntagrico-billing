@@ -213,11 +213,11 @@ class PdfBillRenderer(object):
                     '<b>%10.2f</b>' % (bill.amount - sum),
                     self.normalright)))
 
-        payments_table = Table(
-            lines, (4 * cm, None, 2 * cm),
-            style=self.table_style)
-
-        story.append(payments_table)
+        if lines:
+            payments_table = Table(
+                lines, (4 * cm, None, 2 * cm),
+                style=self.table_style)
+            story.append(payments_table)
 
         if bill.paid:
             story.append(Paragraph(_('Bill paid completely'), self.normal))
