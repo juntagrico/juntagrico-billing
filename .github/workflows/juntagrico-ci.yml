@@ -12,6 +12,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     env:
       DJANGO_SETTINGS_MODULE: testsettings
       PYTHONPATH: .
@@ -36,7 +39,9 @@ jobs:
         python -m django makemigrations --noinput
         coverage run -m manage test
     - run: coverage lcov -o coverage.lcov
+      if: ${{ matrix.python-version == '3.11' }}
     - uses: qltysh/qlty-action/coverage@v2
+      if: ${{ matrix.python-version == '3.11' }}
       with:
         oidc: true
         files: coverage.lcov
