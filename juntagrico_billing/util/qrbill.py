@@ -87,18 +87,19 @@ def get_qrbill_svg(bill, paymenttype):
         amount=Decimal(bill.amount_open).quantize(Decimal('.01'), ROUND_HALF_UP),
         creditor={
             'name': addr['name'],
-            'line1': '%s %s' % (addr['street'], addr['number']),
-            'line2': '%s %s' % (addr['zip'], addr['city']),
+            'street': addr['street'],
+            'house_num': addr['number'],
+            'pcode': addr['zip'],
+            'city': addr['city'],
             'country': 'CH',
         },
         debtor={
             'name': '%s %s' % (
                 bill.member.first_name,
                 bill.member.last_name),
-            'line1': bill.member.addr_street,
-            'line2': '%s %s' % (
-                bill.member.addr_zipcode,
-                bill.member.addr_location),
+            'street': bill.member.addr_street,
+            'pcode': bill.member.addr_zipcode,
+            'city': bill.member.addr_location,
             'country': 'CH',
         }
     )
