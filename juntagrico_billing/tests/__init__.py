@@ -5,6 +5,7 @@ from juntagrico.tests import JuntagricoTestCase
 
 from juntagrico_billing.models.account import SubscriptionTypeAccount, MemberAccount
 from juntagrico_billing.models.bill import BusinessYear
+from juntagrico_billing.models.payment import PaymentType
 from juntagrico_billing.models.settings import Settings
 
 
@@ -22,6 +23,9 @@ class BillingTestCase(JuntagricoTestCase):
         cls.sub_type.price = 1200
         cls.sub_type.name = 'Normal'
         cls.sub_type.save()
+        cls.sub_type3.price = -1200
+        cls.sub_type3.name = 'Negative'
+        cls.sub_type3.save()
 
         cls.extrasub_type.name = 'Extra 1'
         cls.extrasub_type.save()
@@ -64,8 +68,14 @@ class BillingTestCase(JuntagricoTestCase):
             cancel_month=11
         )
 
+        # create payment type and settings
+        cls.payment_type = PaymentType.objects.create(
+            name='Test payment type',
+            iban='CH85009969813949107J7'
+        )
         cls.settings = Settings.objects.create(
-            debtor_account="1100"
+            debtor_account="1100",
+            default_paymenttype=cls.payment_type,
         )
 
     @staticmethod
