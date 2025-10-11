@@ -12,10 +12,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     env:
       DJANGO_SETTINGS_MODULE: testsettings
       PYTHONPATH: .
-      CC_TEST_REPORTER_ID: ${{ secrets.CODECOV_TOKEN }}
     strategy:
       matrix:
         python-version: ['3.9', '3.10', '3.11']
@@ -32,20 +34,14 @@ jobs:
     - name: ruff
       run: |
         ruff check juntagrico_billing
-    - name: install CodeClimate reporter
-      if: ${{ env.CC_TEST_REPORTER_ID != null && github.event_name == 'push'}}
-      run: |
-        curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-        chmod +x ./cc-test-reporter
-        ./cc-test-reporter before-build
     - name: run tests
       run: |
         python -m django makemigrations --noinput
         coverage run -m manage test
-    - name: publish code coverage
-      if: ${{ env.CC_TEST_REPORTER_ID != null && github.event_name == 'push'}}
-      run: |
-        coverage report
-        coverage xml
-        ./cc-test-reporter format-coverage -t coverage.py -o coverageupload
-        ./cc-test-reporter upload-coverage -i coverageupload
+    - run: coverage lcov -o coverage.lcov
+      if: ${{ matrix.python-version == '3.11' }}
+    - uses: qltysh/qlty-action/coverage@v2
+      if: ${{ matrix.python-version == '3.11' }}
+      with:
+        oidc: true
+        files: coverage.lcov
