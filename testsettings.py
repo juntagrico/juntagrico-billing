@@ -27,14 +27,21 @@ INSTALLED_APPS = [
     'djrichtextfield',
     'polymorphic',
     'juntagrico_billing',
+    'juntagrico_contribution',
     'juntagrico',
 ]
 
 DATABASES = {
     'default': {
         #  Sqlite
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'juntagrico.db',
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': 'juntagrico.db',
+        # postgresql
+        'ENGINE': 'django.db.backends.postgresql',
+        'HOST': 'localhost',
+        'USER': 'ortoloco',
+        'PASSWORD': 'sQCLPV0iUBUfpa1f8HF0',
+        'NAME': 'ortoloco',
     }
 }
 
