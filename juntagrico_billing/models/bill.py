@@ -128,6 +128,32 @@ class Bill(JuntagricoBaseModel):
 
         return sorted(self.items.all(), key=order_key)
 
+    @property
+    def period_start(self):
+        """
+        Start date of the billing period
+        derived from the business year and subscription activation date.
+        """
+        if self.items.count() == 0:
+            return self.business_year.start_date
+
+        return max(self.business_year.start_date, self.items.first().subscription_part.subscription.activation_date)
+    
+    @property
+    def period_end(self):
+        """
+        End date of the billing period
+        derived from the business year and subscription deactivation date.
+        """
+        if self.items.count() == 0:
+            return self.business_year.end_date
+        
+        subs = self.items.first().subscription_part.subscription
+        if subs.end_date is None:
+            return self.business_year.end_date
+        
+        return min(self.business_year.end_date, self.items.first().subscription_part.subscription.deactivation_date)
+
     def __str__(self):
         return '{}'.format(self.id)
 
