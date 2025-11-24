@@ -140,8 +140,8 @@ class PdfBillRenderer(object):
         period = Paragraph(
             '%s %s - %s' % (
                 _('Period'),
-                self.date_format(bill.business_year.start_date),
-                self.date_format(bill.business_year.end_date)),
+                self.date_format(bill.period_start),
+                self.date_format(bill.period_end)),
             self.normal)
         story.append(period)
 
