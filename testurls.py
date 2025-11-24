@@ -9,5 +9,4 @@ urlpatterns = [
     path('impersonate/', include('impersonate.urls')),
     path('', include('juntagrico.urls')),
     path('', include('juntagrico_billing.urls')),
-    path('jcr/', include('juntagrico_contribution.urls')),
 ]
