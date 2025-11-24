@@ -8,3 +8,4 @@ from juntagrico_billing.lifecycle.billitem import billitem_saved
 # connect signals to lifecycle functions
 signals.post_save.connect(payment_saved, sender=Payment)
 signals.post_save.connect(billitem_saved, sender=BillItem)
+signals.post_delete.connect(billitem_saved, sender=BillItem)
