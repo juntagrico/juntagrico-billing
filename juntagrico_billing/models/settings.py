@@ -16,6 +16,11 @@ class Settings(models.Model):
     balancing_paymenttype = models.ForeignKey('PaymentType', null=True, related_name='settings_balancing_paymenttype',
                                               verbose_name=_('Balancing Payment Type'),
                                               on_delete=models.SET_NULL)
+    
+    contribution_itemtype = models.ForeignKey('BillItemType', null=True, related_name='settings_contribution_itemtype',
+                                              verbose_name=_('Bill Item Type for contributions from juntagrico-contribution'),
+                                              on_delete=models.SET_NULL)
+
 
     vat_number = models.CharField(_('VAT Number'), max_length=20, null=True, blank=True)
     vat_percent = models.FloatField(_('VAT Percent'), null=False, blank=False, default=0.0)
