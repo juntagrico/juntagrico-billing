@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-26 15:18+0200\n"
+"POT-Creation-Date: 2026-01-09 22:53+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -55,7 +55,7 @@ msgid "Open amount < 0 (overpaid)"
 msgstr "Offener Betrag < 0 (überbezahlt)"
 
 #: .\juntagrico_billing\admin\bill.py:89 .\juntagrico_billing\models\bill.py:56
-#: .\juntagrico_billing\models\bill.py:182
+#: .\juntagrico_billing\models\bill.py:210
 #: .\juntagrico_billing\models\payment.py:22
 #: .\juntagrico_billing\templates\jb\bills_notify.html:38
 #: .\juntagrico_billing\templates\jb\open_bills.html:79
@@ -99,6 +99,7 @@ msgstr "Name"
 
 #: .\juntagrico_billing\models\bill.py:27
 #: .\juntagrico_billing\models\bill.py:44
+#: .\juntagrico_billing\templates\jb\accounting_summary.html:9
 msgid "Business Year"
 msgstr "Geschäftsjahr"
 
@@ -160,12 +161,12 @@ msgid "Amount paid"
 msgstr "Betrag bezahlt"
 
 #: .\juntagrico_billing\models\bill.py:83
-#: .\juntagrico_billing\models\bill.py:184
+#: .\juntagrico_billing\models\bill.py:212
 msgid "VAT Amount"
 msgstr "MWST Betrag"
 
-#: .\juntagrico_billing\models\bill.py:135
-#: .\juntagrico_billing\models\bill.py:165
+#: .\juntagrico_billing\models\bill.py:163
+#: .\juntagrico_billing\models\bill.py:193
 #: .\juntagrico_billing\models\payment.py:15
 #: .\juntagrico_billing\templates\jb\user_bill.html:6
 #: .\juntagrico_billing\templates\jb\user_bill.html:29
@@ -173,60 +174,61 @@ msgstr "MWST Betrag"
 msgid "Bill"
 msgstr "Rechnung"
 
-#: .\juntagrico_billing\models\bill.py:136
+#: .\juntagrico_billing\models\bill.py:164
+#: .\juntagrico_billing\templates\jb\accounting_summary.html:31
 #: .\juntagrico_billing\templates\jb\user_bills.html:6
 #: .\juntagrico_billing\templates\juntagrico\menu\user.html:9
 msgid "Bills"
 msgstr "Rechnungen"
 
-#: .\juntagrico_billing\models\bill.py:144
+#: .\juntagrico_billing\models\bill.py:172
 #: .\juntagrico_billing\models\payment.py:46
 msgid "Name"
 msgstr "Name"
 
-#: .\juntagrico_billing\models\bill.py:145
+#: .\juntagrico_billing\models\bill.py:173
 #: .\juntagrico_billing\models\payment.py:48
 msgid "Booking account"
 msgstr "Buchungskonto"
 
-#: .\juntagrico_billing\models\bill.py:151
+#: .\juntagrico_billing\models\bill.py:179
 msgid "Custom Bill-Item Type"
 msgstr "Rechnungsextra Typ"
 
-#: .\juntagrico_billing\models\bill.py:152
+#: .\juntagrico_billing\models\bill.py:180
 msgid "Custom Bill-Item Types"
 msgstr "Rechnungsextra Typen"
 
-#: .\juntagrico_billing\models\bill.py:172
+#: .\juntagrico_billing\models\bill.py:200
 #, python-brace-format
 msgid "{} Part"
 msgstr "{} Bestandteil"
 
-#: .\juntagrico_billing\models\bill.py:178
+#: .\juntagrico_billing\models\bill.py:206
 msgid "Custom item type"
 msgstr "Extra Typ"
 
-#: .\juntagrico_billing\models\bill.py:180
+#: .\juntagrico_billing\models\bill.py:208
 msgid "Description"
 msgstr "Beschreibung"
 
-#: .\juntagrico_billing\models\bill.py:203 .\juntagrico_billing\views.py:135
+#: .\juntagrico_billing\models\bill.py:231 .\juntagrico_billing\views.py:136
 msgid "Extrasubscription"
 msgstr "Zusatzabo"
 
-#: .\juntagrico_billing\models\bill.py:205 .\juntagrico_billing\views.py:137
+#: .\juntagrico_billing\models\bill.py:233 .\juntagrico_billing\views.py:138
 msgid "Subscription"
 msgstr "Abo"
 
-#: .\juntagrico_billing\models\bill.py:211
+#: .\juntagrico_billing\models\bill.py:239
 msgid "Item kind"
 msgstr "Art"
 
-#: .\juntagrico_billing\models\bill.py:214
+#: .\juntagrico_billing\models\bill.py:242
 msgid "Bill item"
 msgstr "Rechungsbestandteil"
 
-#: .\juntagrico_billing\models\bill.py:215
+#: .\juntagrico_billing\models\bill.py:243
 msgid "Bill items"
 msgstr "Rechungsbestandteile"
 
@@ -248,6 +250,7 @@ msgid "Payment"
 msgstr "Zahlung"
 
 #: .\juntagrico_billing\models\payment.py:38
+#: .\juntagrico_billing\templates\jb\accounting_summary.html:32
 msgid "Payments"
 msgstr "Zahlungen"
 
@@ -278,6 +281,30 @@ msgstr "Rechnung neu berechnen"
 #: .\juntagrico_billing\templates\admin\juntagrico_billing\bill\change_form.html:10
 msgid "History"
 msgstr ""
+
+#: .\juntagrico_billing\templates\jb\accounting_summary.html:5
+msgid "Accounting Summary"
+msgstr "Zusammenfassung für Buchhaltung"
+
+#: .\juntagrico_billing\templates\jb\accounting_summary.html:12
+#: .\juntagrico_billing\templates\jb\open_bills.html:14
+#: .\juntagrico_billing\templates\jb\pending_bills.html:12
+msgid "Year:"
+msgstr "Jahr"
+
+#: .\juntagrico_billing\templates\jb\accounting_summary.html:22
+#: .\juntagrico_billing\templates\jb\open_bills.html:24
+#: .\juntagrico_billing\templates\jb\pending_bills.html:22
+msgid "Change"
+msgstr "Ändern"
+
+#: .\juntagrico_billing\templates\jb\accounting_summary.html:33
+msgid "Subscriptions Balance"
+msgstr "Saldo Abo Debitoren"
+
+#: .\juntagrico_billing\templates\jb\accounting_summary.html:34
+msgid "Shares"
+msgstr "Anteilscheine"
 
 #: .\juntagrico_billing\templates\jb\bills_notify.html:7
 #: .\juntagrico_billing\templates\juntagrico\menu\admin.html:19
@@ -434,16 +461,6 @@ msgstr "Bitte erstelle eines in der Datenadministration"
 msgid "Open bills"
 msgstr "Offene Rechnungen"
 
-#: .\juntagrico_billing\templates\jb\open_bills.html:14
-#: .\juntagrico_billing\templates\jb\pending_bills.html:12
-msgid "Year:"
-msgstr "Jahr"
-
-#: .\juntagrico_billing\templates\jb\open_bills.html:24
-#: .\juntagrico_billing\templates\jb\pending_bills.html:22
-msgid "Change"
-msgstr "Ändern"
-
 #: .\juntagrico_billing\templates\jb\open_bills.html:30
 #: .\juntagrico_billing\templates\jb\open_bills.html:33
 #: .\juntagrico_billing\templates\jb\open_bills.html:36
@@ -580,19 +597,19 @@ msgstr "Zlg"
 msgid "Total payments"
 msgstr "Total Zahlungen"
 
-#: .\juntagrico_billing\views.py:248
+#: .\juntagrico_billing\views.py:249
 msgid "Export to Bexio successful"
 msgstr "Export zu Bexio erfolgreich"
 
-#: .\juntagrico_billing\views.py:250
+#: .\juntagrico_billing\views.py:251
 msgid "Export to Bexio failed"
 msgstr "Export zu Bexio fehlgeschlagen"
 
-#: .\juntagrico_billing\views.py:252
+#: .\juntagrico_billing\views.py:253
 msgid "Please specify a Bexio access token"
 msgstr "Bitte ein Bexio Zugriffs-Token angeben"
 
-#: .\juntagrico_billing\views_payment.py:43
+#: .\juntagrico_billing\views_payment.py:47
 #, python-format
 msgid ""
 "Failed to read payments file %s:\n"
@@ -602,7 +619,7 @@ msgstr ""
 "%s"
 
 #: .\juntagrico_billing\views_payment.py:50
-#, fpython-format
+#, python-format
 msgid ""
 "Failed to process payments in file %s:\n"
 "%s"
