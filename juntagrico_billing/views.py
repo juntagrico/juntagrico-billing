@@ -19,11 +19,12 @@ from juntagrico_billing.mailer import send_bill_notification
 from juntagrico_billing.util.billing import get_billable_subscription_parts, \
     group_billables_by_member, create_bills_for_items, get_open_bills, \
     scale_subscriptionpart_price, recalc_bill, get_unpublished_bills, \
-    publish_bills, export_memberbalance_sheet
+    publish_bills, export_memberbalance_sheet, get_billing_summary
 from juntagrico_billing.util.qrbill import get_qrbill_svg
 from juntagrico_billing.util.pdfbill import PdfBillRenderer
 from juntagrico_billing.util.bookings import get_bill_bookings, \
     get_payment_bookings
+from juntagrico_billing.util.shares_summary import get_shares_summary
 from juntagrico_billing.util.bexio_exporter import BexioExporter
 from juntagrico_billing.util.bexio_api import BexioApiClient
 from django.utils.translation import gettext as _
@@ -314,6 +315,24 @@ def memberbalance_export(request):
 
     return render(request, 'jb/memberbalance_export.html', renderdict)
 
+@permission_required('juntagrico.is_book_keeper')
+def accounting_summary(request):
+    """
+    Summary of billing per business year
+    """
+    business_years, selected_year = get_years_and_selected(request)
+
+    billing = get_billing_summary(selected_year) if selected_year else None
+    shares = get_shares_summary(selected_year.start_date, selected_year.end_date) if selected_year else None
+
+    renderdict = {
+        'business_years': business_years,
+        'selected_year': selected_year,
+        'billing': billing,
+        'shares' : shares
+    }
+
+    return render(request, "jb/accounting_summary.html", renderdict)
 
 @login_required
 def user_bills(request):

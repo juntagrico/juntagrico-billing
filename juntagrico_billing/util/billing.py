@@ -254,6 +254,9 @@ def get_memberbalances(keydate):
     members_billed_amount = Member.objects.annotate(
         billed_amount=Sum('bills__amount', filter=Q(bills__booking_date__lte=keydate)),
         ).filter(billed_amount__gt=0).values('id', 'first_name', 'last_name', 'billed_amount')
+    member_billed_items_amount = Member.objects.annotate(
+        billed_items_amount=Sum('bills__items__amount', filter=Q(bills__booking_date__lte=keydate)),
+        ).filter(billed_items_amount__gt=0).values('id', 'billed_items_amount')
     members_paid_amount = Member.objects.annotate(
         paid_amount=Sum('bills__payments__amount', filter=Q(bills__payments__paid_date__lte=keydate)),
         ).filter(paid_amount__gt=0).values('id', 'first_name', 'last_name', 'paid_amount')
@@ -266,8 +269,12 @@ def get_memberbalances(keydate):
         if member['id'] in member_dict:
             member_dict[member['id']].update(member)
 
+    for member in member_billed_items_amount:
+        if member['id'] in member_dict:
+            member_dict[member['id']].update(member)
+
     for member in member_dict.values():
-        member['balance'] = member.get('billed_amount', 0) - member.get('paid_amount', 0)
+        member['balance'] = member.get('billed_items_amount', 0) - member.get('paid_amount', 0)
 
     return sorted(member_dict.values(), key=lambda x: x['last_name'])
 
@@ -280,6 +287,7 @@ def export_memberbalance_sheet(request, keydate):
         'last_name': 'Nachname',
         'first_name': 'Vorname',
         'billed_amount': 'Rechnungen',
+        'billed_items_amount': 'Rechnungspositionen',
         'paid_amount': 'Zahlungen',
         'balance': 'Saldo'
     }
@@ -288,3 +296,35 @@ def export_memberbalance_sheet(request, keydate):
     lines = get_memberbalances(keydate)
 
     return generate_excel(fields.items(), lines, filename)
+
+def get_billing_summary(businessyear):
+    """
+    get a summary of billing for a business year.
+    returns a dictionary with total billed amount, total paid amount and
+    total open amount.
+    """
+    bills = businessyear.bills.all()
+
+    year_billed = bills.aggregate(Sum('items__amount'))['items__amount__sum'] or Decimal('0.0')
+    year_payments_query = Payment.objects.in_daterange(businessyear.start_date, businessyear.end_date)
+    
+    print(f"Payments Count: {year_payments_query.count()}")
+    year_payments = year_payments_query.aggregate(Sum('amount'))['amount__sum'] or Decimal('0.0')
+
+    start_billed = Bill.objects.filter(booking_date__lt=businessyear.start_date).aggregate(Sum('items__amount'))['items__amount__sum'] or Decimal('0.0')
+    end_billed = Bill.objects.filter(booking_date__lte=businessyear.end_date).aggregate(Sum('items__amount'))['items__amount__sum'] or Decimal('0.0')
+
+    start_payments = Payment.objects.filter(paid_date__lt=businessyear.start_date).aggregate(Sum('amount'))['amount__sum'] or Decimal('0.0')
+    end_payments = Payment.objects.filter(paid_date__lte=businessyear.end_date).aggregate(Sum('amount'))['amount__sum'] or Decimal('0.0')
+
+    return {
+        'year_billed': year_billed,
+        'year_payments': year_payments,
+        'year_balance': year_billed - year_payments,
+        'start_billed': start_billed,
+        'end_billed': end_billed,
+        'start_balance': start_billed - start_payments,
+        'end_balance': end_billed - end_payments,
+        'start_payments': start_payments,
+        'end_payments': end_payments,
+    }

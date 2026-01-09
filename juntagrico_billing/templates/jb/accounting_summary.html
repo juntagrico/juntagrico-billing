@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load juntagrico.config %}
+{% block page_title %}
+    <h3>{% trans "Accounting Summary" %}</h3>
+{% endblock %}
+
+{% block content %}
+    <h4>{% trans "Business Year" %}</h4>
+    <form class="row mb-3" action="{% url 'jb:bills-setyear' %}" method="POST">
+        {% csrf_token %}
+        <p class="col-md-2">{% trans "Year:" %} {{ selected_year.name }}</p>
+        <div class="col-md-2">
+            <select class="form-control" name="year" id="year">
+                {% for year in business_years %}
+                <option {% if year == selected_year %}selected="selected"{% endif %}>{{ year.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-success">
+                {% trans "Change" %}
+            </button>
+        </div>
+    </form>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th></th>
+                <th class="text-right">{% trans "Bills" %}</th>
+                <th class="text-right">{% trans "Payments" %}</th>
+                <th class="text-right">{% trans "Subscriptions Balance" %}</th>
+                <th class="text-right">{% trans "Shares" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ selected_year.start_date }}</td>
+                <td class="text-right"></td>
+                <td class="text-right"></td>
+                <td class="text-right">{{ billing.start_balance|floatformat:"2g" }}</td>
+                <td class="text-right">{{ shares.start_balance|floatformat:"2g" }}</td>
+            </tr>
+            <tr>
+                <td>{{ selected_year.start_date }} - {{ selected_year.end_date }}</td>
+                <td class="text-right">{{ billing.year_billed|floatformat:"2g" }}</td>
+                <td class="text-right">{{ billing.year_payments|floatformat:"2g" }}</td>
+                <td class="text-right">{{ billing.year_balance|floatformat:"2g" }}</td>
+                <td class="text-right">{{ shares.year_balance|floatformat:"2g" }}</td>
+            </tr>
+            <tr>
+                <td>{{ selected_year.end_date }}</td>
+                <td class="text-right"></td>
+                <td class="text-right"></td>
+                <td class="text-right">{{ billing.end_balance|floatformat:"2g" }}</td>
+                <td class="text-right">{{ shares.end_balance|floatformat:"2g" }}</td>
+            </tr>
+        </tbody>
+    </table>
+    
+{% endblock %}

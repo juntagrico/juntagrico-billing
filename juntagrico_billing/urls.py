@@ -13,6 +13,7 @@ urlpatterns = [
     path('jb/bills_generate', views.bills_generate, name='bills-generate'),
     path('jb/bills_notify', views.bills_notify, name='bills-notify'),
     path('jb/bill_recalc/<int:bill_id>', views.bill_recalc, name='bill-recalc'),
+    path('jb/accounting_summary', views.accounting_summary, name='accounting-summary'),
 
     # bookings export
     path('jb/bookings_export', views.bookings_export, name='bookings-export'),
