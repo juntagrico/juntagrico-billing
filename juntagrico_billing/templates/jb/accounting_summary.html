@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load juntagrico.config %}
+{% block page_title %}
+    <h3>{% trans "Accounting Summary" %}</h3>
+{% endblock %}
+
+{% block content %}
+    <h4>{% trans "Bookings Period" %}</h4>
+    <form class="form" method="GET">
+        <div class="form-row align-items-center">
+            <label class="col-md-1 col-form-label" for="id_fromdate">Von</label>
+            {{ daterange_form.fromdate }}
+            <label class="col-md-1 col-form-label" for="id_tilldate">bis</label>
+            {{ daterange_form.tilldate }}
+            <button type="submit" class="col-md-2 form-control ml-2 btn btn-success">OK</button>
+        </div>
+        {% if daterange_form.errors %}
+        <div class="alert alert-danger">{{ daterange_form.errors }}</div>
+        {% endif %}
+    </form>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th></th>
+                <th class="text-right">{% trans "Bills" %}</th>
+                <th class="text-right">{% trans "Payments" %}</th>
+                <th class="text-right">{% trans "Subscriptions Balance" %}</th>
+                <th class="text-right">{% trans "Shares" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ fromdate|date:"d.m.Y" }}</td>
+                <td class="text-right"></td>
+                <td class="text-right"></td>
+                <td class="text-right">{{ billing.start_balance|floatformat:"2g" }}</td>
+                <td class="text-right">{{ shares.start_balance|floatformat:"2g" }}</td>
+            </tr>
+            <tr>
+                <td>{{ fromdate|date:"d.m.Y" }} - {{ tilldate|date:"d.m.Y" }}</td>
+                <td class="text-right">{{ billing.range_billed|floatformat:"2g" }}</td>
+                <td class="text-right">{{ billing.range_payments|floatformat:"2g" }}</td>
+                <td class="text-right">{{ billing.range_balance|floatformat:"2g" }}</td>
+                <td class="text-right">{{ shares.range_balance|floatformat:"2g" }}</td>
+            </tr>
+            <tr>
+                <td>{{ tilldate|date:"d.m.Y" }}</td>
+                <td class="text-right"></td>
+                <td class="text-right"></td>
+                <td class="text-right">{{ billing.end_balance|floatformat:"2g" }}</td>
+                <td class="text-right">{{ shares.end_balance|floatformat:"2g" }}</td>
+            </tr>
+        </tbody>
+    </table>
+    
+{% endblock %}

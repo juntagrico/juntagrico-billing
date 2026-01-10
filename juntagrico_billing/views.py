@@ -19,11 +19,12 @@ from juntagrico_billing.mailer import send_bill_notification
 from juntagrico_billing.util.billing import get_billable_subscription_parts, \
     group_billables_by_member, create_bills_for_items, get_open_bills, \
     scale_subscriptionpart_price, recalc_bill, get_unpublished_bills, \
-    publish_bills, export_memberbalance_sheet
+    publish_bills, export_memberbalance_sheet, get_billing_summary
 from juntagrico_billing.util.qrbill import get_qrbill_svg
 from juntagrico_billing.util.pdfbill import PdfBillRenderer
 from juntagrico_billing.util.bookings import get_bill_bookings, \
     get_payment_bookings
+from juntagrico_billing.util.shares_summary import get_shares_summary
 from juntagrico_billing.util.bexio_exporter import BexioExporter
 from juntagrico_billing.util.bexio_api import BexioApiClient
 from django.utils.translation import gettext as _
@@ -314,6 +315,46 @@ def memberbalance_export(request):
 
     return render(request, 'jb/memberbalance_export.html', renderdict)
 
+@permission_required('juntagrico.is_book_keeper')
+def accounting_summary(request):
+    """
+    Summary of billing per business year
+    """
+    if 'fromdate' in request.GET and 'tilldate' in request.GET:
+        daterange_form = DateRangeForm(request.GET)
+    else:
+        # determine date range of last year
+        last_year = date.today() - timedelta(days=365)
+        start_of_last_year = date(last_year.year, 1, 1)
+        end_of_last_year = date(last_year.year, 12, 31)
+
+        date_range = {
+            'fromdate': start_of_last_year,
+            'tilldate': end_of_last_year
+        }
+
+        daterange_form = DateRangeForm(date_range)
+        
+    if daterange_form.is_valid():
+        fromdate = daterange_form.cleaned_data['fromdate']
+        tilldate = daterange_form.cleaned_data['tilldate']
+        billing = get_billing_summary(fromdate, tilldate)
+        shares = get_shares_summary(fromdate, tilldate)
+    else:
+        fromdate = None
+        tilldate = None
+        billing = None
+        shares = None
+
+    renderdict = {
+        'daterange_form': daterange_form,
+        'fromdate': fromdate,
+        'tilldate': tilldate,
+        'billing': billing,
+        'shares' : shares
+    }
+
+    return render(request, "jb/accounting_summary.html", renderdict)
 
 @login_required
 def user_bills(request):
