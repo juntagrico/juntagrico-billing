@@ -18,7 +18,7 @@ def get_shares_summary(start_date, end_date):
     end_balance = end_paid - end_paid_back
 
     return {
-        'year_balance': end_balance - start_balance,
+        'range_balance': end_balance - start_balance,
         'start_balance': start_balance,
         'end_balance': end_balance,
     }

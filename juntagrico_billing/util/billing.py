@@ -297,30 +297,29 @@ def export_memberbalance_sheet(request, keydate):
 
     return generate_excel(fields.items(), lines, filename)
 
-def get_billing_summary(businessyear):
+def get_billing_summary(fromdate, tilldate):
     """
-    get a summary of billing for a business year.
+    get a summary of billing for a date range.
     returns a dictionary with total billed amount, total paid amount and
     total open amount.
     """
-    bills = businessyear.bills.all()
+    bills = Bill.objects.in_daterange(fromdate, tilldate)
 
-    year_billed = bills.aggregate(Sum('items__amount'))['items__amount__sum'] or Decimal('0.0')
-    year_payments_query = Payment.objects.in_daterange(businessyear.start_date, businessyear.end_date)
+    range_billed = bills.aggregate(Sum('items__amount'))['items__amount__sum'] or Decimal('0.0')
     
-    print(f"Payments Count: {year_payments_query.count()}")
-    year_payments = year_payments_query.aggregate(Sum('amount'))['amount__sum'] or Decimal('0.0')
+    range_payments_query = Payment.objects.in_daterange(fromdate, tilldate)
+    range_payments = range_payments_query.aggregate(Sum('amount'))['amount__sum'] or Decimal('0.0')
+    
+    start_billed = Bill.objects.filter(booking_date__lt=fromdate).aggregate(Sum('items__amount'))['items__amount__sum'] or Decimal('0.0')
+    end_billed = Bill.objects.filter(booking_date__lte=tilldate).aggregate(Sum('items__amount'))['items__amount__sum'] or Decimal('0.0')
 
-    start_billed = Bill.objects.filter(booking_date__lt=businessyear.start_date).aggregate(Sum('items__amount'))['items__amount__sum'] or Decimal('0.0')
-    end_billed = Bill.objects.filter(booking_date__lte=businessyear.end_date).aggregate(Sum('items__amount'))['items__amount__sum'] or Decimal('0.0')
-
-    start_payments = Payment.objects.filter(paid_date__lt=businessyear.start_date).aggregate(Sum('amount'))['amount__sum'] or Decimal('0.0')
-    end_payments = Payment.objects.filter(paid_date__lte=businessyear.end_date).aggregate(Sum('amount'))['amount__sum'] or Decimal('0.0')
+    start_payments = Payment.objects.filter(paid_date__lt=fromdate).aggregate(Sum('amount'))['amount__sum'] or Decimal('0.0')
+    end_payments = Payment.objects.filter(paid_date__lte=tilldate).aggregate(Sum('amount'))['amount__sum'] or Decimal('0.0')
 
     return {
-        'year_billed': year_billed,
-        'year_payments': year_payments,
-        'year_balance': year_billed - year_payments,
+        'range_billed': range_billed,
+        'range_payments': range_payments,
+        'range_balance': range_billed - range_payments,
         'start_billed': start_billed,
         'end_billed': end_billed,
         'start_balance': start_billed - start_payments,

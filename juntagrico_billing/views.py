@@ -320,14 +320,36 @@ def accounting_summary(request):
     """
     Summary of billing per business year
     """
-    business_years, selected_year = get_years_and_selected(request)
+    if 'fromdate' in request.GET and 'tilldate' in request.GET:
+        daterange_form = DateRangeForm(request.GET)
+    else:
+        # determine date range of last year
+        last_year = date.today() - timedelta(days=365)
+        start_of_last_year = date(last_year.year, 1, 1)
+        end_of_last_year = date(last_year.year, 12, 31)
 
-    billing = get_billing_summary(selected_year) if selected_year else None
-    shares = get_shares_summary(selected_year.start_date, selected_year.end_date) if selected_year else None
+        date_range = {
+            'fromdate': start_of_last_year,
+            'tilldate': end_of_last_year
+        }
+
+        daterange_form = DateRangeForm(date_range)
+        
+    if daterange_form.is_valid():
+        fromdate = daterange_form.cleaned_data['fromdate']
+        tilldate = daterange_form.cleaned_data['tilldate']
+        billing = get_billing_summary(fromdate, tilldate)
+        shares = get_shares_summary(fromdate, tilldate)
+    else:
+        fromdate = None
+        tilldate = None
+        billing = None
+        shares = None
 
     renderdict = {
-        'business_years': business_years,
-        'selected_year': selected_year,
+        'daterange_form': daterange_form,
+        'fromdate': fromdate,
+        'tilldate': tilldate,
         'billing': billing,
         'shares' : shares
     }

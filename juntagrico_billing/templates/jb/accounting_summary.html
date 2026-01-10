@@ -6,22 +6,18 @@
 {% endblock %}
 
 {% block content %}
-    <h4>{% trans "Business Year" %}</h4>
-    <form class="row mb-3" action="{% url 'jb:bills-setyear' %}" method="POST">
-        {% csrf_token %}
-        <p class="col-md-2">{% trans "Year:" %} {{ selected_year.name }}</p>
-        <div class="col-md-2">
-            <select class="form-control" name="year" id="year">
-                {% for year in business_years %}
-                <option {% if year == selected_year %}selected="selected"{% endif %}>{{ year.name }}</option>
-                {% endfor %}
-            </select>
+    <h4>{% trans "Bookings Period" %}</h4>
+    <form class="form" method="GET">
+        <div class="form-row align-items-center">
+            <label class="col-md-1 col-form-label" for="id_fromdate">Von</label>
+            {{ daterange_form.fromdate }}
+            <label class="col-md-1 col-form-label" for="id_tilldate">bis</label>
+            {{ daterange_form.tilldate }}
+            <button type="submit" class="col-md-2 form-control ml-2 btn btn-success">OK</button>
         </div>
-        <div class="col-md-4">
-            <button type="submit" class="btn btn-success">
-                {% trans "Change" %}
-            </button>
-        </div>
+        {% if daterange_form.errors %}
+        <div class="alert alert-danger">{{ daterange_form.errors }}</div>
+        {% endif %}
     </form>
 
     <table class="table table-striped">
@@ -36,21 +32,21 @@
         </thead>
         <tbody>
             <tr>
-                <td>{{ selected_year.start_date }}</td>
+                <td>{{ fromdate|date:"d.m.Y" }}</td>
                 <td class="text-right"></td>
                 <td class="text-right"></td>
                 <td class="text-right">{{ billing.start_balance|floatformat:"2g" }}</td>
                 <td class="text-right">{{ shares.start_balance|floatformat:"2g" }}</td>
             </tr>
             <tr>
-                <td>{{ selected_year.start_date }} - {{ selected_year.end_date }}</td>
-                <td class="text-right">{{ billing.year_billed|floatformat:"2g" }}</td>
-                <td class="text-right">{{ billing.year_payments|floatformat:"2g" }}</td>
-                <td class="text-right">{{ billing.year_balance|floatformat:"2g" }}</td>
-                <td class="text-right">{{ shares.year_balance|floatformat:"2g" }}</td>
+                <td>{{ fromdate|date:"d.m.Y" }} - {{ tilldate|date:"d.m.Y" }}</td>
+                <td class="text-right">{{ billing.range_billed|floatformat:"2g" }}</td>
+                <td class="text-right">{{ billing.range_payments|floatformat:"2g" }}</td>
+                <td class="text-right">{{ billing.range_balance|floatformat:"2g" }}</td>
+                <td class="text-right">{{ shares.range_balance|floatformat:"2g" }}</td>
             </tr>
             <tr>
-                <td>{{ selected_year.end_date }}</td>
+                <td>{{ tilldate|date:"d.m.Y" }}</td>
                 <td class="text-right"></td>
                 <td class="text-right"></td>
                 <td class="text-right">{{ billing.end_balance|floatformat:"2g" }}</td>
