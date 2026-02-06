@@ -2,7 +2,6 @@ import re
 from requests import Session
 from datetime import date
 
-
 class BexioApiClient:
     """
     A client to interact with the Bexio API.
@@ -84,6 +83,7 @@ class BexioApiClient:
     def get_existing_bookings(self, from_date, till_date):
         """
         Fetches existing bookings from Bexio within the specified date range.
+        Uses pagination to fetch all bookings if there are more than 2000 entries.
 
         :param from_date: The start date for the bookings to fetch.
         :param till_date: The end date for the bookings to fetch.
@@ -92,16 +92,32 @@ class BexioApiClient:
         """
         self.load_base_data()
 
-        # todo: support more than 2000 manual entries
-        response = self.session.get("https://api.bexio.com/3.0/accounting/manual_entries",
-                                    params={"limit": 2000})
-        response.raise_for_status()
+        # Fetch all manual entries using pagination
+        limit = 2000
+        offset = 0
+        all_envelopes = []
+
+        while True:
+            response = self.session.get(
+                "https://api.bexio.com/3.0/accounting/manual_entries",
+                params={"limit": limit, "offset": offset}
+            )
+            response.raise_for_status()
+
+            envelopes = response.json()
+            all_envelopes.extend(envelopes)
+
+            # If we received fewer entries than the limit, we've fetched all entries
+            if len(envelopes) < limit:
+                break
+
+            offset += limit
 
         # prepare regex for docnumber matching
         docnum_regex = re.compile(r'(.+) jb:(\d+)$')
 
         result = []
-        for envelope in response.json():
+        for envelope in all_envelopes:
             entries = envelope.get('entries', [])
 
             # only consider first entry in envelope
@@ -192,3 +208,18 @@ class Booking(object):
         self.price = price
         self.vat_amount = vat_amount
         self.id = id
+
+# some test code to fetch existing bookings
+#
+# if __name__ == "__main__":
+#     from datetime import date
+
+#     api_key = "API_KEY"  # replace with your actual API key
+#     client = BexioApiClient(api_key)
+
+#     bookings = client.get_existing_bookings(date(2025, 1, 1), date(2025, 12, 31))
+
+#     # write the booking to a file for debugging purposes
+#     for booking in bookings:
+#         with open("bookings_debug.txt", "a") as f:             
+#             f.write(f"{booking.date} {booking.docnumber} {booking.text} {booking.debit_account} {booking.credit_account} {booking.price} {booking.vat_amount}\n")
