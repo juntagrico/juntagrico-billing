@@ -213,17 +213,17 @@ class PaymentProcessorTest(test.TestCase):
         self.processor.process_payments(payment_infos)
 
         # check if payments assigned
-        self.assertEquals(1, len(self.bill1.payments.all()))
-        self.assertEquals(
+        self.assertEqual(1, len(self.bill1.payments.all()))
+        self.assertEqual(
             date(2018, 3, 15),
             self.bill1.payments.all()[0].paid_date)
-        self.assertEquals(250.0, self.bill1.payments.all()[0].amount)
+        self.assertEqual(250.0, self.bill1.payments.all()[0].amount)
 
-        self.assertEquals(1, len(self.bill2.payments.all()))
-        self.assertEquals(
+        self.assertEqual(1, len(self.bill2.payments.all()))
+        self.assertEqual(
             date(2018, 3, 16),
             self.bill2.payments.all()[0].paid_date)
-        self.assertEquals(210.0, self.bill2.payments.all()[0].amount)
+        self.assertEqual(210.0, self.bill2.payments.all()[0].amount)
 
     def test_process_payments_failed(self):
         """
@@ -258,5 +258,5 @@ class PaymentProcessorTest(test.TestCase):
             self.processor.process_payments(payment_infos)
 
         # check that no payments are assigned
-        self.assertEquals(0, len(self.bill1.payments.all()))
-        self.assertEquals(0, len(self.bill2.payments.all()))
+        self.assertEqual(0, len(self.bill1.payments.all()))
+        self.assertEqual(0, len(self.bill2.payments.all()))

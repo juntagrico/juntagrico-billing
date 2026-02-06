@@ -97,7 +97,7 @@ class ScaleExtraSubscriptionPriceTest(BillingTestCase):
         end_date = date(2018, 10, 31)
 
         price = scale_subscriptionpart_price(self.extrasubs, start_date, end_date)
-        self.assertEquals(self.expected_price, price, "partial year")
+        self.assertEqual(self.expected_price, price, "partial year")
 
     def test_partial_active(self):
         # full year but partial active extrasubscription
@@ -108,7 +108,7 @@ class ScaleExtraSubscriptionPriceTest(BillingTestCase):
         self.extrasubs.deactivation_date = date(2018, 10, 31)
 
         price = scale_subscriptionpart_price(self.extrasubs, start_date, end_date)
-        self.assertEquals(self.expected_price, price, "partial active")
+        self.assertEqual(self.expected_price, price, "partial active")
 
 
 class BillSubscriptionsTests(BillingTestCase):
@@ -159,8 +159,8 @@ class BillSubscriptionsTests(BillingTestCase):
         billable_items = [self.subscription.parts.all()[0], self.extrasubs]
         bill = create_bill(billable_items, self.year, self.year.start_date)
 
-        self.assertEquals(2, len(bill.items.all()))
-        self.assertEquals('Abo, Zusatzabo', bill.item_kinds)
+        self.assertEqual(2, len(bill.items.all()))
+        self.assertEqual('Abo, Zusatzabo', bill.item_kinds)
 
     def test_create_bill_for_all(self):
         billable_items = get_billable_subscription_parts(self.year)
@@ -263,8 +263,8 @@ class BillCustomItemsTest(BillingTestCase):
         # create a subscription bill
         bill = create_bill(self.subscription.parts.all(), self.year, self.year.start_date)
 
-        self.assertEquals(1, len(bill.items.all()))
-        self.assertEquals(1200.0, bill.amount)
+        self.assertEqual(1, len(bill.items.all()))
+        self.assertEqual(1200.0, bill.amount)
 
         # add 2 custom items
         item = BillItem(bill=bill, custom_item_type=self.item_type1,
@@ -276,21 +276,21 @@ class BillCustomItemsTest(BillingTestCase):
         bill.save()
 
         # test items
-        self.assertEquals(3, len(bill.items.all()))
-        self.assertEquals(1430.0, bill.amount)
+        self.assertEqual(3, len(bill.items.all()))
+        self.assertEqual(1430.0, bill.amount)
         item = bill.items.all()[1]
-        self.assertEquals('Custom Item 1', item.item_kind)
-        self.assertEquals('some custom item 1', item.description)
-        self.assertEquals('Custom Item 1 some custom item 1', str(item))
+        self.assertEqual('Custom Item 1', item.item_kind)
+        self.assertEqual('some custom item 1', item.description)
+        self.assertEqual('Custom Item 1 some custom item 1', str(item))
         item = bill.items.all()[2]
-        self.assertEquals('Custom Item 2', item.item_kind)
-        self.assertEquals('', item.description)
-        self.assertEquals('Custom Item 2', str(item))
+        self.assertEqual('Custom Item 2', item.item_kind)
+        self.assertEqual('', item.description)
+        self.assertEqual('Custom Item 2', str(item))
 
         # test description
         description_lines = bill.description.split('\n')
-        self.assertEquals('Custom Item 1 some custom item 1', description_lines[1])
-        self.assertEquals('Custom Item 2', description_lines[2])
+        self.assertEqual('Custom Item 1 some custom item 1', description_lines[1])
+        self.assertEqual('Custom Item 2', description_lines[2])
 
     def test_recalc_with_custom_items(self):
         # create a subscription bill
@@ -303,13 +303,13 @@ class BillCustomItemsTest(BillingTestCase):
         bill.save()
 
         # check items count and total amount
-        self.assertEquals(2, len(bill.items.all()), "items before recalc")
-        self.assertEquals(1310.0, bill.amount, "amount before recalc")
+        self.assertEqual(2, len(bill.items.all()), "items before recalc")
+        self.assertEqual(1310.0, bill.amount, "amount before recalc")
 
         # recalc bill, amount should stay the same
         recalc_bill(bill)
-        self.assertEquals(2, len(bill.items.all()), "items after recalc")
-        self.assertEquals(1310.0, bill.amount, "amount after recalc")
+        self.assertEqual(2, len(bill.items.all()), "items after recalc")
+        self.assertEqual(1310.0, bill.amount, "amount after recalc")
 
 
 class BillsListTest(BillingTestCase):
@@ -431,15 +431,15 @@ class BillTest(BillingTestCase):
         # the first item should be the subsription item
         # with price 1200.00
         item = self.bill.items.all()[0]
-        self.assertEquals(1200.0, item.amount)
+        self.assertEqual(1200.0, item.amount)
 
         # we expect VAT (2.5%) of 29.27
-        self.assertEquals(29.27, item.vat_amount)
+        self.assertEqual(29.27, item.vat_amount)
 
     def test_no_vat_customitem(self):
         # custom items should have no vat
         item = self.bill.items.all()[2]
-        self.assertEquals(0.0, item.vat_amount)
+        self.assertEqual(0.0, item.vat_amount)
 
     def test_no_vat(self):
         # create bill with 0% vat (inclusive)
@@ -451,10 +451,10 @@ class BillTest(BillingTestCase):
         # the first item should be the subsription item
         # with amount 1200.00
         item = bill.items.all()[0]
-        self.assertEquals(1200.0, item.amount)
+        self.assertEqual(1200.0, item.amount)
 
         # we expect no VAT
-        self.assertEquals(0.0, item.vat_amount)
+        self.assertEqual(0.0, item.vat_amount)
 
     def test_vat_on_changed_item(self):
         # changing a subscription parts amount
@@ -465,13 +465,13 @@ class BillTest(BillingTestCase):
         item.amount = 2000.0
         item.save()
 
-        self.assertEquals(48.78, item.vat_amount)
+        self.assertEqual(48.78, item.vat_amount)
 
     def test_refnumber(self):
         refnumber = self.bill.refnumber
-        self.assertEquals(27, len(refnumber))
-        self.assertEquals(self.bill.member.id, member_id_from_refnumber(refnumber))
-        self.assertEquals(self.bill.id, bill_id_from_refnumber(refnumber))
+        self.assertEqual(27, len(refnumber))
+        self.assertEqual(self.bill.member.id, member_id_from_refnumber(refnumber))
+        self.assertEqual(self.bill.id, bill_id_from_refnumber(refnumber))
 
     def test_notification_email_has_no_refnumber(self):
         """
@@ -481,7 +481,7 @@ class BillTest(BillingTestCase):
         """
         send_bill_notification(self.bill)
         outbox = django.core.mail.outbox
-        self.assertEquals(1, len(outbox))
+        self.assertEqual(1, len(outbox))
         msg = outbox[0].body
         self.assertFalse('Referencenumber:' in msg)
 
@@ -495,7 +495,7 @@ class BillTest(BillingTestCase):
         self.payment_type.save()
         send_bill_notification(self.bill)
         outbox = django.core.mail.outbox
-        self.assertEquals(1, len(outbox))
+        self.assertEqual(1, len(outbox))
         msg = outbox[0].body
 
         reftext = 'Referenznummer:  {}'.format(self.bill.refnumber)

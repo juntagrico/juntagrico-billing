@@ -46,39 +46,39 @@ class BillBookingsTest(BillingTestCase):
     def test_bill_bookings(self):
         bookings = get_bill_bookings(self.year.start_date, self.year.end_date)
 
-        self.assertEquals(2, len(bookings))
+        self.assertEqual(2, len(bookings))
         booking = bookings[0]
 
-        self.assertEquals(self.year.start_date, booking.date)
-        self.assertEquals("500011", booking.docnumber)
-        self.assertEquals("Rg 1: Abo Michael Test", booking.text)
-        self.assertEquals("1100", booking.debit_account)
-        self.assertEquals("3001", booking.credit_account)
-        self.assertEquals("4321", booking.member_account)
-        self.assertEquals(1200.0, booking.price)
+        self.assertEqual(self.year.start_date, booking.date)
+        self.assertEqual("500011", booking.docnumber)
+        self.assertEqual("Rg 1: Abo Michael Test", booking.text)
+        self.assertEqual("1100", booking.debit_account)
+        self.assertEqual("3001", booking.credit_account)
+        self.assertEqual("4321", booking.member_account)
+        self.assertEqual(1200.0, booking.price)
 
         booking = bookings[1]
 
-        self.assertEquals(self.year.start_date, booking.date)
-        self.assertEquals("500012", booking.docnumber)
-        self.assertEquals("Rg 1: Zusatzabo Michael Test", booking.text)
-        self.assertEquals("1100", booking.debit_account)
-        self.assertEquals("3010", booking.credit_account)
-        self.assertEquals("4321", booking.member_account)
-        self.assertEquals(300.0, booking.price)
+        self.assertEqual(self.year.start_date, booking.date)
+        self.assertEqual("500012", booking.docnumber)
+        self.assertEqual("Rg 1: Zusatzabo Michael Test", booking.text)
+        self.assertEqual("1100", booking.debit_account)
+        self.assertEqual("3010", booking.credit_account)
+        self.assertEqual("4321", booking.member_account)
+        self.assertEqual(300.0, booking.price)
 
     def test_payment_bookings(self):
         bookings = get_payment_bookings(self.year.start_date, self.year.end_date)
 
-        self.assertEquals(2, len(bookings))
+        self.assertEqual(2, len(bookings))
         booking = bookings[0]
-        self.assertEquals(date(2018, 2, 1), booking.date)
-        self.assertEquals('600001', booking.docnumber)
-        self.assertEquals("Zlg Rg 1: Abo, Zusatzabo Michael Test", booking.text)
-        self.assertEquals(500.0, booking.price)
-        self.assertEquals('1100', booking.credit_account)
-        self.assertEquals('1010', booking.debit_account)
-        self.assertEquals('4321', booking.member_account)
+        self.assertEqual(date(2018, 2, 1), booking.date)
+        self.assertEqual('600001', booking.docnumber)
+        self.assertEqual("Zlg Rg 1: Abo, Zusatzabo Michael Test", booking.text)
+        self.assertEqual(500.0, booking.price)
+        self.assertEqual('1100', booking.credit_account)
+        self.assertEqual('1010', booking.debit_account)
+        self.assertEqual('4321', booking.member_account)
 
     def test_negative_payment_bookings(self):
         """
@@ -92,15 +92,15 @@ class BillBookingsTest(BillingTestCase):
 
         bookings = get_payment_bookings(self.year.start_date, self.year.end_date)
 
-        self.assertEquals(2, len(bookings))
+        self.assertEqual(2, len(bookings))
         booking = bookings[0]
-        self.assertEquals(date(2018, 2, 1), booking.date)
-        self.assertEquals('600001', booking.docnumber)
-        self.assertEquals("Zlg Rg 1: Abo, Zusatzabo Michael Test", booking.text)
-        self.assertEquals(500.0, booking.price)
-        self.assertEquals('1100', booking.debit_account)
-        self.assertEquals('1010', booking.credit_account)
-        self.assertEquals('4321', booking.member_account)
+        self.assertEqual(date(2018, 2, 1), booking.date)
+        self.assertEqual('600001', booking.docnumber)
+        self.assertEqual("Zlg Rg 1: Abo, Zusatzabo Michael Test", booking.text)
+        self.assertEqual(500.0, booking.price)
+        self.assertEqual('1100', booking.debit_account)
+        self.assertEqual('1010', booking.credit_account)
+        self.assertEqual('4321', booking.member_account)
 
 
 class BillWithCustomItemBookingsTest(BillingTestCase):
@@ -120,25 +120,25 @@ class BillWithCustomItemBookingsTest(BillingTestCase):
         # get bookigs
         bookings = get_bill_bookings(self.year.start_date, self.year.end_date)
 
-        self.assertEquals(3, len(bookings))
+        self.assertEqual(3, len(bookings))
 
         booking = bookings[1]
-        self.assertEquals(self.year.start_date, booking.date)
-        self.assertEquals("500012", booking.docnumber)
-        self.assertEquals("Rg 1: Custom Item 1 Michael Test", booking.text)
-        self.assertEquals("1100", booking.debit_account)
-        self.assertEquals("2211", booking.credit_account)
-        self.assertEquals("4321", booking.member_account)
-        self.assertEquals(100.0, booking.price)
+        self.assertEqual(self.year.start_date, booking.date)
+        self.assertEqual("500012", booking.docnumber)
+        self.assertEqual("Rg 1: Custom Item 1 Michael Test", booking.text)
+        self.assertEqual("1100", booking.debit_account)
+        self.assertEqual("2211", booking.credit_account)
+        self.assertEqual("4321", booking.member_account)
+        self.assertEqual(100.0, booking.price)
 
         booking = bookings[2]
-        self.assertEquals(self.year.start_date, booking.date)
-        self.assertEquals("500013", booking.docnumber)
-        self.assertEquals("Rg 1: Custom Item 2 Michael Test", booking.text)
-        self.assertEquals("1100", booking.debit_account)
-        self.assertEquals("2212", booking.credit_account)
-        self.assertEquals("4321", booking.member_account)
-        self.assertEquals(200.0, booking.price)
+        self.assertEqual(self.year.start_date, booking.date)
+        self.assertEqual("500013", booking.docnumber)
+        self.assertEqual("Rg 1: Custom Item 2 Michael Test", booking.text)
+        self.assertEqual("1100", booking.debit_account)
+        self.assertEqual("2212", booking.credit_account)
+        self.assertEqual("4321", booking.member_account)
+        self.assertEqual(200.0, booking.price)
 
     def test_get_bill_bookings_negative(self):
         """
@@ -156,16 +156,16 @@ class BillWithCustomItemBookingsTest(BillingTestCase):
         # get bookigs
         bookings = get_bill_bookings(self.year.start_date, self.year.end_date)
 
-        self.assertEquals(2, len(bookings))
+        self.assertEqual(2, len(bookings))
 
         booking = bookings[1]
-        self.assertEquals(self.year.start_date, booking.date)
-        self.assertEquals("500012", booking.docnumber)
-        self.assertEquals("Rg 1: Custom Item 1 Michael Test", booking.text)
+        self.assertEqual(self.year.start_date, booking.date)
+        self.assertEqual("500012", booking.docnumber)
+        self.assertEqual("Rg 1: Custom Item 1 Michael Test", booking.text)
 
         # credit and debit account are exchanged
         # and amount is positive
-        self.assertEquals("2211", booking.debit_account)
-        self.assertEquals("1100", booking.credit_account)
-        self.assertEquals("4321", booking.member_account)
-        self.assertEquals(100.0, booking.price)
+        self.assertEqual("2211", booking.debit_account)
+        self.assertEqual("1100", booking.credit_account)
+        self.assertEqual("4321", booking.member_account)
+        self.assertEqual(100.0, booking.price)
