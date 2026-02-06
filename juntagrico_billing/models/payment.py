@@ -17,7 +17,7 @@ class Payment(JuntagricoBaseModel):
                              null=False, blank=False,
                              on_delete=models.PROTECT,
                              verbose_name=_('Payment type'))
-    paid_date = models.DateField(_('Payment date'), null=True, blank=True)
+    paid_date = models.DateField(_('Payment date'), null=False, blank=False)
     amount = models.FloatField(
         _('Amount'),
         null=False, blank=False, default=0.0)
