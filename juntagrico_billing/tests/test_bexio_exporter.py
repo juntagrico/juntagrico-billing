@@ -43,16 +43,16 @@ class BexioExporterTest(TestCase):
         result, msg = self.exporter.export_bookings(bookings)
 
         # Assert
-        self.assertEquals(len(self.api_client.created_bookings), 0)
-        self.assertEquals(len(self.api_client.updated_bookings), 0)
-        self.assertEquals(len(self.api_client.deleted_bookings), 0)
+        self.assertEqual(len(self.api_client.created_bookings), 0)
+        self.assertEqual(len(self.api_client.updated_bookings), 0)
+        self.assertEqual(len(self.api_client.deleted_bookings), 0)
 
         self.assertTrue('updated' in result)
         self.assertTrue('created' in result)
         self.assertTrue('deleted' in result)
-        self.assertEquals(result['updated'], 0)
-        self.assertEquals(result['created'], 0)
-        self.assertEquals(result['deleted'], 0)
+        self.assertEqual(result['updated'], 0)
+        self.assertEqual(result['created'], 0)
+        self.assertEqual(result['deleted'], 0)
 
     def test_export_bookings_with_update(self):
         """
@@ -72,16 +72,16 @@ class BexioExporterTest(TestCase):
         result, msg = self.exporter.export_bookings(bookings)
 
         # Assert
-        self.assertEquals(len(self.api_client.created_bookings), 0)
-        self.assertEquals(len(self.api_client.updated_bookings), 2)  # Two bookings were updated
-        self.assertEquals(len(self.api_client.deleted_bookings), 0)
+        self.assertEqual(len(self.api_client.created_bookings), 0)
+        self.assertEqual(len(self.api_client.updated_bookings), 2)  # Two bookings were updated
+        self.assertEqual(len(self.api_client.deleted_bookings), 0)
 
-        self.assertEquals(self.api_client.updated_bookings[0][1].price, 150.0)
-        self.assertEquals(self.api_client.updated_bookings[1][1].price, 350.0)
+        self.assertEqual(self.api_client.updated_bookings[0][1].price, 150.0)
+        self.assertEqual(self.api_client.updated_bookings[1][1].price, 350.0)
 
-        self.assertEquals(result['updated'], 2)
-        self.assertEquals(result['created'], 0)
-        self.assertEquals(result['deleted'], 0)
+        self.assertEqual(result['updated'], 2)
+        self.assertEqual(result['created'], 0)
+        self.assertEqual(result['deleted'], 0)
 
     def test_export_bookings_with_addition(self):
         """
@@ -100,14 +100,14 @@ class BexioExporterTest(TestCase):
 
         result, msg = self.exporter.export_bookings(bookings)
 
-        self.assertEquals(len(self.api_client.created_bookings), 1)  # One new booking was added
-        self.assertEquals(len(self.api_client.updated_bookings), 0)
-        self.assertEquals(len(self.api_client.deleted_bookings), 0)
-        self.assertEquals(self.api_client.created_bookings[0].price, 400.0)
+        self.assertEqual(len(self.api_client.created_bookings), 1)  # One new booking was added
+        self.assertEqual(len(self.api_client.updated_bookings), 0)
+        self.assertEqual(len(self.api_client.deleted_bookings), 0)
+        self.assertEqual(self.api_client.created_bookings[0].price, 400.0)
 
-        self.assertEquals(result['updated'], 0)
-        self.assertEquals(result['created'], 1)
-        self.assertEquals(result['deleted'], 0)
+        self.assertEqual(result['updated'], 0)
+        self.assertEqual(result['created'], 1)
+        self.assertEqual(result['deleted'], 0)
 
     def test_export_bookings_with_deletion(self):
         """
@@ -123,14 +123,14 @@ class BexioExporterTest(TestCase):
 
         result, msg = self.exporter.export_bookings(bookings)
 
-        self.assertEquals(len(self.api_client.created_bookings), 0)
-        self.assertEquals(len(self.api_client.updated_bookings), 0)
-        self.assertEquals(len(self.api_client.deleted_bookings), 1)  # One booking was deleted
-        self.assertEquals(self.api_client.deleted_bookings[0].docnumber, "12347")
+        self.assertEqual(len(self.api_client.created_bookings), 0)
+        self.assertEqual(len(self.api_client.updated_bookings), 0)
+        self.assertEqual(len(self.api_client.deleted_bookings), 1)  # One booking was deleted
+        self.assertEqual(self.api_client.deleted_bookings[0].docnumber, "12347")
 
-        self.assertEquals(result['updated'], 0)
-        self.assertEquals(result['created'], 0)
-        self.assertEquals(result['deleted'], 1)
+        self.assertEqual(result['updated'], 0)
+        self.assertEqual(result['created'], 0)
+        self.assertEqual(result['deleted'], 1)
 
     def test_bookings_are_equal(self):
         """
