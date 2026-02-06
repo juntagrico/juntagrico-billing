@@ -2,6 +2,7 @@ import re
 from requests import Session
 from datetime import date
 
+
 class BexioApiClient:
     """
     A client to interact with the Bexio API.
