@@ -132,7 +132,7 @@ def get_subscription(parts):
 def get_short_parts(parts):
 
     def short_name(part):
-        if part.type.size.product.is_extra:
+        if part.type.is_extra:
             return _('Extrasubscription')
         else:
             return _('Subscription')

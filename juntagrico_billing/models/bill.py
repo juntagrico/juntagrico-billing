@@ -116,7 +116,7 @@ class Bill(JuntagricoBaseModel):
         """
         def order_key(itm):
             if itm.subscription_part:
-                if itm.subscription_part.type.size.product.is_extra:
+                if itm.subscription_part.type.is_extra:
                     return (1, itm.id)
                 else:
                     return (0, itm.id)
@@ -227,7 +227,7 @@ class BillItem(JuntagricoBaseModel):
         used as a short description the bill item.
         """
         if self.subscription_part:
-            if self.subscription_part.type.size.product.is_extra:
+            if self.subscription_part.type.is_extra:
                 return _('Extrasubscription')
             else:
                 return _('Subscription')

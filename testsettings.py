@@ -21,9 +21,11 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'impersonate',
     'crispy_forms',
+    'crispy_bootstrap4',
     'fontawesomefree',
     'import_export',
     'adminsortable2',
+    'django_select2',
     'djrichtextfield',
     'polymorphic',
     'juntagrico_billing',
@@ -122,12 +124,12 @@ TEMPLATES = [
 
 LOGIN_REDIRECT_URL = "/"
 
-SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
-
 LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'juntagrico/locale'),
     os.path.join(BASE_DIR, 'juntagrico_billing/locale'),
 )
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 CRISPY_FAIL_SILENTLY = not DEBUG
