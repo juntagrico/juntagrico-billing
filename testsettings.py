@@ -22,7 +22,6 @@ INSTALLED_APPS = [
     'impersonate',
     'crispy_forms',
     'crispy_bootstrap4',
-    'fontawesomefree',
     'import_export',
     'adminsortable2',
     'django_select2',
@@ -99,6 +98,7 @@ USE_TZ = True
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 # Insert your TEMPLATE_CONTEXT_PROCESSORS here or use this
@@ -112,10 +112,6 @@ TEMPLATES = [
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
                 'juntagrico.context_processors.vocabulary',
-            ],
-            'loaders': [
-                'django.template.loaders.filesystem.Loader',
-                'django.template.loaders.app_directories.Loader'
             ],
             'debug': True
         },
