@@ -47,6 +47,7 @@ class BillingTestCase(JuntagricoTestCase):
             account="3010"
         )
 
+        cls.period1.delete()
         cls.extrasub_period1 = BillingPeriod.objects.create(
             type=cls.extrasub_type,
             price=100,
