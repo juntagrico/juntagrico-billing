@@ -1,0 +1,17 @@
+{% load i18n %}
+<form class="row mb-3" action="{% url 'jb:bills-setyear' %}" method="POST">
+    {% csrf_token %}
+    <p class="col-md-2">{% trans "Year:" %} {{ selected_year.name }}</p>
+    <div class="col-md-2">
+        <select class="form-control" name="year" id="year">
+            {% for year in business_years %}
+            <option {% if year == selected_year %}selected="selected"{% endif %}>{{ year.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <button type="submit" class="btn btn-success">
+            {% trans "Change" %}
+        </button>
+    </div>
+</form>

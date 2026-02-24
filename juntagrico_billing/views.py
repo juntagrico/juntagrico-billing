@@ -58,8 +58,6 @@ def open_bills(request):
         'selected_year': selected_year,
         'bills_list': bills_list,
         'percent_paid': percent_paid,
-        'email_form_disabled': True,
-        'change_date_disabled': True,
         'state': state,
         'state_active': state_active
     }
@@ -77,6 +75,7 @@ def bills_setyear(request):
 
 
 @permission_required('juntagrico.is_book_keeper')
+@require_POST
 def bills_generate(request):
     # generate bills for current business year
     year_name = request.session['bills_businessyear']
@@ -114,8 +113,6 @@ def pending_bills(request):
         'business_years': business_years,
         'selected_year': selected_year,
         'pending_bills': pending_bills,
-        'email_form_disabled': True,
-        'change_date_disabled': True,
     }
 
     return render(request, "jb/pending_bills.html", renderdict)
@@ -166,23 +163,20 @@ def unpublished_bills(request):
 
     renderdict = {
         'bills_list': bills_list,
-        'search_disabled': True,
-        'email_form_disabled': True,
-        'change_date_disabled': True,
     }
 
     return render(request, "jb/unpublished_bills.html", renderdict)
 
 
 @permission_required('juntagrico.is_book_keeper')
+@require_POST
 def bills_publish(request):
     """
     POST handler for publishing bills.
     Called from unpublished_bills view.
     """
-    if request.method == 'POST':
-        selected_ids = request.POST.getlist('_selected')
-        publish_bills(selected_ids)
+    selected_ids = request.POST.get('bill_ids').split('_')
+    publish_bills(selected_ids)
 
     return redirect(reverse('jb:unpublished-bills-list'))
 
@@ -422,10 +416,10 @@ def bills_notify(request):
     """
     List of bills to send notification e-mails
     """
-    bills_list = list(Bill.objects.filter(notification_sent=False))
+    bills = Bill.objects.filter(notification_sent=False)
 
     if request.method == 'POST':
-        for bill in bills_list:
+        for bill in bills.filter(id__in=request.POST.get('bill_ids').split('_')):
             send_bill_notification(bill)
             bill.notification_sent = True
             bill.save()
@@ -433,10 +427,7 @@ def bills_notify(request):
         return return_to_previous_location(request)
 
     renderdict = {
-        'bills_list': bills_list,
-        'bills_count': len(bills_list),
-        'email_form_disabled': True,
-        'change_date_disabled': True,
+        'bills': bills,
     }
 
     return render(request, "jb/bills_notify.html", renderdict)

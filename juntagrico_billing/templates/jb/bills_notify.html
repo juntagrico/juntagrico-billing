@@ -1,23 +1,19 @@
-{% extends "management_lists/man_list_base.html" %}
+{% extends "juntagrico/manage/base.html" %}
 {% load i18n %}
 {% load l10n %}
 {% load juntagrico.config %}
+
 {% block page_title %}
     <h3>
         {% trans "Send billing notifications" %}
     </h3>
 {% endblock %}
-{% block management_cmd %}
-<form class="row mb-3" method="POST">
-    {% csrf_token %} 
-    <p class="col-md-4">{{ bills_count }} {% trans "billing notifications to be sent" %}</p>
-    <div class="col-md-4">
-        <button type="submit" class="btn btn-success">
-            {% trans "Send E-Mails" %}
-        </button>
-    </div>
-</form>
+
+{% block content %}
+    {% include 'juntagrico/manage/member/snippets/toggle_buttons.html' %}
+    {{ block.super }}
 {% endblock %}
+
 {% block list %}
     <table id="filter-table" class="table">
         <thead>
@@ -46,15 +42,15 @@
             </tr>
         </thead>
         <tbody>
-            {% for bill in bills_list %}
+            {% for bill in bills %}
                 <tr>
                     <td>
-                        <a href="{% url 'admin:juntagrico_billing_bill_change' bill.id %}">
+                        <a href="{% url 'admin:juntagrico_billing_bill_change' bill.id %}" class="bill-id">
                         {{ bill.id }}
                         </a>
                     </td>
                     <td>
-                        {{ bill.member }}
+                        {% include 'juntagrico/manage/member/snippets/display_linked.html' with member=bill.member %}
                     </td>
                     <td>
                         {{ bill.item_kinds }}
@@ -75,4 +71,16 @@
             {% endfor %}
         </tbody>
     </table>
+{% endblock %}
+
+{% block datatable_constructor %}
+    {{ block.super }}
+    config.layout.topStart.features.buttons.push(
+        id_action_button(
+            '<i class="bi bi-envelope-paper"></i> {% trans "Send Bills" %}',
+            '',
+            '{% csrf_token %}',
+            '.bill-id', 'bill_ids'
+        )
+    )
 {% endblock %}

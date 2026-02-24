@@ -1,197 +1,102 @@
-{% extends "base.html" %}
+{% extends "juntagrico/manage/base.html" %}
 {% load i18n %}
 {% load static %}
 {% load juntagrico.config %}
 {% block body_extra_classes %}wide-layout{% endblock %}
+
 {% block page_title %}
     <h3>
         {% trans "Open bills" %}
     </h3>
 {% endblock %}
+
 {% block content %}
-<form class="row mb-3" action="{% url 'jb:bills-setyear' %}" method="POST">
-    {% csrf_token %} 
-    <p class="col-md-2">{% trans "Year:" %} {{ selected_year.name }}</p>
-    <div class="col-md-2">
-        <select class="form-control" name="year" id="year">
-            {% for year in business_years %}
-            <option {% if year == selected_year %}selected="selected"{% endif %}>{{ year.name }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="col-md-4">
-        <button type="submit" class="btn btn-success">
-            {% trans "Change" %}
-        </button>
-    </div>
-</form>
-<ul class="nav nav-tabs mb-3">
-    <li class="nav-item">
-      <a class="nav-link {{ state_active.0 }}" href="{% url 'jb:open-bills-list' %}?state=open">{% trans "Open" %}</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link {{ state_active.1 }}" href="{% url 'jb:open-bills-list' %}?state=open75">{% trans "Open" %} 75%</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link {{ state_active.2 }}" href="{% url 'jb:open-bills-list' %}?state=open50">{% trans "Open" %} 50%</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link {{ state_active.3 }}" href="{% url 'jb:open-bills-list' %}?state=open25">{% trans "Open" %} 25%</a>
-    </li>
-</ul>
+    {% include 'jb/snippets/year_form.html' %}
+
+    <ul class="nav nav-tabs mb-3">
+        <li class="nav-item">
+          <a class="nav-link {{ state_active.0 }}" href="{% url 'jb:open-bills-list' %}?state=open">{% trans "Open" %}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ state_active.1 }}" href="{% url 'jb:open-bills-list' %}?state=open75">{% trans "Open" %} 75%</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ state_active.2 }}" href="{% url 'jb:open-bills-list' %}?state=open50">{% trans "Open" %} 50%</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {{ state_active.3 }}" href="{% url 'jb:open-bills-list' %}?state=open25">{% trans "Open" %} 25%</a>
+        </li>
+    </ul>
   
-{% if state == "all" %}
-<p class="mb-3">
-    {{ bills_list | length }} {% trans "bills for" %} {{ selected_year.name }}
-</p>
-{% else %}
-<p class="mb-3">
-    {{ bills_list | length }} {% trans "open bills with paid amount less than" %} {{ percent_paid }}%
-</p>
-{% endif %}
+    {% if state == "all" %}
+    <p class="mb-3">
+        {{ bills_list | length }} {% trans "bills for" %} {{ selected_year.name }}
+    </p>
+    {% else %}
+    <p class="mb-3">
+        {{ bills_list | length }} {% trans "open bills with paid amount less than" %} {{ percent_paid }}%
+    </p>
+    {% endif %}
 
-<button class="btn btn-success" id="copy-email">
-    {% trans "Copy E-Mail addresses of selected rows" %}
-</button>
-
-<div id="email-copied-alert" class="mt-2 alert alert-success alert-dismissible show fade" style="display:none">
-    {% trans "E-mail addresses have been copied. You may paste them into an e-mail as BCC recipients." %}
-    <button id="alert-close-button" type="button" class="close">&times;</button>
-</div>
-    
-<table id="filter-table" class="table">
-    <thead>
-        <tr>
-            <th style="text-align:center" data-orderable="false" ><input type="checkbox" /></th>
-            <th scope="col">
-                {% trans "Number" %}
-            </th>
-            <th scope="col">
-                {% trans "Member" %}
-            </th>
-            <th scope="col" data-orderable="false">
-                {% trans "Kind" %}
-            </th>
-            <th scope="col">
-                {% trans "Date" %}
-            </th>
-            <th scope="col" class="text-right">
-                {% trans "Amount" %}
-            </th>
-            <th scope="col" class="text-right">
-                {% trans "Amount open" %}
-            </th>
-            <th scope="col" data-orderable="false">
-                {% trans "User view" %}
-            </th>
-            <th hidden="true">E-Mail</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for bill in bills_list %}
-            <tr>
-                <td style="text-align:center"><input type="checkbox"/> </td>
-                <td>
-                    <a href="{% url 'admin:juntagrico_billing_bill_change' bill.id %}">
-                    {{ bill.id }}
-                    </a>
-                </td>
-                <td>
-                    {{ bill.member }}
-                </td>
-                <td>
-                    {{ bill.item_kinds }}
-                </td>
-                <td>
-                    {{ bill.bill_date|date:"SHORT_DATE_FORMAT" }}
-                </td>
-                <td class="text-right">
-                    {{ bill.amount | floatformat:2 }}
-                </td>
-                <td class="text-right">
-                    {{ bill.amount_open | floatformat:2 }}
-                </td>
-                <td>
-                    <a href="{% url 'jb:user-bill' bill.id %}">{{ bill.id }}</a>
-                </td>
-                <td hidden="true" class="email">{{ bill.member.email }}</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    {% include 'juntagrico/manage/member/snippets/toggle_buttons.html' %}
+    {{ block.super }}
 {% endblock %}
-{% block scripts %}
-<script type="text/javascript" src="{% static 'juntagrico/external/datatables/datatables.min.js' %}">
-</script>
-<script type="text/javascript">
-// copy to clipboard functions
-function fallbackCopyTextToClipboard(text) {
-  var textArea = document.createElement("textarea");
-  textArea.value = text;
-  
-  // Avoid scrolling to bottom
-  textArea.style.top = "0";
-  textArea.style.left = "0";
-  textArea.style.position = "fixed";
 
-  document.body.appendChild(textArea);
-  textArea.focus();
-  textArea.select();
-
-  try {
-    var successful = document.execCommand('copy');
-    var msg = successful ? 'successful' : 'unsuccessful';
-    console.log('Fallback: Copying text command was ' + msg);
-  } catch (err) {
-    console.error('Fallback: Oops, unable to copy', err);
-  }
-
-  document.body.removeChild(textArea);
-}
-
-function copyTextToClipboard(text) {
-  if (!navigator.clipboard) {
-    fallbackCopyTextToClipboard(text);
-    return;
-  }
-  navigator.clipboard.writeText(text).then(function() {
-    console.log('Async: Copying to clipboard was successful!');
-  }, function(err) {
-    console.error('Async: Could not copy text: ', err);
-  });
-}
-
-// initialize datatable
-$(document).ready(function() {
-    // configure table
-    $('#filter-table').DataTable( {
-        order: [[6, "desc"]],
-        searching: true,
-        paging: false,
-        info: false
-    } );
-
-    // attach select all checkbox handler
-    $('#filter-table tr:first th:first input:checkbox').click(function() {
-        var checkboxes = $('#filter-table tbody tr td input:checkbox');
-        $(checkboxes).prop("checked", this.checked);
-    });
-
-    // copy-emails button
-    $('#copy-email').click(function() {
-        var checked_rows = $('#filter-table tbody tr:has(input:checked)');
-        var emails = $('td:hidden', checked_rows).map(function() {
-            return $(this).text();
-        }).toArray();
-
-        copyTextToClipboard(emails);
-        $("#email-copied-alert").show();
-    });
-
-    // alert-close button
-    $("#alert-close-button").click(function() {
-        $("#email-copied-alert").hide();
-    });
-});
-</script>
+{% block list %}
+    <table id="filter-table" class="table">
+        <thead>
+            <tr>
+                <th scope="col">
+                    {% trans "Number" %}
+                </th>
+                <th scope="col">
+                    {% trans "Member" %}
+                </th>
+                <th scope="col" data-orderable="false">
+                    {% trans "Kind" %}
+                </th>
+                <th scope="col">
+                    {% trans "Date" %}
+                </th>
+                <th scope="col" class="text-right">
+                    {% trans "Amount" %}
+                </th>
+                <th scope="col" class="text-right">
+                    {% trans "Amount open" %}
+                </th>
+                <th scope="col" data-orderable="false">
+                    {% trans "User view" %}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bill in bills_list %}
+                <tr>
+                    <td>
+                        <a href="{% url 'admin:juntagrico_billing_bill_change' bill.id %}">
+                        {{ bill.id }}
+                        </a>
+                    </td>
+                    <td>
+                        {% include 'juntagrico/manage/member/snippets/display_linked.html' with member=bill.member %}
+                    </td>
+                    <td>
+                        {{ bill.item_kinds }}
+                    </td>
+                    <td>
+                        {{ bill.bill_date|date:"SHORT_DATE_FORMAT" }}
+                    </td>
+                    <td class="text-right">
+                        {{ bill.amount | floatformat:2 }}
+                    </td>
+                    <td class="text-right">
+                        {{ bill.amount_open | floatformat:2 }}
+                    </td>
+                    <td>
+                        <a href="{% url 'jb:user-bill' bill.id %}">{{ bill.id }}</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

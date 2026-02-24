@@ -1,26 +1,22 @@
-{% extends "management_lists/man_list_base.html" %}
+{% extends "juntagrico/manage/base.html" %}
 {% load i18n %}
 {% load juntagrico.config %}
+
 {% block page_title %}
     <h3>
         {% trans "Unpublished Bills" %}
     </h3>
 {% endblock %}
+
+{% block content %}
+    {% include 'juntagrico/manage/member/snippets/toggle_buttons.html' %}
+    {{ block.super }}
+{% endblock %}
+
 {% block list %}
-<form action="{% url 'jb:bills-publish' %}" method="POST">
-    {% csrf_token %} 
-    <div class="row mb-3">
-        <p class="col-md-3">{% trans "Publish selected bills" %}</p>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-success">
-                {% trans "Publish" %}
-            </button>
-        </div>
-    </div>
-    <table id="filter-table" class="table" searching="false">
+    <table id="filter-table" class="table">
         <thead>
             <tr>
-                <th></th>
                 <th scope="col" class="filter">
                     {% trans "Number" %}
                 </th>
@@ -45,15 +41,12 @@
             {% for bill in bills_list %}
                 <tr>
                     <td>
-                        <input type="checkbox" name="_selected" value="{{ bill.id }}">
-                    </td>
-                    <td>
-                        <a href="{% url 'admin:juntagrico_billing_bill_change' bill.id %}">
+                        <a href="{% url 'admin:juntagrico_billing_bill_change' bill.id %}" class="bill-id">
                         {{ bill.id }}
                         </a>
                     </td>
                     <td>
-                        {{ bill.member }}
+                        {% include 'juntagrico/manage/member/snippets/display_linked.html' with member=bill.member %}
                     </td>
                     <td>
                         {{ bill.item_kinds }}
@@ -71,5 +64,16 @@
             {% endfor %}
         </tbody>
     </table>
-</form>
+{% endblock %}
+
+{% block datatable_constructor %}
+    {{ block.super }}
+    config.layout.topStart.features.buttons.push(
+        id_action_button(
+            '<i class="bi bi-send"></i> {% trans "Publish" %}',
+            '{% url 'jb:bills-publish' %}',
+            '{% csrf_token %}',
+            '.bill-id', 'bill_ids'
+        )
+    )
 {% endblock %}
