@@ -297,6 +297,7 @@ def export_memberbalance_sheet(request, keydate):
 
     return generate_excel(fields.items(), lines, filename)
 
+
 def get_billing_summary(fromdate, tilldate):
     """
     get a summary of billing for a date range.
