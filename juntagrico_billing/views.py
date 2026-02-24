@@ -77,6 +77,7 @@ def bills_setyear(request):
 
 
 @permission_required('juntagrico.is_book_keeper')
+@require_POST
 def bills_generate(request):
     # generate bills for current business year
     year_name = request.session['bills_businessyear']
@@ -175,14 +176,14 @@ def unpublished_bills(request):
 
 
 @permission_required('juntagrico.is_book_keeper')
+@require_POST
 def bills_publish(request):
     """
     POST handler for publishing bills.
     Called from unpublished_bills view.
     """
-    if request.method == 'POST':
-        selected_ids = request.POST.getlist('_selected')
-        publish_bills(selected_ids)
+    selected_ids = request.POST.getlist('_selected')
+    publish_bills(selected_ids)
 
     return redirect(reverse('jb:unpublished-bills-list'))
 
