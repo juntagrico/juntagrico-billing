@@ -305,16 +305,16 @@ def get_billing_summary(fromdate, tilldate):
     """
     bills = Bill.objects.in_daterange(fromdate, tilldate)
 
-    range_billed = bills.aggregate(Sum('items__amount'))['items__amount__sum'] or Decimal('0.0')
+    range_billed = bills.aggregate(Sum('items__amount'))['items__amount__sum'] or 0.0
     
     range_payments_query = Payment.objects.in_daterange(fromdate, tilldate)
-    range_payments = range_payments_query.aggregate(Sum('amount'))['amount__sum'] or Decimal('0.0')
+    range_payments = range_payments_query.aggregate(Sum('amount'))['amount__sum'] or 0.0
     
-    start_billed = Bill.objects.filter(booking_date__lt=fromdate).aggregate(Sum('items__amount'))['items__amount__sum'] or Decimal('0.0')
-    end_billed = Bill.objects.filter(booking_date__lte=tilldate).aggregate(Sum('items__amount'))['items__amount__sum'] or Decimal('0.0')
+    start_billed = Bill.objects.filter(booking_date__lt=fromdate).aggregate(Sum('items__amount'))['items__amount__sum'] or 0.0
+    end_billed = Bill.objects.filter(booking_date__lte=tilldate).aggregate(Sum('items__amount'))['items__amount__sum'] or 0.0
 
-    start_payments = Payment.objects.filter(paid_date__lt=fromdate).aggregate(Sum('amount'))['amount__sum'] or Decimal('0.0')
-    end_payments = Payment.objects.filter(paid_date__lte=tilldate).aggregate(Sum('amount'))['amount__sum'] or Decimal('0.0')
+    start_payments = Payment.objects.filter(paid_date__lt=fromdate).aggregate(Sum('amount'))['amount__sum'] or 0.0
+    end_payments = Payment.objects.filter(paid_date__lte=tilldate).aggregate(Sum('amount'))['amount__sum'] or 0.0
 
     return {
         'range_billed': range_billed,
