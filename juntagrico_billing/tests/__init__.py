@@ -4,8 +4,8 @@ from juntagrico.entity.billing import BillingPeriod
 from juntagrico.tests import JuntagricoTestCase
 
 from juntagrico_billing.models.account import SubscriptionTypeAccount, MemberAccount
-from juntagrico_billing.models.bill import BusinessYear
-from juntagrico_billing.models.payment import PaymentType
+from juntagrico_billing.models.bill import BusinessYear, Bill, BillItem
+from juntagrico_billing.models.payment import PaymentType, Payment
 from juntagrico_billing.models.settings import Settings
 
 
@@ -14,6 +14,7 @@ class BillingTestCase(JuntagricoTestCase):
     def setUpTestData(cls):
         # load from fixtures
         cls.load_members()
+        cls.default_member = cls.member
         # setup other objects
         cls.set_up_depots()
         cls.set_up_sub_types()
@@ -117,3 +118,23 @@ class BillingTestCase(JuntagricoTestCase):
             end_date=date(year, 12, 31),
             name=str(year)
         )
+
+    @classmethod
+    def create_bill(cls, member, item_type, date, amount):
+        bill = Bill.objects.create(
+            business_year=cls.year, member=member, published=True,
+            bill_date=date, booking_date=date)
+        BillItem.objects.create(
+            bill=bill, custom_item_type=item_type,
+            amount=amount
+        )
+        bill.save()
+        return bill
+
+    @classmethod
+    def create_payment(cls, payment_type, bill, amount, date):
+        payment = Payment.objects.create(
+            bill=bill, amount=amount, paid_date=date, type=payment_type
+        )
+        payment.save()
+        return payment
