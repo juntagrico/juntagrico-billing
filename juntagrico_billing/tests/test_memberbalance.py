@@ -1,7 +1,7 @@
 from datetime import date
 from . import BillingTestCase
-from juntagrico_billing.models.bill import Bill, BillItem, BillItemType
-from juntagrico_billing.models.payment import Payment, PaymentType
+from juntagrico_billing.models.bill import BillItemType
+from juntagrico_billing.models.payment import PaymentType
 from juntagrico_billing.util.billing import get_memberbalances
 
 

@@ -34,7 +34,7 @@ jobs:
         pip install --upgrade -r requirements.txt
     - name: ruff
       run: |
-        ruff check juntagrico_billing
+        ruff check --preview juntagrico_billing
     - name: run tests
       run: |
         python -m django makemigrations --noinput

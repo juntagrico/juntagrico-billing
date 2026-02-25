@@ -59,3 +59,7 @@ class ManagementListTests(BillingTestCase):
     def test_bills_recalc(self):
         self.assertGet(reverse('jb:bill-recalc', args=[1]) + '?next=.', 302)
         self.assertGet(reverse('jb:bill-recalc', args=[1]) + '?next=.', 302, member=self.admin)
+
+    def test_accounting_summary(self):
+        self.assertGet(reverse('jb:accounting-summary'), 302)
+        self.assertGet(reverse('jb:accounting-summary'), member=self.admin)

@@ -309,6 +309,7 @@ def memberbalance_export(request):
 
     return render(request, 'jb/memberbalance_export.html', renderdict)
 
+
 @permission_required('juntagrico.is_book_keeper')
 def accounting_summary(request):
     """
@@ -345,10 +346,11 @@ def accounting_summary(request):
         'fromdate': fromdate,
         'tilldate': tilldate,
         'billing': billing,
-        'shares' : shares
+        'shares': shares
     }
 
     return render(request, "jb/accounting_summary.html", renderdict)
+
 
 @login_required
 def user_bills(request):
