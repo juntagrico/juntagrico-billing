@@ -2,6 +2,7 @@ from juntagrico.entity.share import Share
 from django.db.models import Sum
 from decimal import Decimal
 
+
 def get_shares_summary(start_date, end_date):
     """
     Get a summary of share paid and paid back between start_date and end_date,
