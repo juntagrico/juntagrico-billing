@@ -567,6 +567,14 @@ msgstr "Zlg"
 msgid "Total payments"
 msgstr "Total Zahlungen"
 
+#: .\juntagrico_billing\views.py:249
+msgid "Export to Bexio successful"
+msgstr "Export zu Bexio erfolgreich"
+
+#: .\juntagrico_billing\views.py:251
+msgid "Export to Bexio failed"
+msgstr "Export zu Bexio fehlgeschlagen"
+
 #: juntagrico_billing/views.py:247
 msgid "Please specify a Bexio access token"
 msgstr "Bitte ein Bexio Zugriffs-Token angeben"
