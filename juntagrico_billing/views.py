@@ -12,7 +12,7 @@ from django.views.decorators.http import require_POST
 from juntagrico.util import return_to_previous_location
 from juntagrico.util.temporal import start_of_business_year, \
     start_of_next_business_year
-from juntagrico.util.xls import generate_excel
+from juntagrico_billing.util.xls import generate_excel
 from juntagrico_billing.models.bill import BusinessYear, Bill
 from juntagrico_billing.models.settings import Settings
 from juntagrico_billing.mailer import send_bill_notification
@@ -58,8 +58,6 @@ def open_bills(request):
         'selected_year': selected_year,
         'bills_list': bills_list,
         'percent_paid': percent_paid,
-        'email_form_disabled': True,
-        'change_date_disabled': True,
         'state': state,
         'state_active': state_active
     }
@@ -115,8 +113,6 @@ def pending_bills(request):
         'business_years': business_years,
         'selected_year': selected_year,
         'pending_bills': pending_bills,
-        'email_form_disabled': True,
-        'change_date_disabled': True,
     }
 
     return render(request, "jb/pending_bills.html", renderdict)
@@ -133,7 +129,7 @@ def get_subscription(parts):
 def get_short_parts(parts):
 
     def short_name(part):
-        if part.type.size.product.is_extra:
+        if part.type.is_extra:
             return _('Extrasubscription')
         else:
             return _('Subscription')
@@ -167,9 +163,6 @@ def unpublished_bills(request):
 
     renderdict = {
         'bills_list': bills_list,
-        'search_disabled': True,
-        'email_form_disabled': True,
-        'change_date_disabled': True,
     }
 
     return render(request, "jb/unpublished_bills.html", renderdict)
@@ -182,7 +175,7 @@ def bills_publish(request):
     POST handler for publishing bills.
     Called from unpublished_bills view.
     """
-    selected_ids = request.POST.getlist('_selected')
+    selected_ids = request.POST.get('bill_ids').split('_')
     publish_bills(selected_ids)
 
     return redirect(reverse('jb:unpublished-bills-list'))
@@ -425,10 +418,10 @@ def bills_notify(request):
     """
     List of bills to send notification e-mails
     """
-    bills_list = list(Bill.objects.filter(notification_sent=False))
+    bills = Bill.objects.filter(notification_sent=False)
 
     if request.method == 'POST':
-        for bill in bills_list:
+        for bill in bills.filter(id__in=request.POST.get('bill_ids').split('_')):
             send_bill_notification(bill)
             bill.notification_sent = True
             bill.save()
@@ -436,10 +429,7 @@ def bills_notify(request):
         return return_to_previous_location(request)
 
     renderdict = {
-        'bills_list': bills_list,
-        'bills_count': len(bills_list),
-        'email_form_disabled': True,
-        'change_date_disabled': True,
+        'bills': bills,
     }
 
     return render(request, "jb/bills_notify.html", renderdict)

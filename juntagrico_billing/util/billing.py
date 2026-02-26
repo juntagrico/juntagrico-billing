@@ -3,12 +3,13 @@ from datetime import date
 from decimal import Decimal
 
 from django.utils.translation import gettext as _
-from juntagrico.entity.subs import SubscriptionPart
 from django.contrib.messages import error
 from django.db.models import Sum, Q
 
-from juntagrico.util.xls import generate_excel
 from juntagrico.entity.member import Member
+from juntagrico.entity.subs import SubscriptionPart
+
+from juntagrico_billing.util.xls import generate_excel
 from juntagrico_billing.models.bill import Bill, BillItem
 from juntagrico_billing.models.payment import Payment
 from juntagrico_billing.models.settings import Settings

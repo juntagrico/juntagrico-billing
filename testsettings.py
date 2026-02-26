@@ -18,12 +18,13 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.admin',
+    'juntagrico.apps.JuntagricoAdminConfig',
     'impersonate',
     'crispy_forms',
-    'fontawesomefree',
+    'crispy_bootstrap4',
     'import_export',
     'adminsortable2',
+    'django_select2',
     'djrichtextfield',
     'polymorphic',
     'juntagrico_billing',
@@ -97,6 +98,7 @@ USE_TZ = True
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 # Insert your TEMPLATE_CONTEXT_PROCESSORS here or use this
@@ -111,10 +113,6 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'juntagrico.context_processors.vocabulary',
             ],
-            'loaders': [
-                'django.template.loaders.filesystem.Loader',
-                'django.template.loaders.app_directories.Loader'
-            ],
             'debug': True
         },
     },
@@ -122,12 +120,12 @@ TEMPLATES = [
 
 LOGIN_REDIRECT_URL = "/"
 
-SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
-
 LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'juntagrico/locale'),
     os.path.join(BASE_DIR, 'juntagrico_billing/locale'),
 )
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 CRISPY_FAIL_SILENTLY = not DEBUG
