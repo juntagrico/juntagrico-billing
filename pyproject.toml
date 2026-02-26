@@ -12,7 +12,7 @@ readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
 dependencies = [
-    "juntagrico>=2.0.0b1",
+    "juntagrico>=2.0.0",
     "lxml>=4.9.3",
     "python-stdnum>=1.16",
     "qrbill>=1.1.0",
