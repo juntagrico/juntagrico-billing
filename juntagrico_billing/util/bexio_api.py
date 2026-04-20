@@ -171,7 +171,7 @@ class BexioApiClient:
                 raise Exception(f"API error: {response.json()}")
 
         except Exception as e:
-            raise Exception(f"Failed to create booking {booking.date}, {booking.text}: {e}")
+            raise Exception(f"Failed to create booking {booking.date}, {booking.text}: {e}") from e
 
     def update_booking(self, existing_booking, new_booking):
         """
@@ -187,7 +187,7 @@ class BexioApiClient:
             response = self.session.put(f"https://api.bexio.com/3.0/accounting/manual_entries/{existing_booking.id}", json=entry_data)
             response.raise_for_status()
         except Exception as e:
-            raise Exception(f"Failed to update booking {existing_booking.date}, {existing_booking.text}: {e}")
+            raise Exception(f"Failed to update booking {existing_booking.date}, {existing_booking.text}: {e}") from e
 
     def delete_booking(self, booking):
         """
@@ -199,7 +199,7 @@ class BexioApiClient:
             response = self.session.delete(f"https://api.bexio.com/3.0/accounting/manual_entries/{booking.id}")
             response.raise_for_status()
         except Exception as e:
-            raise Exception(f"Failed to delete booking {booking.date}, {booking.text}: {e}")
+            raise Exception(f"Failed to delete booking {booking.date}, {booking.text}: {e}") from e
 
 
 class Booking(object):
