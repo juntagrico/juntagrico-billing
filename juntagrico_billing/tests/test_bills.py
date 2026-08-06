@@ -312,6 +312,20 @@ class BillCustomItemsTest(BillingTestCase):
         self.assertEqual(1310.0, bill.amount, "amount after recalc")
 
 
+class BillItemSubscriptionPartStrTest(BillingTestCase):
+    def test_str_uses_long_name_if_set(self):
+        item = BillItem(bill=Bill(business_year=self.year), subscription_part=self.part)
+        self.assertEqual(self.part.type.long_name, str(item))
+
+    def test_str_falls_back_to_bundle_long_name_if_long_name_not_set(self):
+        # regression test: BillItem.__str__ used to access the no longer
+        # existing SubscriptionType.size attribute in this fallback branch
+        self.sub_type.long_name = ''
+        self.sub_type.save()
+        item = BillItem(bill=Bill(business_year=self.year), subscription_part=self.part)
+        self.assertEqual(self.part.type.bundle.long_name, str(item))
+
+
 class BillsListTest(BillingTestCase):
     @classmethod
     def setUpTestData(cls):
