@@ -214,7 +214,7 @@ class BillItem(JuntagricoBaseModel):
     def __str__(self):
         if self.subscription_part:
             return self.subscription_part.type.long_name or\
-                self.subscription_part.type.size.name
+                self.subscription_part.type.bundle.long_name
         elif self.custom_item_type:
             return ('%s %s' % (self.custom_item_type.name, self.description)).strip()
         else:
