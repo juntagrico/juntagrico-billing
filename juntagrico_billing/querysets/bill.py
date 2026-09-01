@@ -8,6 +8,14 @@ class BillQuerySet(models.QuerySet):
     def published(self):
         return self.filter(published=True)
 
+    def active(self):
+        """
+        all bills that are not cancelled.
+        cancelled bills are kept for reference only and
+        are ignored by lists, bookkeeping and member views.
+        """
+        return self.filter(cancelled=False)
+
     def in_daterange(self, from_date, till_date):
         return self.filter(booking_date__gte=from_date, booking_date__lte=till_date)
 

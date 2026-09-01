@@ -59,6 +59,8 @@ def get_billable_subscription_parts(business_year):
     """
     get all subscription parts that are active during the given period and
     don't have a corresponding bill.
+    parts on a cancelled bill count as billed, i.e. cancelling a bill
+    is the way to permanently exclude parts from billing.
     """
     from_date = business_year.start_date
     till_date = business_year.end_date
@@ -191,7 +193,7 @@ def get_open_bills(businessyear, expected_percentage_paid):
     than the given expected percentage.
     """
     # fetch unpaid bills, SQL filtered
-    unpaid_bills = businessyear.bills.filter(paid=False, published=True)
+    unpaid_bills = businessyear.bills.active().filter(paid=False, published=True)
 
     return [
         bill for bill in unpaid_bills
@@ -202,16 +204,46 @@ def get_unpublished_bills():
     """
     get bills not published yet (no visible to members).
     """
-    return Bill.objects.filter(published=False)
+    return Bill.objects.active().filter(published=False)
 
 
 def publish_bills(id_list):
     """
     Publishes a set of bills given by their ids.
+    Cancelled bills are skipped.
     """
-    for bill_id in id_list:
-        bill = Bill.objects.get(pk=bill_id)
+    for bill in Bill.objects.active().filter(id__in=id_list):
         bill.published = True
+        bill.save()
+
+
+def cancel_bills(id_list):
+    """
+    Cancel (discard) a set of bills given by their ids.
+    Cancelled bills stay in the database, but are no longer
+    visible to members and are excluded from bookkeeping.
+    Their subscription parts still count as billed, so they don't
+    show up as pending bills again.
+    Bills with payments can not be cancelled, they are returned
+    as a list by this function.
+    """
+    not_cancelled = []
+    for bill in Bill.objects.filter(id__in=id_list):
+        if not bill.is_cancellable:
+            not_cancelled.append(bill)
+            continue
+        bill.cancelled = True
+        bill.save()
+
+    return not_cancelled
+
+
+def restore_bills(id_list):
+    """
+    Undo the cancellation of a set of bills given by their ids.
+    """
+    for bill in Bill.objects.filter(id__in=id_list):
+        bill.cancelled = False
         bill.save()
 
 
@@ -252,14 +284,15 @@ def get_memberbalances(keydate):
     """
     get member balances for a given date.
     """
+    active_bills = Q(bills__cancelled=False)
     members_billed_amount = Member.objects.annotate(
-        billed_amount=Sum('bills__amount', filter=Q(bills__booking_date__lte=keydate)),
+        billed_amount=Sum('bills__amount', filter=active_bills & Q(bills__booking_date__lte=keydate)),
         ).filter(billed_amount__gt=0).values('id', 'first_name', 'last_name', 'billed_amount')
     member_billed_items_amount = Member.objects.annotate(
-        billed_items_amount=Sum('bills__items__amount', filter=Q(bills__booking_date__lte=keydate)),
+        billed_items_amount=Sum('bills__items__amount', filter=active_bills & Q(bills__booking_date__lte=keydate)),
         ).filter(billed_items_amount__gt=0).values('id', 'billed_items_amount')
     members_paid_amount = Member.objects.annotate(
-        paid_amount=Sum('bills__payments__amount', filter=Q(bills__payments__paid_date__lte=keydate)),
+        paid_amount=Sum('bills__payments__amount', filter=active_bills & Q(bills__payments__paid_date__lte=keydate)),
         ).filter(paid_amount__gt=0).values('id', 'first_name', 'last_name', 'paid_amount')
 
     member_dict = {}
@@ -305,15 +338,15 @@ def get_billing_summary(fromdate, tilldate):
     returns a dictionary with total billed amount, total paid amount and
     total open amount.
     """
-    bills = Bill.objects.in_daterange(fromdate, tilldate)
+    bills = Bill.objects.active().in_daterange(fromdate, tilldate)
 
     range_billed = bills.aggregate(Sum('items__amount'))['items__amount__sum'] or 0.0
     
     range_payments_query = Payment.objects.in_daterange(fromdate, tilldate)
     range_payments = range_payments_query.aggregate(Sum('amount'))['amount__sum'] or 0.0
     
-    start_billed = Bill.objects.filter(booking_date__lt=fromdate).aggregate(Sum('items__amount'))['items__amount__sum'] or 0.0
-    end_billed = Bill.objects.filter(booking_date__lte=tilldate).aggregate(Sum('items__amount'))['items__amount__sum'] or 0.0
+    start_billed = Bill.objects.active().filter(booking_date__lt=fromdate).aggregate(Sum('items__amount'))['items__amount__sum'] or 0.0
+    end_billed = Bill.objects.active().filter(booking_date__lte=tilldate).aggregate(Sum('items__amount'))['items__amount__sum'] or 0.0
 
     start_payments = Payment.objects.filter(paid_date__lt=fromdate).aggregate(Sum('amount'))['amount__sum'] or 0.0
     end_payments = Payment.objects.filter(paid_date__lte=tilldate).aggregate(Sum('amount'))['amount__sum'] or 0.0
