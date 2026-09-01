@@ -73,7 +73,7 @@
             {% for bill in bills_list %}
                 <tr>
                     <td>
-                        <a href="{% url 'admin:juntagrico_billing_bill_change' bill.id %}">
+                        <a href="{% url 'admin:juntagrico_billing_bill_change' bill.id %}" class="bill-id">
                         {{ bill.id }}
                         </a>
                     </td>
@@ -99,4 +99,20 @@
             {% endfor %}
         </tbody>
     </table>
+{% endblock %}
+
+{% block datatable_constructor %}
+    {{ block.super }}
+    config.layout.topStart.features.buttons.push(
+        id_action_button(
+            '<i class="bi bi-trash"></i> {% trans "Discard" %}',
+            '{% url 'jb:bills-cancel' %}',
+            '{% csrf_token %}',
+            '.bill-id', 'bill_ids',
+            [
+                '{% trans "Discard 1 bill? It will no longer be billed and not appear as pending again." %}',
+                '{% trans "Discard these {count} bills? They will no longer be billed and not appear as pending again." %}'
+            ]
+        )
+    )
 {% endblock %}

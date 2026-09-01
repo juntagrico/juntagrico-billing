@@ -19,7 +19,7 @@ from juntagrico_billing.mailer import send_bill_notification
 from juntagrico_billing.util.billing import get_billable_subscription_parts, \
     group_billables_by_member, create_bills_for_items, get_open_bills, \
     scale_subscriptionpart_price, recalc_bill, get_unpublished_bills, \
-    publish_bills, export_memberbalance_sheet, get_billing_summary
+    publish_bills, cancel_bills, export_memberbalance_sheet, get_billing_summary
 from juntagrico_billing.util.qrbill import get_qrbill_svg
 from juntagrico_billing.util.pdfbill import PdfBillRenderer
 from juntagrico_billing.util.bookings import get_bill_bookings, \
@@ -149,7 +149,7 @@ def get_price(parts, year):
 
 
 def get_existing_bills(member, year):
-    bills = member.bills.filter(business_year=year)
+    bills = member.bills.active().filter(business_year=year)
     return bills
 
 
@@ -179,6 +179,23 @@ def bills_publish(request):
     publish_bills(selected_ids)
 
     return redirect(reverse('jb:unpublished-bills-list'))
+
+
+@permission_required('juntagrico.is_book_keeper')
+@require_POST
+def bills_cancel(request):
+    """
+    POST handler for cancelling (discarding) bills.
+    Called from unpublished_bills and open_bills view.
+    """
+    selected_ids = request.POST.get('bill_ids').split('_')
+    not_cancelled = cancel_bills(selected_ids)
+
+    if not_cancelled:
+        error(request, _('Bills with payments can not be cancelled: {}').format(
+            ', '.join(str(bill.id) for bill in not_cancelled)))
+
+    return return_to_previous_location(request)
 
 
 @permission_required('juntagrico.is_book_keeper')
@@ -357,21 +374,33 @@ def user_bills(request):
     member = request.user.member
     settings = Settings.objects.first()
     renderdict = {
-        'bills': Bill.objects.of_member(member).published().order_by("-bill_date"),
+        'bills': Bill.objects.of_member(member).published().active().order_by("-bill_date"),
         'paymenttype': settings.default_paymenttype,
         'menu': {'bills': 'active'},
     }
     return render(request, "jb/user_bills.html", renderdict)
 
 
-@login_required
-def user_bill(request, bill_id):
-    member = request.user.member
+def get_bill_for_view(request, bill_id):
+    """
+    get a bill for the user views.
+    bookkeepers may see any bill, members only their own.
+    cancelled bills are not visible to members.
+    """
     bill = get_object_or_404(Bill, id=bill_id)
 
-    # only allow for bookkepper or the bills member
-    if not (request.user.has_perms(('juntagrico.is_book_keeper',)) or bill.member == member):
+    if request.user.has_perms(('juntagrico.is_book_keeper',)):
+        return bill
+
+    if bill.member != request.user.member or bill.cancelled:
         raise PermissionDenied()
+
+    return bill
+
+
+@login_required
+def user_bill(request, bill_id):
+    bill = get_bill_for_view(request, bill_id)
 
     settings = Settings.objects.first()
 
@@ -397,12 +426,7 @@ def user_bill(request, bill_id):
 
 @login_required
 def user_bill_pdf(request, bill_id):
-    member = request.user.member
-    bill = get_object_or_404(Bill, id=bill_id)
-
-    # only allow for bookkeeper or the bills member
-    if not (request.user.has_perms(('juntagrico.is_book_keeper',)) or bill.member == member):
-        raise PermissionDenied()
+    bill = get_bill_for_view(request, bill_id)
 
     filename = "Rechnung %d.pdf" % bill.id
     response = HttpResponse(content_type='application/pdf')
@@ -418,7 +442,7 @@ def bills_notify(request):
     """
     List of bills to send notification e-mails
     """
-    bills = Bill.objects.filter(notification_sent=False)
+    bills = Bill.objects.active().filter(notification_sent=False)
 
     if request.method == 'POST':
         for bill in bills.filter(id__in=request.POST.get('bill_ids').split('_')):
