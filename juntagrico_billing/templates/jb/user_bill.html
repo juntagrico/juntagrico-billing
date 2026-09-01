@@ -100,7 +100,7 @@
     {% if bill.amount_open > 0 %}
         {% if qr_svg %}
 {{ qr_svg | safe }}
-        {% else %}
+        {% elif paymenttype %}
     <p class="mt-5">
         {% config "organisation_address" as addr %}
         {% trans "Please pay specifying bill number to:" %}<br>

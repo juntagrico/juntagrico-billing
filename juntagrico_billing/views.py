@@ -358,7 +358,7 @@ def user_bills(request):
     settings = Settings.objects.first()
     renderdict = {
         'bills': Bill.objects.of_member(member).published().order_by("-bill_date"),
-        'paymenttype': settings.default_paymenttype,
+        'paymenttype': settings.default_paymenttype if settings else None,
         'menu': {'bills': 'active'},
     }
     return render(request, "jb/user_bills.html", renderdict)
@@ -374,10 +374,11 @@ def user_bill(request, bill_id):
         raise PermissionDenied()
 
     settings = Settings.objects.first()
+    paymenttype = settings.default_paymenttype if settings else None
 
     # add QR-Bill part
-    if bill.amount_open > 0:
-        qr_svg = get_qrbill_svg(bill, settings.default_paymenttype)
+    if bill.amount_open > 0 and paymenttype:
+        qr_svg = get_qrbill_svg(bill, paymenttype)
     else:
         qr_svg = None
 
@@ -387,8 +388,8 @@ def user_bill(request, bill_id):
         'today': date.today(),
         'payments': bill.payments.all(),
         'open_amount': bill.amount - bill.amount_paid,
-        'paymenttype': settings.default_paymenttype,
-        'vat_number': settings.vat_number,
+        'paymenttype': paymenttype,
+        'vat_number': settings.vat_number if settings else None,
         'vat_percent': bill.vat_rate * 100,
         'qr_svg': qr_svg
     }
