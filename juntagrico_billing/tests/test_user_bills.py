@@ -17,6 +17,10 @@ class UserBillsTests(BillingTestCase):
     def test_user_bills(self):
         self.assertGet(reverse('jb:user-bills'))
 
+    def test_user_bills_loads_datatables(self):
+        response = self.assertGet(reverse('jb:user-bills'))
+        self.assertContains(response, 'juntagrico/external/datatables/datatables.min.js')
+
     def test_user_bill(self):
         self.assertGet(reverse('jb:user-bill', args=[self.bill.id]))
 
