@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='bill',
             name='cancelled',
-            field=models.BooleanField(default=False, help_text='Cancelled bills are not shown to members and are excluded from bookkeeping.', verbose_name='Cancelled'),
+            field=models.BooleanField(default=False, help_text='Verworfene Rechnungen werden Mitgliedern nicht angezeigt und sind von der Buchhaltung ausgenommen.', verbose_name='Verworfen'),
         ),
     ]

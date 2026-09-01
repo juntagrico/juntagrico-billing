@@ -16,6 +16,7 @@ dependencies = [
     "lxml>=4.9.3",
     "python-stdnum>=1.16",
     "qrbill>=1.1.0",
+    "requests>=2.31.0",
     "svglib==1.5.1",
 ]
 classifiers = [
