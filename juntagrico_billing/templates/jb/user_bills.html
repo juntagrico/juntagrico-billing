@@ -28,6 +28,9 @@
                         {% trans "Paid" %}
                     </th>
                     <th>
+                        {% trans "Amount open" %}
+                    </th>
+                    <th>
                     </th>
                 </tr>
             </thead>
@@ -51,7 +54,7 @@
                     </td>
                     <td class="text-right">
                         {% if not bill.paid %}
-                        {{ amount.paid  }}
+                        {{ bill.amount_open | floatformat:2 }}
                         {% endif %}
                     </td>
                     <td>

@@ -21,6 +21,16 @@ class UserBillsTests(BillingTestCase):
         response = self.assertGet(reverse('jb:user-bills'))
         self.assertContains(response, 'juntagrico/external/datatables/datatables.min.js')
 
+    def test_user_bills_column_count(self):
+        """
+        DataTables refuses to initialize if the number of header cells
+        does not match the number of cells per row.
+        """
+        html = self.assertGet(reverse('jb:user-bills')).content.decode()
+        header = html.split('<thead>')[1].split('</thead>')[0]
+        first_row = html.split('<tbody>')[1].split('</tr>')[0]
+        self.assertEqual(header.count('<th'), first_row.count('<td'))
+
     def test_user_bill(self):
         self.assertGet(reverse('jb:user-bill', args=[self.bill.id]))
 
