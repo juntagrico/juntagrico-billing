@@ -11,15 +11,18 @@ jobs:
     name: Dependency Check
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
 
-      - name: Run Python Dependency Checker
-        uses: aleqsd/python-dependency-checker@v1
+      - name: Set up Python
+        uses: actions/setup-python@v7
         with:
-          path: .
-          mode: deptry
-          fail-on-warn: true
+          python-version: '3.11'
+
+      - name: Install deptry
+        run: pip install deptry
+
+      - name: Run deptry
+        run: deptry .
 
   tests:
     name: Tests
