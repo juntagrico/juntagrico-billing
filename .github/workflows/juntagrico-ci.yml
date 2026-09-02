@@ -24,7 +24,7 @@ jobs:
           pip install deptry
 
       - name: Run deptry
-        run: deptry .
+        run: deptry . --github-output
 
   tests:
     name: Tests
