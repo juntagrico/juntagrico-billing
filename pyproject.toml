@@ -16,7 +16,10 @@ dependencies = [
     "lxml>=4.9.3",
     "python-stdnum>=1.16",
     "qrbill>=1.1.0",
+    "requests>=2.31.0",
     "svglib==1.5.1",
+    "reportlab>=4.0.4,<5",
+    "xlsxwriter>=3.2.0",
 ]
 classifiers = [
     'Development Status :: 5 - Production/Stable',
@@ -50,3 +53,6 @@ version = {attr = "juntagrico_billing.__version__"}
 [tool.ruff.lint]
 select = ["E", "F", "B"]
 ignore = ["E501"]
+
+[tool.deptry.per_rule_ignores]
+DEP003 = ["django"]
