@@ -7,6 +7,20 @@ on:
     branches: [ main, 'releases/**' ]
 
 jobs:
+  check-dependencies:
+    name: Dependency Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Run Python Dependency Checker
+        uses: aleqsd/python-dependency-checker@v1
+        with:
+          path: .
+          mode: deptry
+          fail-on-warn: true
+
   tests:
     name: Tests
     runs-on: ubuntu-latest
