@@ -19,7 +19,9 @@ jobs:
           python-version: '3.11'
 
       - name: Install deptry
-        run: pip install deptry
+        run: |
+          pip install --upgrade -r requirements.txt
+          pip install deptry
 
       - name: Run deptry
         run: deptry .
