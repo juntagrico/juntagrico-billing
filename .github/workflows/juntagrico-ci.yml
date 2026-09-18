@@ -43,9 +43,9 @@ jobs:
           - python-version: '3.14'
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@7
       with:
         python-version: ${{ matrix.python-version }}
     - name: install dependencies
@@ -60,7 +60,7 @@ jobs:
         coverage run -m manage test
     - run: coverage lcov -o coverage.lcov
       if: ${{ matrix.python-version  == '3.11' }}
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v6
       if: ${{ matrix.python-version  == '3.11' }}
       with:
         name: coverage
@@ -74,12 +74,12 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v6
         with:
           path: coverage
           merge-multiple: true
       - uses: qltysh/qlty-action/coverage@v2
         with:
-          oidc: true
+          token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
           files: coverage/coverage*.lcov
