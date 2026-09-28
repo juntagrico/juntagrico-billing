@@ -132,29 +132,29 @@ class Bill(JuntagricoBaseModel):
     def period_start(self):
         """
         Start date of the billing period
-        derived from the business year and subscription activation date.
+        derived from the business year and the activation dates
+        of the subscription parts on the bill.
         """
+        year_start = self.business_year.start_date
         subscription_parts = [itm.subscription_part for itm in self.items.all() if itm.subscription_part]
         if len(subscription_parts) == 0:
-            return self.business_year.start_date
+            return year_start
 
-        return max(self.business_year.start_date, subscription_parts[0].subscription.activation_date)
+        return max(year_start, min(part.activation_date or year_start for part in subscription_parts))
 
     @property
     def period_end(self):
         """
         End date of the billing period
-        derived from the business year and subscription deactivation date.
+        derived from the business year and the deactivation dates
+        of the subscription parts on the bill.
         """
+        year_end = self.business_year.end_date
         subscription_parts = [itm.subscription_part for itm in self.items.all() if itm.subscription_part]
         if len(subscription_parts) == 0:
-            return self.business_year.end_date
+            return year_end
 
-        subs = subscription_parts[0].subscription
-        if subs.end_date is None:
-            return self.business_year.end_date
-
-        return min(self.business_year.end_date, subs.end_date)
+        return min(year_end, max(part.deactivation_date or year_end for part in subscription_parts))
 
     def __str__(self):
         return '{}'.format(self.id)
