@@ -1,4 +1,5 @@
 from django.utils.translation import gettext as _
+from django.contrib.messages import error
 from django.urls import reverse
 from django.utils.html import mark_safe
 from django.contrib.admin import display, SimpleListFilter
@@ -6,7 +7,8 @@ from juntagrico.admins import BaseAdmin
 
 from juntagrico_billing.admin.billitem_inline import BillItemInline
 from juntagrico_billing.admin.payment_inline import PaymentInline
-from juntagrico_billing.util.billing import recalc_bill, publish_bills, update_vat, add_balancing_payment
+from juntagrico_billing.util.billing import recalc_bill, publish_bills, update_vat, \
+    add_balancing_payment, cancel_bills, restore_bills
 
 
 def set_notification_sent(modeladmin, request, queryset):
@@ -37,6 +39,23 @@ def do_publish_bills(modeladmin, request, queryset):
 
 
 do_publish_bills.short_description = _("Publish bills")
+
+
+def do_cancel_bills(modeladmin, request, queryset):
+    not_cancelled = cancel_bills([bill.id for bill in queryset.all()])
+    if not_cancelled:
+        error(request, _('Bills with payments can not be cancelled: {}').format(
+            ', '.join(str(bill.id) for bill in not_cancelled)))
+
+
+do_cancel_bills.short_description = _("Cancel bills")
+
+
+def do_restore_bills(modeladmin, request, queryset):
+    restore_bills([bill.id for bill in queryset.all()])
+
+
+do_restore_bills.short_description = _("Undo cancellation of bills")
 
 
 def do_update_vat(modeladmin, request, queryset):
@@ -78,13 +97,14 @@ class BillAdmin(BaseAdmin):
     search_fields = ['id', 'member__first_name', 'member__last_name']
     list_display = [
         'id', 'business_year', 'member', 'bill_date', 'item_kinds',
-        'amount_f', 'amount_open_f', 'paid', 'published', 'user_bill_link']
-    list_filter = ['paid', 'published', 'notification_sent', 'business_year', OpenAmountFilter]
+        'amount_f', 'amount_open_f', 'paid', 'published', 'cancelled', 'user_bill_link']
+    list_filter = ['paid', 'published', 'cancelled', 'notification_sent', 'business_year', OpenAmountFilter]
     readonly_fields = ['vat_rate', 'vat_amount', 'amount_paid', 'amount_open']
     inlines = [BillItemInline, PaymentInline, ]
     actions = [
-        do_recalc_bill, do_publish_bills, set_notification_sent,
-        reset_notification_sent, do_update_vat, do_add_balancing_payment]
+        do_recalc_bill, do_publish_bills, do_cancel_bills, do_restore_bills,
+        set_notification_sent, reset_notification_sent, do_update_vat,
+        do_add_balancing_payment]
 
     @display(description=_('Amount'))
     def amount_f(self, bill):

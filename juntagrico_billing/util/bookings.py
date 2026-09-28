@@ -35,8 +35,9 @@ class Booking(object):
 
 def get_bill_bookings(fromdate, tilldate):
     # get all bills by business-year start, end
+    # cancelled bills are not booked
 
-    bills = Bill.objects.in_daterange(fromdate, tilldate)
+    bills = Bill.objects.active().in_daterange(fromdate, tilldate)
 
     # global debtor account on settings object
     debtor_account = Settings.objects.first().debtor_account

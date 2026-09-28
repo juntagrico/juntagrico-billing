@@ -126,6 +126,31 @@ If there already is a bill for the same member and you want the additional parts
 Deleting a bill is only possible if there are no payments on it.
 If you add parts without deleting an existing bill, then a new bill will be added for the member.
 
+### Discarding bills
+
+Sometimes a subscription part should not be billed by juntagrico-billing at all, for example
+trial subscriptions or memberships that started in the middle of a business year and are
+invoiced by other means.
+
+For these cases a bill may be discarded (cancelled). A discarded bill
+- is no longer visible to the member
+- is excluded from the bookkeeping export and the member balances
+- can not be published anymore
+- keeps its bill items, so its subscription parts don't show up as pending bills again
+
+Discarding is therefore the way to permanently exclude subscription parts from billing:
+generate the bills for the business year as usual and discard the ones you don't want to bill.
+
+Bills can be discarded
+- from the `Unpublished bills` and the `Open bills` list with the `Discard` button
+- in the django admin with the `Cancel bills` action
+
+Only bills without payments can be discarded. If a payment was already booked on a bill, remove
+the payment first or balance the bill instead.
+
+A discarded bill is not deleted. Use the `Cancelled` filter in the django admin to find discarded
+bills and the `Undo cancellation of bills` action to bring one back.
+
 ### Adding custom items to a bill
 
 In addition to subscription and extrasubscription parts, a bill may also contain custom items.
