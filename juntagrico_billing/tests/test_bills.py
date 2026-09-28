@@ -252,6 +252,66 @@ class GetBillableItemsTests(BillingTestCase):
         self.assertEqual(len(items_before), len(items), "expecting no items for additional inactive subscription")
 
 
+class BillPeriodTest(BillingTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.item_type = BillItemType.objects.create(name='Custom Item', booking_account='2211')
+
+    def create_extra_part(self, activation_date, deactivation_date=None):
+        return SubscriptionPart.objects.create(
+            subscription=self.subscription,
+            activation_date=activation_date,
+            cancellation_date=deactivation_date,
+            deactivation_date=deactivation_date,
+            type=self.extrasub_type
+        )
+
+    def test_period_without_subscription_parts(self):
+        bill = self.create_bill(self.subscription.primary_member, self.item_type, self.year.start_date, 10.0)
+
+        self.assertEqual(date(2018, 1, 1), bill.period_start)
+        self.assertEqual(date(2018, 12, 31), bill.period_end)
+
+    def test_period_subscription_active_before_business_year(self):
+        subscription = self.create_subscription_and_member(self.sub_type, date(2017, 1, 1), None, "Test2", "17321")
+        bill = create_bill(subscription.parts.all(), self.year, self.year.start_date)
+
+        self.assertEqual(date(2018, 1, 1), bill.period_start)
+        self.assertEqual(date(2018, 12, 31), bill.period_end)
+
+    def test_period_part_activated_during_business_year(self):
+        # regression test: the period used to be derived from the subscription,
+        # which is active for the whole year, instead of the billed part.
+        extra_part = self.create_extra_part(date(2018, 10, 1))
+        bill = create_bill([extra_part], self.year, self.year.start_date)
+
+        self.assertEqual(date(2018, 10, 1), bill.period_start)
+        self.assertEqual(date(2018, 12, 31), bill.period_end)
+
+    def test_period_part_deactivated_during_business_year(self):
+        extra_part = self.create_extra_part(date(2018, 3, 1), date(2018, 6, 30))
+        bill = create_bill([extra_part], self.year, self.year.start_date)
+
+        self.assertEqual(date(2018, 3, 1), bill.period_start)
+        self.assertEqual(date(2018, 6, 30), bill.period_end)
+
+    def test_period_spans_all_parts(self):
+        first_part = self.create_extra_part(date(2018, 3, 1), date(2018, 6, 30))
+        second_part = self.create_extra_part(date(2018, 5, 1), date(2018, 9, 30))
+        bill = create_bill([second_part, first_part], self.year, self.year.start_date)
+
+        self.assertEqual(date(2018, 3, 1), bill.period_start)
+        self.assertEqual(date(2018, 9, 30), bill.period_end)
+
+    def test_period_part_without_activation_date(self):
+        extra_part = self.create_extra_part(None)
+        bill = create_bill([extra_part], self.year, self.year.start_date)
+
+        self.assertEqual(date(2018, 1, 1), bill.period_start)
+        self.assertEqual(date(2018, 12, 31), bill.period_end)
+
+
 class BillCustomItemsTest(BillingTestCase):
     @classmethod
     def setUpTestData(cls):
