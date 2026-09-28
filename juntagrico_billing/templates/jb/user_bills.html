@@ -36,7 +36,7 @@
                     <td>
                         <a href="{% url 'jb:user-bill' bill.pk  %}">{{ bill.pk }}</a>
                     </td>
-                    <td>
+                    <td data-order="{{ bill.bill_date|date:"Y-m-d" }}">
                         {{ bill.bill_date|date:"SHORT_DATE_FORMAT" }}
                     </td>
                     <td>
