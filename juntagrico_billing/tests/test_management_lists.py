@@ -63,3 +63,11 @@ class ManagementListTests(BillingTestCase):
     def test_accounting_summary(self):
         self.assertGet(reverse('jb:accounting-summary'), 302)
         self.assertGet(reverse('jb:accounting-summary'), member=self.admin)
+
+    def test_billing_menu_expanded_on_billing_pages(self):
+        response = self.assertGet(reverse('jb:pending-bills-list'), member=self.admin)
+        self.assertContains(response, '<div class="collapse show" id="jb">', html=False)
+
+    def test_billing_menu_collapsed_elsewhere(self):
+        response = self.assertGet(reverse('jb:user-bills'), member=self.admin)
+        self.assertContains(response, '<div class="collapse" id="jb">', html=False)
