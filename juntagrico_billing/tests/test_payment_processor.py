@@ -96,6 +96,31 @@ class PaymentProcessorTest(test.TestCase):
         self.assertEqual('OTHER_BILL', code)
         self.assertEqual(self.bill2, bill)
 
+    def test_check_payment_other_bill_skips_cancelled(self):
+        """
+        test payment with invalid bill reference where the
+        most recent open bill has been cancelled.
+        """
+        bill_date3 = date(2018, 6, 1)
+        Bill.objects.create(
+            business_year=self.businessyear,
+            amount=0.0, member=self.member, cancelled=True,
+            bill_date=bill_date3, booking_date=bill_date3
+        )
+
+        pinfo = PaymentInfo(
+            date(2018, 3, 15),
+            'CH7730000001250094239',
+            250.0,
+            'QRR',
+            '000000000000000100000000052',
+            'xa56-klkw345'
+        )
+
+        code, bill = self.processor.check_payment(pinfo)
+        self.assertEqual('OTHER_BILL', code)
+        self.assertEqual(self.bill2, bill)
+
     def test_check_payment_no_bill(self):
         """
         test payment with invalid bill reference where

@@ -82,8 +82,9 @@ class PaymentProcessor(object):
         if bill and (bill.member == member):
             return ('OK', bill)
 
-        # consider the most recent open bill of the same member
-        bills = member.bills.filter(paid=False).order_by('-bill_date')
+        # consider the most recent open bill of the same member,
+        # cancelled bills are no longer valid.
+        bills = member.bills.active().filter(paid=False).order_by('-bill_date')
         if len(bills):
             return ('OTHER_BILL', bills[0])
 
