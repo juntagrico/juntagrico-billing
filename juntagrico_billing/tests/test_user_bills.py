@@ -34,6 +34,22 @@ class UserBillsTests(BillingTestCase):
     def test_user_bill(self):
         self.assertGet(reverse('jb:user-bill', args=[self.bill.id]))
 
+    def test_user_bill_unpublished(self):
+        """
+        members can not see their own bills before they are published,
+        bookkeepers can.
+        """
+        self.bill.published = False
+        self.bill.save()
+        self.assertGet(reverse('jb:user-bill', args=[self.bill.id]), 403)
+        self.assertGet(reverse('jb:user-bill-pdf', args=[self.bill.id]), 403)
+        self.assertGet(reverse('jb:user-bill', args=[self.bill.id]), member=self.admin)
+        self.assertGet(reverse('jb:user-bill-pdf', args=[self.bill.id]), member=self.admin)
+
+    def test_user_bill_of_other_member(self):
+        self.assertGet(reverse('jb:user-bill', args=[self.bill.id]), 403, member=self.member2)
+        self.assertGet(reverse('jb:user-bill-pdf', args=[self.bill.id]), 403, member=self.member2)
+
     def test_user_bills_without_settings(self):
         """
         the bill list must render even if the bookkeeping settings
