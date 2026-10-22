@@ -6,6 +6,7 @@ from juntagrico_billing.models.payment import Payment, PaymentType
 from juntagrico_billing.util.qrbill import bill_id_from_refnumber
 from juntagrico_billing.util.qrbill import member_id_from_refnumber
 from stdnum import iban
+from stdnum.ch import esr
 
 
 class PaymentInfo(object):
@@ -67,6 +68,11 @@ class PaymentProcessor(object):
           - the credit account was not found
         """
 
+        if not esr.is_valid(paymentinfo.reference or ''):
+            msg = 'Payment %s can not be imported, because %s is not a valid QR reference number.'
+            raise PaymentProcessorError(
+                self._(msg) % (paymentinfo.unique_id, paymentinfo.reference))
+
         if not self.find_paymenttype(paymentinfo):
             msg = 'Payment for account iban %s can not be imported, because there is no paymenttype for this account.'
             raise PaymentProcessorError(
@@ -115,7 +121,7 @@ class PaymentProcessor(object):
             return None
 
     def find_paymenttype(self, paymentinfo):
-        return self.payment_types.get(iban.compact(paymentinfo.credit_iban), None)
+        return self.payment_types.get(iban.compact(paymentinfo.credit_iban or ''), None)
 
     def process_payments(self, payments):
         """

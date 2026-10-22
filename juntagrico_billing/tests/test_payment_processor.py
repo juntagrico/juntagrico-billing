@@ -167,6 +167,27 @@ class PaymentProcessorTest(test.TestCase):
                 'Payment from member 1 can not be imported, because there is no open bill for the member.'):
             self.processor.check_payment(pinfo)
 
+    def test_check_payment_invalid_reference(self):
+        """
+        test payment with a reference that is not a QR reference
+        (e.g. a SCOR reference or a wrong check digit)
+        """
+        for reference in ('RF18539007547034', '000000000000000100000000011', None):
+            pinfo = PaymentInfo(
+                date(2018, 3, 15),
+                'CH7730000001250094239',
+                250.0,
+                'QRR',
+                reference,
+                'xa56-klkw345'
+            )
+
+            with self.assertRaisesMessage(
+                    PaymentProcessorError,
+                    'Payment xa56-klkw345 can not be imported, because %s is not a valid QR reference number.'
+                    % reference):
+                self.processor.check_payment(pinfo)
+
     def test_check_payment_no_member(self):
         """
         test payment with invalid bill and member reference
