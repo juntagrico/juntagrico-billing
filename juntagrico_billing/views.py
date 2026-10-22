@@ -7,6 +7,7 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import get_template
 from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
 from juntagrico.util import return_to_previous_location
@@ -184,11 +185,16 @@ def bills_publish(request):
 
 
 @permission_required('juntagrico.is_book_keeper')
+@require_POST
 def bill_recalc(request, bill_id):
-    bill = Bill.objects.get(pk=bill_id)
+    bill = get_object_or_404(Bill, pk=bill_id)
     recalc_bill(bill)
 
-    next_url = request.GET.get('next')
+    # only redirect to urls on this site
+    next_url = request.POST.get('next')
+    if not url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()},
+                                           require_https=request.is_secure()):
+        next_url = reverse('admin:juntagrico_billing_bill_change', args=[bill.pk])
     return redirect(next_url)
 
 

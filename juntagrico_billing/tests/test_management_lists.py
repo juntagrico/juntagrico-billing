@@ -80,8 +80,28 @@ class ManagementListTests(BillingTestCase):
         self.assertEqual(self.client.session.get('bills_businessyear'), self.year.name)
 
     def test_bills_recalc(self):
-        self.assertGet(reverse('jb:bill-recalc', args=[1]) + '?next=.', 302)
-        self.assertGet(reverse('jb:bill-recalc', args=[1]) + '?next=.', 302, member=self.admin)
+        url = reverse('jb:bill-recalc', args=[self.bill1.id])
+        change_url = reverse('admin:juntagrico_billing_bill_change', args=[self.bill1.id])
+        self.assertGet(url, 302)
+        self.assertPost(url, {'next': change_url}, 302)
+        # state changing, so GET is not allowed
+        self.assertGet(url + '?next=' + change_url, 405, member=self.admin)
+        response = self.assertPost(url, {'next': change_url}, 302, member=self.admin)
+        self.assertEqual(response.url, change_url)
+        self.assertPost(reverse('jb:bill-recalc', args=[999999]), {'next': change_url}, 404, member=self.admin)
+
+    def test_bills_recalc_rejects_external_next(self):
+        url = reverse('jb:bill-recalc', args=[self.bill1.id])
+        change_url = reverse('admin:juntagrico_billing_bill_change', args=[self.bill1.id])
+        for next_url in ('https://evil.example/', '//evil.example/', None):
+            data = {'next': next_url} if next_url else {}
+            response = self.assertPost(url, data, 302, member=self.admin)
+            self.assertEqual(response.url, change_url)
+
+    def test_bill_change_form_recalc_button(self):
+        self.client.force_login(self.admin.user)
+        response = self.client.get(reverse('admin:juntagrico_billing_bill_change', args=[self.bill1.id]))
+        self.assertContains(response, 'action="' + reverse('jb:bill-recalc', args=[self.bill1.id]) + '"')
 
     def test_accounting_summary(self):
         self.assertGet(reverse('jb:accounting-summary'), 302)
@@ -93,3 +113,11 @@ class ManagementListTests(BillingTestCase):
         self.assertEqual(response.url, reverse('jb:payments-upload'))
         messages = [str(m) for m in get_messages(response.wsgi_request)]
         self.assertTrue(any('payments.xml' in m for m in messages), messages)
+
+    def test_billing_menu_expanded_on_billing_pages(self):
+        response = self.assertGet(reverse('jb:pending-bills-list'), member=self.admin)
+        self.assertContains(response, '<div class="collapse show" id="jb">', html=False)
+
+    def test_billing_menu_collapsed_elsewhere(self):
+        response = self.assertGet(reverse('jb:user-bills'), member=self.admin)
+        self.assertContains(response, '<div class="collapse" id="jb">', html=False)
