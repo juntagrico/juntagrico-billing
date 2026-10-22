@@ -58,8 +58,8 @@ class PaymentProcessor(object):
         possible result-codes:
           OK:           account and billing reference ok
           OTHER_BILL:   invalid bill reference, but
-                        another open bill of the same member
-                        was found found
+                        another open (and published) bill of the
+                        same member was found
 
         exceptions are raised in the following cases
           - the payment has already been imported
@@ -88,8 +88,9 @@ class PaymentProcessor(object):
         if bill and (bill.member == member):
             return ('OK', bill)
 
-        # consider the most recent open bill of the same member
-        bills = member.bills.filter(paid=False).order_by('-bill_date')
+        # consider the most recent open bill of the same member.
+        # unpublished bills are drafts the member has not received yet.
+        bills = member.bills.published().filter(paid=False).order_by('-bill_date')
         if len(bills):
             return ('OTHER_BILL', bills[0])
 
