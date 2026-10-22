@@ -79,8 +79,11 @@ def bills_setyear(request):
 @require_POST
 def bills_generate(request):
     # generate bills for current business year
-    year_name = request.session['bills_businessyear']
+    year_name = request.session.get('bills_businessyear')
     year = BusinessYear.objects.by_name(year_name)
+    if year is None:
+        error(request, _('Please select a business year'))
+        return redirect(reverse('jb:pending-bills-list'))
 
     billable_items = get_billable_subscription_parts(year)
 
@@ -176,8 +179,7 @@ def bills_publish(request):
     POST handler for publishing bills.
     Called from unpublished_bills view.
     """
-    selected_ids = request.POST.get('bill_ids').split('_')
-    publish_bills(selected_ids)
+    publish_bills(get_selected_bill_ids(request))
 
     return redirect(reverse('jb:unpublished-bills-list'))
 
@@ -428,7 +430,7 @@ def bills_notify(request):
     bills = Bill.objects.filter(notification_sent=False)
 
     if request.method == 'POST':
-        for bill in bills.filter(id__in=request.POST.get('bill_ids').split('_')):
+        for bill in bills.filter(id__in=get_selected_bill_ids(request)):
             send_bill_notification(bill)
             bill.notification_sent = True
             bill.save()
@@ -457,16 +459,23 @@ def get_years_and_selected(request):
         messages.append(get_template('jb/messages/no_businessyear.html').render())
         request.member_messages = messages
 
-    # if no year set, choose most recent year
-    selected_year = None
+    # if no year (or an unknown one) is set, choose most recent year
     selected_year_name = request.session.get('bills_businessyear', None)
-    if selected_year_name:
-        selected_year = [
-            year for year in business_years
-            if year.name == selected_year_name][0]
-    else:
-        if len(business_years):
-            selected_year = business_years[-1]
-            request.session['bills_businessyear'] = selected_year.name
+    selected_year = next(
+        (year for year in business_years if year.name == selected_year_name),
+        None)
+    if selected_year is None and len(business_years):
+        selected_year = business_years[-1]
+        request.session['bills_businessyear'] = selected_year.name
 
     return (business_years, selected_year)
+
+
+def get_selected_bill_ids(request):
+    """
+    get the ids of the selected bills from the
+    'bill_ids' POST parameter (ids separated by '_').
+    invalid ids are ignored.
+    """
+    bill_ids = request.POST.get('bill_ids', '').split('_')
+    return [int(bill_id) for bill_id in bill_ids if bill_id.isdigit()]
