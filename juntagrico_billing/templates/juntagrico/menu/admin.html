@@ -2,11 +2,12 @@
 {% load i18n %}
 {% block extend %}
     {% if perms.juntagrico.is_book_keeper %}
+        {% with match=request.resolver_match %}
         <li class="nav-item">
-            <a class="nav-link collapsed" data-toggle="collapse" href="#jb">
+            <a class="nav-link{% if match.namespace != 'jb' or 'user-bill' in match.url_name %} collapsed{% endif %}" data-toggle="collapse" href="#jb">
                 <i class="bi bi-caret-down turn"></i>{% trans "Bills and Bookkeeping" %}
             </a>
-            <div class="collapse" id="jb">
+            <div class="collapse{% if match.namespace == 'jb' and 'user-bill' not in match.url_name %} show{% endif %}" id="jb">
                 <ul class="nav flex-column admin-menu subadmin-menu">
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'jb:pending-bills-list' %}">{% trans "Pending bills" %}</a>
@@ -35,6 +36,7 @@
                 </ul>
             </div>
         </li>
+        {% endwith %}
     {% endif %}
     {{ block.super }}
 {% endblock %}

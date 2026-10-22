@@ -38,17 +38,23 @@ class Camt045Reader(object):
     def parse_payments(self, xml):
         results = []
 
-        doc = et.fromstring(xml)
+        try:
+            doc = et.fromstring(xml)
+        except et.ParseError as e:
+            raise PaymentReaderError("invalid xml: %s" % e) from e
         root = self.find(doc, "./ns:BkToCstmrDbtCdtNtfctn/ns:Ntfctn")
 
         entries = self.findall(root, "ns:Ntry")
         for entry in entries:
             # get valuta date
             vdate_elem = self.find(entry, "ns:ValDt/ns:Dt")
-            valuta_date = datetime.date.fromisoformat(vdate_elem.text)
+            try:
+                valuta_date = datetime.date.fromisoformat(vdate_elem.text)
+            except (TypeError, ValueError) as e:
+                raise PaymentReaderError("invalid date %s" % vdate_elem.text) from e
 
             entry_ref = self.find_optional(entry, "ns:NtryRef")
-            if entry_ref is not None:
+            if entry_ref is not None and entry_ref.text:
                 entry_iban = entry_ref.text[:21]
             else:
                 entry_iban = None
@@ -56,7 +62,10 @@ class Camt045Reader(object):
             details = self.findall(entry, 'ns:NtryDtls/ns:TxDtls')
             for detail in details:
                 amt = self.find(detail, 'ns:Amt')
-                amount = float(amt.text)
+                try:
+                    amount = float(amt.text)
+                except (TypeError, ValueError) as e:
+                    raise PaymentReaderError("invalid amount %s" % amt.text) from e
 
                 # if there is no global creditor iban, try to find it in the detail
                 if entry_iban:

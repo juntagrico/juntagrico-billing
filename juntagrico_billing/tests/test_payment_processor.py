@@ -49,13 +49,13 @@ class PaymentProcessorTest(test.TestCase):
         bill_date1 = cls.businessyear.start_date
         cls.bill1 = Bill.objects.create(
             business_year=cls.businessyear, amount=0.0,
-            member=cls.member,
+            member=cls.member, published=True,
             bill_date=bill_date1, booking_date=bill_date1
         )
         bill_date2 = date(2018, 4, 25)
         cls.bill2 = Bill.objects.create(
             business_year=cls.businessyear,
-            amount=0.0, member=cls.member,
+            amount=0.0, member=cls.member, published=True,
             bill_date=bill_date2, booking_date=bill_date2
         )
 
@@ -96,6 +96,52 @@ class PaymentProcessorTest(test.TestCase):
         self.assertEqual('OTHER_BILL', code)
         self.assertEqual(self.bill2, bill)
 
+    def test_check_payment_other_bill_skips_unpublished(self):
+        """
+        test payment with invalid bill reference where the
+        most recent open bill is not published yet.
+        """
+        bill_date3 = date(2018, 6, 1)
+        Bill.objects.create(
+            business_year=self.businessyear,
+            amount=0.0, member=self.member,
+            bill_date=bill_date3, booking_date=bill_date3
+        )
+
+        pinfo = PaymentInfo(
+            date(2018, 3, 15),
+            'CH7730000001250094239',
+            250.0,
+            'QRR',
+            '000000000000000100000000052',
+            'xa56-klkw345'
+        )
+
+        code, bill = self.processor.check_payment(pinfo)
+        self.assertEqual('OTHER_BILL', code)
+        self.assertEqual(self.bill2, bill)
+
+    def test_check_payment_only_unpublished_bill(self):
+        """
+        test payment with invalid bill reference where the
+        member has only an unpublished open bill.
+        """
+        Bill.objects.filter(member=self.member).update(published=False)
+
+        pinfo = PaymentInfo(
+            date(2018, 3, 15),
+            'CH7730000001250094239',
+            250.0,
+            'QRR',
+            '000000000000000100000000052',
+            'xa56-klkw345'
+        )
+
+        with self.assertRaisesMessage(
+                PaymentProcessorError,
+                'Payment from member 1 can not be imported, because there is no open bill for the member.'):
+            self.processor.check_payment(pinfo)
+
     def test_check_payment_no_bill(self):
         """
         test payment with invalid bill reference where
@@ -120,6 +166,27 @@ class PaymentProcessorTest(test.TestCase):
                 PaymentProcessorError,
                 'Payment from member 1 can not be imported, because there is no open bill for the member.'):
             self.processor.check_payment(pinfo)
+
+    def test_check_payment_invalid_reference(self):
+        """
+        test payment with a reference that is not a QR reference
+        (e.g. a SCOR reference or a wrong check digit)
+        """
+        for reference in ('RF18539007547034', '000000000000000100000000011', None):
+            pinfo = PaymentInfo(
+                date(2018, 3, 15),
+                'CH7730000001250094239',
+                250.0,
+                'QRR',
+                reference,
+                'xa56-klkw345'
+            )
+
+            with self.assertRaisesMessage(
+                    PaymentProcessorError,
+                    'Payment xa56-klkw345 can not be imported, because %s is not a valid QR reference number.'
+                    % reference):
+                self.processor.check_payment(pinfo)
 
     def test_check_payment_no_member(self):
         """
