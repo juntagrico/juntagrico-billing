@@ -372,14 +372,26 @@ def user_bills(request):
     return render(request, "jb/user_bills.html", renderdict)
 
 
-@login_required
-def user_bill(request, bill_id):
-    member = request.user.member
+def get_bill_for_view(request, bill_id):
+    """
+    get a bill for the user views.
+    bookkeepers may see any bill, members only their own.
+    unpublished bills are not visible to members.
+    """
     bill = get_object_or_404(Bill, id=bill_id)
 
-    # only allow for bookkepper or the bills member
-    if not (request.user.has_perms(('juntagrico.is_book_keeper',)) or bill.member == member):
+    if request.user.has_perms(('juntagrico.is_book_keeper',)):
+        return bill
+
+    if bill.member != request.user.member or not bill.published:
         raise PermissionDenied()
+
+    return bill
+
+
+@login_required
+def user_bill(request, bill_id):
+    bill = get_bill_for_view(request, bill_id)
 
     settings = Settings.objects.first()
     paymenttype = settings.default_paymenttype if settings else None
@@ -406,12 +418,7 @@ def user_bill(request, bill_id):
 
 @login_required
 def user_bill_pdf(request, bill_id):
-    member = request.user.member
-    bill = get_object_or_404(Bill, id=bill_id)
-
-    # only allow for bookkeeper or the bills member
-    if not (request.user.has_perms(('juntagrico.is_book_keeper',)) or bill.member == member):
-        raise PermissionDenied()
+    bill = get_bill_for_view(request, bill_id)
 
     filename = "Rechnung %d.pdf" % bill.id
     response = HttpResponse(content_type='application/pdf')
