@@ -75,6 +75,7 @@ You need to create this settings object once in django admin.
   ![grafik](https://user-images.githubusercontent.com/3380098/110239725-b79fad00-7f48-11eb-9bb6-badecc6af93e.png)
   
 - You need to specify a debtors account, just specify any digit code (e.g. `1100`)
+- Set the surcharge account to the income account used for subscription surcharges and discounts in bookkeeping exports.
 - A default paymenttype is mandatory too. You may create one directly from the settings dialog:
   ![grafik](https://user-images.githubusercontent.com/3380098/110239772-f9c8ee80-7f48-11eb-8866-7844d234e971.png)
 - Save your settings object. There must be only one settings object.

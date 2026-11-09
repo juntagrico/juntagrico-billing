@@ -12,11 +12,12 @@ from django.views.decorators.http import require_POST
 from juntagrico.util import return_to_previous_location
 from juntagrico.util.temporal import start_of_business_year, \
     start_of_next_business_year
+from juntagrico.entity.subs import SubscriptionSurcharge
 from juntagrico_billing.util.xls import generate_excel
 from juntagrico_billing.models.bill import BusinessYear, Bill
 from juntagrico_billing.models.settings import Settings
 from juntagrico_billing.mailer import send_bill_notification
-from juntagrico_billing.util.billing import get_billable_subscription_parts, \
+from juntagrico_billing.util.billing import get_billable_items, \
     group_billables_by_member, create_bills_for_items, get_open_bills, \
     scale_subscriptionpart_price, recalc_bill, get_unpublished_bills, \
     publish_bills, export_memberbalance_sheet, get_billing_summary
@@ -81,7 +82,7 @@ def bills_generate(request):
     year_name = request.session['bills_businessyear']
     year = BusinessYear.objects.by_name(year_name)
 
-    billable_items = get_billable_subscription_parts(year)
+    billable_items = get_billable_items(year)
 
     create_bills_for_items(billable_items, year, date.today())
 
@@ -96,7 +97,7 @@ def pending_bills(request):
     business_years, selected_year = get_years_and_selected(request)
     pending_bills = []
     if selected_year:
-        billable_items = get_billable_subscription_parts(selected_year)
+        billable_items = get_billable_items(selected_year)
         members_and_parts = group_billables_by_member(billable_items).items()
         pending_bills = [
             (
@@ -129,6 +130,8 @@ def get_subscription(parts):
 def get_short_parts(parts):
 
     def short_name(part):
+        if isinstance(part, SubscriptionSurcharge):
+            return _('Surcharge')
         if part.type.is_extra:
             return _('Extrasubscription')
         else:
@@ -139,7 +142,7 @@ def get_short_parts(parts):
 
 def get_price(parts, year):
     prices = [
-        scale_subscriptionpart_price(
+        part.amount if isinstance(part, SubscriptionSurcharge) else scale_subscriptionpart_price(
             part,
             year.start_date,
             year.end_date)

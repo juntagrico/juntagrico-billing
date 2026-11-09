@@ -4,7 +4,7 @@ from django.utils.translation import gettext as _
 from juntagrico.config import Config
 from juntagrico.entity import JuntagricoBaseModel
 from juntagrico.entity.member import Member
-from juntagrico.entity.subs import SubscriptionPart
+from juntagrico.entity.subs import SubscriptionPart, SubscriptionSurcharge
 
 from juntagrico_billing.querysets.bill import BillQuerySet, BusinessYearQuerySet
 from juntagrico_billing.util.qrbill import calc_refnumber
@@ -112,7 +112,8 @@ class Bill(JuntagricoBaseModel):
         Bill items ordered for display.
         1. Subscription ordered by id
         2. Extrasubscriptions ordered by id
-        3. Custom Items ordered by type and id
+        3. Surcharges ordered by id
+        4. Custom Items ordered by type and id
         """
         def order_key(itm):
             if itm.subscription_part:
@@ -120,11 +121,13 @@ class Bill(JuntagricoBaseModel):
                     return (1, itm.id)
                 else:
                     return (0, itm.id)
+            elif itm.surcharge:
+                return (2, itm.id)
             elif itm.custom_item_type:
-                return (2, itm.custom_item_type.id, itm.id)
+                return (3, itm.custom_item_type.id, itm.id)
             else:
                 # itm without reference (unexpected)
-                return (3, None)
+                return (4, itm.id)
 
         return sorted(self.items.all(), key=order_key)
 
@@ -192,8 +195,7 @@ class BillItem(JuntagricoBaseModel):
                              null=False, blank=False,
                              on_delete=models.CASCADE, verbose_name=_('Bill'))
 
-    # a bill item has either a subscription part
-    # or a custom item_type assigned
+    # a bill item has a subscription part, surcharge or custom item type
     subscription_part = models.ForeignKey(
         SubscriptionPart, related_name='bill_items',
         null=True, blank=True, on_delete=models.PROTECT,
@@ -205,7 +207,12 @@ class BillItem(JuntagricoBaseModel):
         null=True, blank=True, on_delete=models.PROTECT,
         verbose_name=_('Custom item type'))
 
-    description = models.CharField(_('Description'), null=False, blank=True, max_length=100)
+    surcharge = models.ForeignKey(
+        SubscriptionSurcharge, related_name='bill_items',
+        null=True, blank=True, on_delete=models.PROTECT,
+        verbose_name=_('Surcharge'))
+
+    description = models.CharField(_('Description'), null=False, blank=True, max_length=255)
 
     amount = models.FloatField(_('Amount'), null=False, blank=False, default=0.0)
 
@@ -233,6 +240,8 @@ class BillItem(JuntagricoBaseModel):
                 return _('Subscription')
         elif self.custom_item_type:
             return self.custom_item_type.name
+        elif self.surcharge:
+            return _('Surcharge')
         else:
             return ''
 
@@ -241,6 +250,10 @@ class BillItem(JuntagricoBaseModel):
     class Meta:
         verbose_name = _('Bill item')
         verbose_name_plural = _('Bill items')
+
+    def clean(self):
+        if sum(bool(value) for value in (self.subscription_part_id, self.surcharge_id, self.custom_item_type_id)) > 1:
+            raise ValidationError(_('A bill item can reference only one item type.'))
 
     def save(self, *args, **kwargs):
         """
