@@ -88,7 +88,7 @@ class Bill(JuntagricoBaseModel):
         List the kind of items on the bill.
         short description for displaying in lists.
         """
-        return ', '.join([itm.item_kind for itm in self.items.all()])
+        return ', '.join([itm.item_kind for itm in self.ordered_items])
 
     @property
     def description(self):
