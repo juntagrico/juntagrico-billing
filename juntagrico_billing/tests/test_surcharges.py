@@ -4,6 +4,8 @@ from decimal import Decimal
 from django.http import HttpResponse
 from django.core.exceptions import ValidationError
 from django.urls import reverse
+from django.utils import translation
+
 from juntagrico.entity.subs import SubscriptionSurcharge
 
 from . import BillingTestCase
@@ -81,10 +83,11 @@ class SurchargeTests(BillingTestCase):
         session = self.client.session
         session['bills_businessyear'] = '2018'
         session.save()
-        response = self.client.get(reverse('jb:pending-bills-list'))
-        self.assertContains(response, '50,25')
-        self.assertContains(response, 'Surcharge')
-        self.assertEqual(self.client.post(reverse('jb:bills-generate')).status_code, 302)
+        with translation.override('en'):
+            response = self.client.get(reverse('jb:pending-bills-list'))
+            self.assertContains(response, '50.25')
+            self.assertContains(response, 'Surcharge')
+            self.assertEqual(self.client.post(reverse('jb:bills-generate')).status_code, 302)
         item = BillItem.objects.get(surcharge=surcharge)
         self.assertNotEqual(item.bill, part_bill)
         self.assertEqual(item.bill.amount, 50.25)
