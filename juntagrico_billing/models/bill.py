@@ -259,8 +259,8 @@ class BillItem(JuntagricoBaseModel):
         """
         save override to automatically recalculate the vat amount
         """
-        # calc vat only for subscription_part items
-        if self.bill and self.subscription_part:
+        # calc vat only for subscription_part and surcharge items
+        if self.bill and (self.subscription_part or self.surcharge):
             vat_rate = self.bill.vat_rate
             self.vat_amount = round(self.amount / (1 + vat_rate) * vat_rate, 2)
         else:
