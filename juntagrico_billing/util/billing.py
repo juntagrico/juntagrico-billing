@@ -1,3 +1,4 @@
+import calendar
 from collections import defaultdict
 from datetime import date
 from decimal import Decimal
@@ -15,6 +16,12 @@ from juntagrico_billing.models.payment import Payment
 from juntagrico_billing.models.settings import Settings
 
 
+def clamp_day(day, month, year):
+    """Clamp day to the valid range for the given month and year."""
+    max_days = calendar.monthrange(year, month)[1]
+    return max(1, min(day, max_days))
+
+
 def scale_subscriptionpart_price(part, fromdate, tilldate):
     """
     scale subscription part price for a certain date interval.
@@ -24,20 +31,23 @@ def scale_subscriptionpart_price(part, fromdate, tilldate):
         # calculate price based on billing periods.
         # takes into account periods that overlap with the requested interval.
         period_prices = []
-        for period in part.type.periods.all():
-            period_start = date(fromdate.year, period.start_month, period.start_day)
-            period_end = date(fromdate.year, period.end_month, period.end_day)
-            if period_start <= tilldate and period_end >= fromdate:
-                # calculate the resulting start and end of the period that overlaps
-                # with the activation date and our requested date interval
-                eff_start = max(fromdate, max(period_start, part.activation_date or date.min))
-                eff_end = min(tilldate, min(period_end, part.deactivation_date or date.max))
+        for year in range(fromdate.year, tilldate.year + 1):
+            for period in part.type.periods.all():
+                start_day = clamp_day(period.start_day, period.start_month, year)
+                end_day = clamp_day(period.end_day, period.end_month, year)
+                period_start = date(year, period.start_month, start_day)
+                period_end = date(year, period.end_month, end_day)
+                if period_start <= tilldate and period_end >= fromdate:
+                    # calculate the resulting start and end of the period that overlaps
+                    # with the activation date and our requested date interval
+                    eff_start = max(fromdate, max(period_start, part.activation_date or date.min))
+                    eff_end = min(tilldate, min(period_end, part.deactivation_date or date.max))
 
-                # scale the period price
-                full_days = (period_end - period_start).days + 1
-                eff_days = (eff_end - eff_start).days + 1
+                    # scale the period price
+                    full_days = (period_end - period_start).days + 1
+                    eff_days = (eff_end - eff_start).days + 1
 
-                period_prices.append(period.price * Decimal(eff_days / full_days))
+                    period_prices.append(period.price * Decimal(eff_days) / Decimal(full_days))
 
         # round to .05
         return round(Decimal(2.0) * sum(period_prices), 1) / Decimal('2.0')
@@ -50,7 +60,7 @@ def scale_subscriptionpart_price(part, fromdate, tilldate):
         part_start = max(part.activation_date or date.min, fromdate)
         part_end = min(part.deactivation_date or date.max, tilldate)
         days_part = (part_end - part_start).days + 1
-        return round(part.type.price * Decimal(2.0 * days_part / days_period), 1) / Decimal('2.0')
+        return round(part.type.price * Decimal(2) * Decimal(days_part) / Decimal(days_period), 1) / Decimal('2.0')
 
     return 0
 
