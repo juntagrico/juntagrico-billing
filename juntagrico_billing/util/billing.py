@@ -7,7 +7,7 @@ from django.contrib.messages import error
 from django.db.models import Sum, Q
 
 from juntagrico.entity.member import Member
-from juntagrico.entity.subs import SubscriptionPart
+from juntagrico.entity.subs import SubscriptionPart, SubscriptionSurcharge
 
 from juntagrico_billing.util.xls import generate_excel
 from juntagrico_billing.models.bill import Bill, BillItem
@@ -79,6 +79,19 @@ def get_billable_subscription_parts(business_year):
     return not_billed
 
 
+def get_billable_surcharges(business_year):
+    billed = BillItem.objects.filter(
+        bill__business_year=business_year, surcharge__isnull=False
+    ).values('surcharge_id')
+    return SubscriptionSurcharge.objects.in_daterange(
+        business_year.start_date, business_year.end_date
+    ).exclude(amount=0).exclude(pk__in=billed)
+
+
+def get_billable_items(business_year):
+    return list(get_billable_subscription_parts(business_year)) + list(get_billable_surcharges(business_year))
+
+
 def update_bill_parts(bill, subscription_parts):
     """
     update a bill with the given subscription parts.
@@ -106,7 +119,19 @@ def update_bill_parts(bill, subscription_parts):
     bill.save()
 
 
+def update_bill_surcharges(bill, surcharges):
+    bill.items.filter(surcharge__isnull=False).delete()
+    for surcharge in surcharges:
+        BillItem.objects.create(
+            bill=bill, surcharge=surcharge, amount=float(surcharge.amount),
+            description=surcharge.description,
+        )
+    bill.amount = sum(itm.amount for itm in bill.items.all())
+    bill.save()
+
+
 def create_bill(billable_items, businessyear, bill_date, vat_rate=0.0):
+    billable_items = list(billable_items)
     booking_date = max(businessyear.start_date, bill_date)
 
     # make sure all billables belong to the same member
@@ -120,7 +145,8 @@ def create_bill(billable_items, businessyear, bill_date, vat_rate=0.0):
                                bill_date=bill_date, booking_date=booking_date,
                                vat_rate=vat_rate)
 
-    update_bill_parts(bill, billable_items)
+    update_bill_parts(bill, [item for item in billable_items if isinstance(item, SubscriptionPart)])
+    update_bill_surcharges(bill, [item for item in billable_items if isinstance(item, SubscriptionSurcharge)])
     return bill
 
 
@@ -148,6 +174,10 @@ def recalc_bill(bill):
              if not is_on_other_bill(part)]
 
     update_bill_parts(bill, parts)
+    surcharges = SubscriptionSurcharge.objects.in_daterange(
+        year.start_date, year.end_date
+    ).filter(subscription__primary_member=member).exclude(amount=0)
+    update_bill_surcharges(bill, [surcharge for surcharge in surcharges if not is_on_other_bill(surcharge)])
 
 
 def group_billables_by_member(billable_items):

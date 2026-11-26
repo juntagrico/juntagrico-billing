@@ -15,8 +15,8 @@ class BillItemInline(admin.TabularInline):
         """
         generate a link to the subscription admin page
         """
-        if item.subscription_part:
-            subscription = item.subscription_part.subscription
+        if item.subscription_part or item.surcharge:
+            subscription = (item.subscription_part or item.surcharge).subscription
             link = reverse("admin:juntagrico_subscription_change", args=[subscription.id])
             return mark_safe(f'<a href="{link}">{escape(item.item_kind)}</a>')
 
