@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-09 17:54+0100\n"
+"POT-Creation-Date: 2026-11-27 16:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -209,7 +209,7 @@ msgid "Custom item type"
 msgstr "Extra Typ"
 
 #: .\juntagrico_billing\models\bill.py:213
-#: .\juntagrico_billing\models\bill.py:244 .\juntagrico_billing\views.py:134
+#: .\juntagrico_billing\models\bill.py:244 .\juntagrico_billing\views.py:138
 msgid "Surcharge"
 msgstr "Zu-/Abschlag"
 
@@ -217,11 +217,11 @@ msgstr "Zu-/Abschlag"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: .\juntagrico_billing\models\bill.py:238 .\juntagrico_billing\views.py:136
+#: .\juntagrico_billing\models\bill.py:238 .\juntagrico_billing\views.py:140
 msgid "Extrasubscription"
 msgstr "Zusatzabo"
 
-#: .\juntagrico_billing\models\bill.py:240 .\juntagrico_billing\views.py:138
+#: .\juntagrico_billing\models\bill.py:240 .\juntagrico_billing\views.py:142
 msgid "Subscription"
 msgstr "Abo"
 
@@ -287,16 +287,16 @@ msgstr "MWST Nummer"
 msgid "VAT Percent"
 msgstr "MWST Prozent"
 
-#: .\juntagrico_billing\templates\admin\juntagrico_billing\bill\change_form.html:7
+#: .\juntagrico_billing\templates\admin\juntagrico_billing\bill\change_form.html:12
 msgid "Recalculate bill"
 msgstr "Rechnung neu berechnen"
 
-#: .\juntagrico_billing\templates\admin\juntagrico_billing\bill\change_form.html:10
+#: .\juntagrico_billing\templates\admin\juntagrico_billing\bill\change_form.html:21
 msgid "History"
 msgstr ""
 
 #: .\juntagrico_billing\templates\jb\accounting_summary.html:5
-#: .\juntagrico_billing\templates\juntagrico\menu\admin.html:33
+#: .\juntagrico_billing\templates\juntagrico\menu\admin.html:34
 msgid "Accounting Summary"
 msgstr "Zusammenfassung für Buchhaltung"
 
@@ -314,7 +314,7 @@ msgid "Shares"
 msgstr "Anteilscheine"
 
 #: .\juntagrico_billing\templates\jb\bills_notify.html:8
-#: .\juntagrico_billing\templates\juntagrico\menu\admin.html:21
+#: .\juntagrico_billing\templates\juntagrico\menu\admin.html:22
 msgid "Send billing notifications"
 msgstr "E-Mails für Rechnungen senden"
 
@@ -348,7 +348,7 @@ msgid "Send Bills"
 msgstr "Rechnungen senden"
 
 #: .\juntagrico_billing\templates\jb\bookings_export.html:5
-#: .\juntagrico_billing\templates\juntagrico\menu\admin.html:27
+#: .\juntagrico_billing\templates\juntagrico\menu\admin.html:28
 msgid "Export bookings"
 msgstr "Buchungen exportieren"
 
@@ -456,7 +456,7 @@ msgid "Please create one in the data administration."
 msgstr "Bitte erstelle eines in der Datenadministration"
 
 #: .\juntagrico_billing\templates\jb\open_bills.html:9
-#: .\juntagrico_billing\templates\juntagrico\menu\admin.html:18
+#: .\juntagrico_billing\templates\juntagrico\menu\admin.html:19
 msgid "Open bills"
 msgstr "Offene Rechnungen"
 
@@ -476,12 +476,12 @@ msgid "open bills with paid amount less than"
 msgstr "Offene Rechnungen mit bezahltem Betrag weniger als"
 
 #: .\juntagrico_billing\templates\jb\payments_upload.html:5
-#: .\juntagrico_billing\templates\juntagrico\menu\admin.html:24
+#: .\juntagrico_billing\templates\juntagrico\menu\admin.html:25
 msgid "Import payments"
 msgstr "Zahlungen importieren"
 
 #: .\juntagrico_billing\templates\jb\pending_bills.html:7
-#: .\juntagrico_billing\templates\juntagrico\menu\admin.html:12
+#: .\juntagrico_billing\templates\juntagrico\menu\admin.html:13
 msgid "Pending bills"
 msgstr "Anstehende Rechnungen"
 
@@ -559,19 +559,19 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-#: .\juntagrico_billing\templates\juntagrico\menu\admin.html:7
+#: .\juntagrico_billing\templates\juntagrico\menu\admin.html:8
 msgid "Bills and Bookkeeping"
 msgstr "Rechnungen und Buchhaltung"
 
-#: .\juntagrico_billing\templates\juntagrico\menu\admin.html:15
+#: .\juntagrico_billing\templates\juntagrico\menu\admin.html:16
 msgid "Unpublished bills"
 msgstr "Unveröffentlichte Rechnungen"
 
-#: .\juntagrico_billing\templates\juntagrico\menu\admin.html:30
+#: .\juntagrico_billing\templates\juntagrico\menu\admin.html:31
 msgid "Export member balances"
 msgstr "Saldoliste Mitglieder exportieren"
 
-#: .\juntagrico_billing\util\billing.py:268
+#: .\juntagrico_billing\util\billing.py:278
 msgid "No balancing payment type configured."
 msgstr "Kein Zahlungstyp für Zahlungsausgleich konfiguriert."
 
@@ -588,23 +588,23 @@ msgstr "Zlg"
 msgid "Total payments"
 msgstr "Total Zahlungen"
 
-#: .\juntagrico_billing\views.py:246
-msgid "Export to Bexio successful"
-msgstr "Export zu Bexio erfolgreich"
-
-#: .\juntagrico_billing\views.py:248
-msgid "Export to Bexio failed"
-msgstr "Export zu Bexio fehlgeschlagen"
-
-#: .\juntagrico_billing\views.py:250
-msgid "Please specify a Bexio access token"
-msgstr "Bitte ein Bexio Zugriffs-Token angeben"
-
-#: juntagrico_billing/views.py
+#: .\juntagrico_billing\views.py:86
 msgid "Please select a business year"
 msgstr "Bitte ein Geschäftsjahr auswählen"
 
-#: juntagrico_billing/views_payment.py:47
+#: .\juntagrico_billing\views.py:254
+msgid "Export to Bexio successful"
+msgstr "Export zu Bexio erfolgreich"
+
+#: .\juntagrico_billing\views.py:256
+msgid "Export to Bexio failed"
+msgstr "Export zu Bexio fehlgeschlagen"
+
+#: .\juntagrico_billing\views.py:258
+msgid "Please specify a Bexio access token"
+msgstr "Bitte ein Bexio Zugriffs-Token angeben"
+
+#: .\juntagrico_billing\views_payment.py:47
 #, python-format
 msgid ""
 "Failed to read payments file %s:\n"
