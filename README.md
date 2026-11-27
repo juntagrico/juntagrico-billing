@@ -72,12 +72,16 @@ You need to create this settings object once in django admin.
   ![grafik](https://user-images.githubusercontent.com/3380098/110239635-419b4600-7f48-11eb-8fb7-afed31983a2d.png)
 - Add a new Settings object
   
-  ![grafik](https://user-images.githubusercontent.com/3380098/110239725-b79fad00-7f48-11eb-9bb6-badecc6af93e.png)
+  <img width="607" height="341" alt="image" src="https://github.com/user-attachments/assets/4d04be43-8828-4357-8167-ec222a6cefa0" />
+
   
 - You need to specify a debtors account, just specify any digit code (e.g. `1100`)
-- Set the surcharge account to the income account used for subscription surcharges and discounts in bookkeeping exports.
+- If needed, specify a surcharge account. Surcharges may be added by optional apps like `juntagrico-contribution` to a subscription. When created by `juntagrico-contribution` this would be an income account used for subscription.
 - A default paymenttype is mandatory too. You may create one directly from the settings dialog:
   ![grafik](https://user-images.githubusercontent.com/3380098/110239772-f9c8ee80-7f48-11eb-8866-7844d234e971.png)
+- The paymenttype for balancing bills must be specified too. It is used for bookings representing the difference to the normal amount when overpaying a bill.
+- VAT number (optional), used to show the vat number on PDF bills.
+- VAT percent (mandatory), may be 0 if no vat is applicable.
 - Save your settings object. There must be only one settings object.
 
 ## Create a business year
