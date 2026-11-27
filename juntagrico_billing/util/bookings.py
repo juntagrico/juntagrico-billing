@@ -66,6 +66,9 @@ def create_item_booking(idx, item, debtor_account):
     elif item.custom_item_type:
         booking.credit_account = item.custom_item_type.booking_account
 
+    elif item.surcharge:
+        booking.credit_account = Settings.objects.first().surcharge_account
+
     # docnumber is DOCNUMBER_OFFSET_BILL + id of bill*10 + sequencenumber of bill item
     booking.docnumber = str(DOCNUMBER_OFFSET_BILL + bill.id * 10 + idx + 1)
 

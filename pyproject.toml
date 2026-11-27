@@ -10,9 +10,9 @@ authors = [
 ]
 readme = "README.md"
 license = { file = "LICENSE" }
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
-    "juntagrico>=2.0.0",
+    "juntagrico>=2.1.0",
     "lxml>=4.9.3",
     "python-stdnum>=1.16",
     "qrbill>=1.1.0",
@@ -31,7 +31,6 @@ classifiers = [
     'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
     'Operating System :: OS Independent',
     'Programming Language :: Python',
-    'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
     'Programming Language :: Python :: 3.13',

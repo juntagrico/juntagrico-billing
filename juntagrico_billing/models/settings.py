@@ -10,6 +10,7 @@ class Settings(models.Model):
         verbose_name_plural = "Settings"
 
     debtor_account = models.CharField('Debitor-Konto', max_length=10)
+    surcharge_account = models.CharField(_('Surcharge account'), max_length=10, blank=True, default='')
     default_paymenttype = models.ForeignKey('PaymentType', null=True, verbose_name=_('Default Payment Type'),
                                             on_delete=models.SET_NULL)
 

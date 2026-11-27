@@ -1,4 +1,5 @@
 import datetime
+from xml.sax.saxutils import escape
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import cm
@@ -152,7 +153,7 @@ class PdfBillRenderer(object):
         lines = []
         for item in bill.ordered_items:
             lines.append((
-                Paragraph(str(item), self.normal),
+                Paragraph(escape(str(item)), self.normal),
                 Paragraph('%10.2f' % item.amount, self.normalright)))
         lines.append((
             Paragraph('<b>Total</b>', self.normal),

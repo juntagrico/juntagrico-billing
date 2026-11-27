@@ -4,7 +4,7 @@ from django.utils.translation import gettext as _
 from juntagrico.config import Config
 from juntagrico.entity import JuntagricoBaseModel
 from juntagrico.entity.member import Member
-from juntagrico.entity.subs import SubscriptionPart
+from juntagrico.entity.subs import SubscriptionPart, SubscriptionSurcharge
 
 from juntagrico_billing.querysets.bill import BillQuerySet, BusinessYearQuerySet
 from juntagrico_billing.util.qrbill import calc_refnumber
@@ -88,7 +88,7 @@ class Bill(JuntagricoBaseModel):
         List the kind of items on the bill.
         short description for displaying in lists.
         """
-        return ', '.join([itm.item_kind for itm in self.items.all()])
+        return ', '.join([itm.item_kind for itm in self.ordered_items])
 
     @property
     def description(self):
@@ -112,7 +112,8 @@ class Bill(JuntagricoBaseModel):
         Bill items ordered for display.
         1. Subscription ordered by id
         2. Extrasubscriptions ordered by id
-        3. Custom Items ordered by type and id
+        3. Surcharges ordered by id
+        4. Custom Items ordered by type and id
         """
         def order_key(itm):
             if itm.subscription_part:
@@ -120,11 +121,13 @@ class Bill(JuntagricoBaseModel):
                     return (1, itm.id)
                 else:
                     return (0, itm.id)
+            elif itm.surcharge:
+                return (2, itm.id)
             elif itm.custom_item_type:
-                return (2, itm.custom_item_type.id, itm.id)
+                return (3, itm.custom_item_type.id, itm.id)
             else:
                 # itm without reference (unexpected)
-                return (3, None)
+                return (4, itm.id)
 
         return sorted(self.items.all(), key=order_key)
 
@@ -192,8 +195,7 @@ class BillItem(JuntagricoBaseModel):
                              null=False, blank=False,
                              on_delete=models.CASCADE, verbose_name=_('Bill'))
 
-    # a bill item has either a subscription part
-    # or a custom item_type assigned
+    # a bill item has a subscription part, surcharge or custom item type
     subscription_part = models.ForeignKey(
         SubscriptionPart, related_name='bill_items',
         null=True, blank=True, on_delete=models.PROTECT,
@@ -205,7 +207,12 @@ class BillItem(JuntagricoBaseModel):
         null=True, blank=True, on_delete=models.PROTECT,
         verbose_name=_('Custom item type'))
 
-    description = models.CharField(_('Description'), null=False, blank=True, max_length=100)
+    surcharge = models.ForeignKey(
+        SubscriptionSurcharge, related_name='bill_items',
+        null=True, blank=True, on_delete=models.PROTECT,
+        verbose_name=_('Surcharge'))
+
+    description = models.CharField(_('Description'), null=False, blank=True, max_length=255)
 
     amount = models.FloatField(_('Amount'), null=False, blank=False, default=0.0)
 
@@ -233,6 +240,8 @@ class BillItem(JuntagricoBaseModel):
                 return _('Subscription')
         elif self.custom_item_type:
             return self.custom_item_type.name
+        elif self.surcharge:
+            return _('Surcharge')
         else:
             return ''
 
@@ -242,12 +251,16 @@ class BillItem(JuntagricoBaseModel):
         verbose_name = _('Bill item')
         verbose_name_plural = _('Bill items')
 
+    def clean(self):
+        if sum(bool(value) for value in (self.subscription_part_id, self.surcharge_id, self.custom_item_type_id)) > 1:
+            raise ValidationError(_('A bill item can reference only one item type.'))
+
     def save(self, *args, **kwargs):
         """
         save override to automatically recalculate the vat amount
         """
-        # calc vat only for subscription_part items
-        if self.bill and self.subscription_part:
+        # calc vat only for subscription_part and surcharge items
+        if self.bill and (self.subscription_part or self.surcharge):
             vat_rate = self.bill.vat_rate
             self.vat_amount = round(self.amount / (1 + vat_rate) * vat_rate, 2)
         else:
