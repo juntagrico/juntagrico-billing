@@ -4,10 +4,20 @@
 
 {% block object-tools-items %}
     <li>
-        <a href="{% url 'jb:bill-recalc' original.pk %}?next={% url 'admin:juntagrico_billing_bill_change' original.pk %}" class="historylink">{% trans 'Recalculate bill' %}</a>
+        {# recalculating changes the bill, so the link submits a POST form #}
+        <form id="recalc-bill-form" method="post" action="{% url 'jb:bill-recalc' original.pk %}" hidden>
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{% url 'admin:juntagrico_billing_bill_change' original.pk %}">
+        </form>
+        <a href="{% url 'jb:bill-recalc' original.pk %}" id="recalc-bill-link" class="historylink">{% trans 'Recalculate bill' %}</a>
+        <script>
+            document.getElementById('recalc-bill-link').addEventListener('click', function (event) {
+                event.preventDefault();
+                document.getElementById('recalc-bill-form').submit();
+            });
+        </script>
     </li>
     <li>
         <a href="{% url opts|admin_urlname:'history' original.pk|admin_urlquote %}" class="historylink">{% trans "History" %}</a>
     </li>
 {% endblock %}
-

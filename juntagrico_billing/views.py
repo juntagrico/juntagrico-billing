@@ -7,6 +7,7 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import get_template
 from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
 from juntagrico.util import return_to_previous_location
@@ -79,8 +80,11 @@ def bills_setyear(request):
 @require_POST
 def bills_generate(request):
     # generate bills for current business year
-    year_name = request.session['bills_businessyear']
+    year_name = request.session.get('bills_businessyear')
     year = BusinessYear.objects.by_name(year_name)
+    if year is None:
+        error(request, _('Please select a business year'))
+        return redirect(reverse('jb:pending-bills-list'))
 
     billable_items = get_billable_items(year)
 
@@ -178,18 +182,22 @@ def bills_publish(request):
     POST handler for publishing bills.
     Called from unpublished_bills view.
     """
-    selected_ids = request.POST.get('bill_ids').split('_')
-    publish_bills(selected_ids)
+    publish_bills(get_selected_bill_ids(request))
 
     return redirect(reverse('jb:unpublished-bills-list'))
 
 
 @permission_required('juntagrico.is_book_keeper')
+@require_POST
 def bill_recalc(request, bill_id):
-    bill = Bill.objects.get(pk=bill_id)
+    bill = get_object_or_404(Bill, pk=bill_id)
     recalc_bill(bill)
 
-    next_url = request.GET.get('next')
+    # only redirect to urls on this site
+    next_url = request.POST.get('next')
+    if not url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()},
+                                           require_https=request.is_secure()):
+        next_url = reverse('admin:juntagrico_billing_bill_change', args=[bill.pk])
     return redirect(next_url)
 
 
@@ -367,14 +375,26 @@ def user_bills(request):
     return render(request, "jb/user_bills.html", renderdict)
 
 
-@login_required
-def user_bill(request, bill_id):
-    member = request.user.member
+def get_bill_for_view(request, bill_id):
+    """
+    get a bill for the user views.
+    bookkeepers may see any bill, members only their own.
+    unpublished bills are not visible to members.
+    """
     bill = get_object_or_404(Bill, id=bill_id)
 
-    # only allow for bookkepper or the bills member
-    if not (request.user.has_perms(('juntagrico.is_book_keeper',)) or bill.member == member):
+    if request.user.has_perms(('juntagrico.is_book_keeper',)):
+        return bill
+
+    if bill.member != request.user.member or not bill.published:
         raise PermissionDenied()
+
+    return bill
+
+
+@login_required
+def user_bill(request, bill_id):
+    bill = get_bill_for_view(request, bill_id)
 
     settings = Settings.objects.first()
     paymenttype = settings.default_paymenttype if settings else None
@@ -401,12 +421,7 @@ def user_bill(request, bill_id):
 
 @login_required
 def user_bill_pdf(request, bill_id):
-    member = request.user.member
-    bill = get_object_or_404(Bill, id=bill_id)
-
-    # only allow for bookkeeper or the bills member
-    if not (request.user.has_perms(('juntagrico.is_book_keeper',)) or bill.member == member):
-        raise PermissionDenied()
+    bill = get_bill_for_view(request, bill_id)
 
     filename = "Rechnung %d.pdf" % bill.id
     response = HttpResponse(content_type='application/pdf')
@@ -425,7 +440,7 @@ def bills_notify(request):
     bills = Bill.objects.filter(notification_sent=False)
 
     if request.method == 'POST':
-        for bill in bills.filter(id__in=request.POST.get('bill_ids').split('_')):
+        for bill in bills.filter(id__in=get_selected_bill_ids(request)):
             send_bill_notification(bill)
             bill.notification_sent = True
             bill.save()
@@ -454,16 +469,23 @@ def get_years_and_selected(request):
         messages.append(get_template('jb/messages/no_businessyear.html').render())
         request.member_messages = messages
 
-    # if no year set, choose most recent year
-    selected_year = None
+    # if no year (or an unknown one) is set, choose most recent year
     selected_year_name = request.session.get('bills_businessyear', None)
-    if selected_year_name:
-        selected_year = [
-            year for year in business_years
-            if year.name == selected_year_name][0]
-    else:
-        if len(business_years):
-            selected_year = business_years[-1]
-            request.session['bills_businessyear'] = selected_year.name
+    selected_year = next(
+        (year for year in business_years if year.name == selected_year_name),
+        None)
+    if selected_year is None and len(business_years):
+        selected_year = business_years[-1]
+        request.session['bills_businessyear'] = selected_year.name
 
     return (business_years, selected_year)
+
+
+def get_selected_bill_ids(request):
+    """
+    get the ids of the selected bills from the
+    'bill_ids' POST parameter (ids separated by '_').
+    invalid ids are ignored.
+    """
+    bill_ids = request.POST.get('bill_ids', '').split('_')
+    return [int(bill_id) for bill_id in bill_ids if bill_id.isdigit()]

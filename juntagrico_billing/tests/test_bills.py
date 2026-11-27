@@ -3,7 +3,9 @@ from decimal import Decimal
 
 from django.conf import settings
 import django.core.mail
+from juntagrico.entity.billing import BillingPeriod
 from juntagrico.entity.subs import SubscriptionPart
+from juntagrico.entity.subtypes import SubscriptionType
 
 from juntagrico_billing.models.bill import Bill, BillItem, BillItemType
 from juntagrico_billing.util.billing import get_billable_subscription_parts, \
@@ -109,6 +111,171 @@ class ScaleExtraSubscriptionPriceTest(BillingTestCase):
 
         price = scale_subscriptionpart_price(self.extrasubs, start_date, end_date)
         self.assertEqual(self.expected_price, price, "partial active")
+
+
+class ScaleSubscriptionPriceClampDayTest(BillingTestCase):
+    """Test that clamp_day prevents ValueError when end_day exceeds month days (e.g., 31 in February)."""
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+
+        # Create a subscription type with a period that has end_day=31
+        # This would cause ValueError without clamp_day when the period falls in February
+        cls.clamp_type = SubscriptionType.objects.create(
+            name='Clamp Test Type',
+            long_name='Clamp Test Type',
+            is_extra=True,
+            bundle=cls.bundle,
+            shares=0,
+            visible=True,
+            required_assignments=0,
+            price=365,
+            description='Test type for clamp_day'
+        )
+        # Period: Jan 1 – Feb 28/29, price 100 (end_day=31 should be clamped to 28/29)
+        BillingPeriod.objects.create(
+            type=cls.clamp_type,
+            price=100,
+            start_day=1,
+            start_month=1,
+            end_day=31,
+            end_month=2,
+            cancel_day=1,
+            cancel_month=1
+        )
+        # Period: Mar 1 – Apr 30, price 100
+        BillingPeriod.objects.create(
+            type=cls.clamp_type,
+            price=100,
+            start_day=1,
+            start_month=3,
+            end_day=31,
+            end_month=4,
+            cancel_day=1,
+            cancel_month=3
+        )
+        # Period: May 1 – Jun 30, price 85
+        BillingPeriod.objects.create(
+            type=cls.clamp_type,
+            price=85,
+            start_day=1,
+            start_month=5,
+            end_day=31,
+            end_month=6,
+            cancel_day=1,
+            cancel_month=5
+        )
+
+        cls.clamp_part = SubscriptionPart.objects.create(
+            subscription=cls.subscription,
+            activation_date=date(2018, 1, 1),
+            type=cls.clamp_type
+        )
+
+    def test_period_with_end_day_31_in_feb(self):
+        """Billing interval includes January-February where end_day=31 should clamp to 28."""
+        start_date = date(2018, 1, 1)
+        end_date = date(2018, 2, 28)
+        # Should not raise ValueError; end_day=31 clamped to 28 for February 2018
+        price = scale_subscriptionpart_price(self.clamp_part, start_date, end_date)
+        # Full period is Jan 1 – Feb 28 (31+28=59 days), we cover all 59 days
+        self.assertEqual(Decimal('100.0'), price, "full Jan-Feb period with clamped end day")
+
+    def test_period_with_end_day_31_in_feb_leap_year(self):
+        """Billing interval includes January-February in a leap year where end_day=31 should clamp to 29."""
+        start_date = date(2020, 1, 1)
+        end_date = date(2020, 2, 29)
+        price = scale_subscriptionpart_price(self.clamp_part, start_date, end_date)
+        # Full period is Jan 1 – Feb 29 (31+29=60 days), we cover all 60 days
+        self.assertEqual(Decimal('100.0'), price, "full Jan-Feb period in leap year with clamped end day")
+
+
+class ScaleSubscriptionPriceCrossYearTest(BillingTestCase):
+    """Test that periods in both years are considered when billing interval spans two years."""
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+
+        # Create a subscription type with quarterly periods
+        cls.crossyear_type = SubscriptionType.objects.create(
+            name='CrossYear Test Type',
+            long_name='CrossYear Test Type',
+            is_extra=True,
+            bundle=cls.bundle,
+            shares=0,
+            visible=True,
+            required_assignments=0,
+            price=400,
+            description='Test type for cross-year billing'
+        )
+        # Q1: Jan 1 – Mar 31, price 100
+        BillingPeriod.objects.create(
+            type=cls.crossyear_type,
+            price=100,
+            start_day=1,
+            start_month=1,
+            end_day=31,
+            end_month=3,
+            cancel_day=1,
+            cancel_month=1
+        )
+        # Q2: Apr 1 – Jun 30, price 100
+        BillingPeriod.objects.create(
+            type=cls.crossyear_type,
+            price=100,
+            start_day=1,
+            start_month=4,
+            end_day=30,
+            end_month=6,
+            cancel_day=1,
+            cancel_month=4
+        )
+        # Q3: Jul 1 – Sep 30, price 100
+        BillingPeriod.objects.create(
+            type=cls.crossyear_type,
+            price=100,
+            start_day=1,
+            start_month=7,
+            end_day=30,
+            end_month=9,
+            cancel_day=1,
+            cancel_month=7
+        )
+        # Q4: Oct 1 – Dec 31, price 100
+        BillingPeriod.objects.create(
+            type=cls.crossyear_type,
+            price=100,
+            start_day=1,
+            start_month=10,
+            end_day=31,
+            end_month=12,
+            cancel_day=1,
+            cancel_month=10
+        )
+
+        cls.crossyear_part = SubscriptionPart.objects.create(
+            subscription=cls.subscription,
+            activation_date=date(2018, 1, 1),
+            type=cls.crossyear_type
+        )
+
+    def test_cross_year_billing(self):
+        """Billing interval spans two years: Jul 2018 – Jun 2019 should include periods from both years."""
+        start_date = date(2018, 7, 1)
+        end_date = date(2019, 6, 30)
+        price = scale_subscriptionpart_price(self.crossyear_part, start_date, end_date)
+        # Q3 2018 (full) + Q4 2018 (full) + Q1 2019 (full) + Q2 2019 (full) = 400
+        self.assertEqual(Decimal('400.0'), price, "cross-year should include all 4 quarters")
+
+    def test_cross_year_partial(self):
+        """Billing interval spans two years but only partial periods."""
+        start_date = date(2018, 10, 1)
+        end_date = date(2019, 3, 31)
+        price = scale_subscriptionpart_price(self.crossyear_part, start_date, end_date)
+        # Q4 2018 (full) + Q1 2019 (full) = 200
+        self.assertEqual(Decimal('200.0'), price, "cross-year partial should include Q4 2018 and Q1 2019")
 
 
 class BillSubscriptionsTests(BillingTestCase):

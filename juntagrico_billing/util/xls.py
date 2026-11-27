@@ -24,7 +24,8 @@ def generate_excel(fields, data, download_name=None):
     download_name = download_name or data_name
 
     output = BytesIO()
-    workbook = Workbook(output)
+    # write strings like '=HYPERLINK(...)' (e.g. from member names) as text, never as formula
+    workbook = Workbook(output, {'strings_to_formulas': False})
     writer = ExcelWriter(fields, workbook)
     writer.write_data(data)
     workbook.close()

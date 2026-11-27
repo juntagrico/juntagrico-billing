@@ -1,7 +1,7 @@
 from unittest import TestCase
 import datetime
 from os.path import join, dirname
-from juntagrico_billing.util.payment_reader import Camt045Reader
+from juntagrico_billing.util.payment_reader import Camt045Reader, PaymentReaderError
 
 
 class Camt054ReaderTest(TestCase):
@@ -83,3 +83,17 @@ class Camt054ReaderTest(TestCase):
         self.assertEqual('QRR', payment.ref_type)
         self.assertEqual('000000000000013600000000688', payment.reference)
         self.assertEqual('230202CH09TIF874', payment.unique_id)
+
+    def test_read_invalid_xml(self):
+        reader = Camt045Reader()
+
+        with self.assertRaisesRegex(PaymentReaderError, 'invalid xml'):
+            reader.parse_payments('this is not a camt.054 file')
+
+    def test_read_invalid_amount(self):
+        reader = Camt045Reader()
+        xml = self.read_file('camt054_testfile.xml').replace(
+            '<Amt Ccy="CHF">778.29</Amt>', '<Amt Ccy="CHF">abc</Amt>')
+
+        with self.assertRaisesRegex(PaymentReaderError, 'invalid amount abc'):
+            reader.parse_payments(xml)
