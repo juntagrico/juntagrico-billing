@@ -147,5 +147,13 @@ You need to specify a description and a booking account for the custom item type
 You may then add custom item types on a bill in the django admin view of the bill:
 ![grafik](https://user-images.githubusercontent.com/3380098/110240939-8c1fc100-7f4e-11eb-8e62-45393ddd1600.png)
 
-## Bookkeeping Export
-TBD
+## Bookings Export
+The bookings that are derived from bills and payments can be exported into an accounting package.
+The accounting export page features a date range that filters the bookings to be exported.
+There are 2 ways to export bookings:
+### Download Excel
+Downloads an excel sheet containing all bookings. This may serve as base for importing into an accounting software.
+### Export to Bexio
+Writes the bookings via API into the Bexio (https://bexio.com) accounting package. 
+Identification of the Bexio account and authorisation is provided by an authentication token (a long text string) that needs to be pasted in the corresponding field. Such a token may be generated via the Bexio developer page at https://developer.bexio.com. 
+The export performs a synchronisation between juntagrico bookings and manual bookings in Bexio. Export may be started multiple times for the same period, only the differences are written to the API. Depending on the number of existing manual bookings in Bexio, the export action may take quite a long time.
